@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Paddle Game Starter</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <h1>Paddle Game Starter</h1>
+      <p class="subtitle">Browser-based prototype (lokale preview)</p>
+      <div class="hud" aria-live="polite">
+        <div class="scoreboard">
+          <p id="score" class="score">Gevangen ballen: 0</p>
+          <p id="highScore" class="high-score">High score: 0</p>
+        </div>
+        <div class="actions">
+          <button id="resetHighScoreBtn" class="reset-high-score" type="button">Reset high score</button>
+          <button id="restartBtn" class="restart" type="button" hidden>Opnieuw starten</button>
+        </div>
+      </div>
+      <canvas id="gameCanvas" width="900" height="500" aria-label="Paddle game canvas"></canvas>
+      <p id="status" class="status status--default" role="status" aria-live="polite" aria-atomic="true">Spel actief</p>
+      <p id="connectionInfo" class="connection-info">Verbinding maken met server...</p>
+      <p class="hint">Besturing: W/S (links) en ↑/↓ (rechts)</p>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
