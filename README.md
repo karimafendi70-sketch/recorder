@@ -23,7 +23,8 @@ Probeer FreeSurfCast direct op [GitHub Pages](https://karimafendi70-sketch.githu
 - Surf-rating:
 	- 1–5 sterren,
 	- kleurcodes (rood/oranje/groen),
-	- korte uitleg: **Waarom deze rating?** met plus- en minpunten.
+	- korte uitleg: **Waarom deze rating?** met plus- en minpunten,
+	- eenvoudige niveau-filter: **Alle niveaus / Beginner / Gevorderd** voor nuance in de uitleg.
 - Favorieten:
 	- spots markeren als favoriet,
 	- overzichtslijst met favorieten,
@@ -67,6 +68,9 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 - Deployen naar GitHub Pages of Vercel.
 
 ## Changelog
+
+- **v0.1.3 – UX update**
+	- Basis niveau-filter toegevoegd bij de rating-uitleg (Alle niveaus, Beginner, Gevorderd) met subtiele context in de tekst.
 
 - **v0.1.2 – Data update**
 	- Extra Europese surfspots toegevoegd in `spots.js` (o.a. Portugal, Spanje, Frankrijk en Verenigd Koninkrijk) voor issue #3.

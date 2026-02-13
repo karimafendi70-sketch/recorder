@@ -6,6 +6,7 @@ const temperatureEl = document.getElementById('temperature');
 const forecastMetaEl = document.getElementById('forecastMeta');
 const surfRatingEl = document.getElementById('surfRating');
 const ratingExplanationEl = document.getElementById('ratingExplanation');
+const levelSelectEl = document.getElementById('levelSelect');
 const legendToggleBtnEl = document.getElementById('legendToggleBtn');
 const ratingLegendBodyEl = document.getElementById('ratingLegendBody');
 const spotMapEl = document.getElementById('spotMap');
@@ -38,8 +39,10 @@ const favoriteSpotIds = new Set();
 const mapMarkersBySpotKey = new Map();
 let activeMapMarker = null;
 let activeSpot = null;
+let currentLevel = 'all';
+let latestRatingConditions = null;
 
-function buildRatingExplanation(conditions) {
+function buildRatingExplanation(conditions, level = 'all') {
   const waveHeight = conditions?.golfHoogteMeter;
   const wavePeriod = conditions?.golfPeriodeSeconden;
   const windSpeed = conditions?.windSnelheidKnopen;
@@ -100,7 +103,26 @@ function buildRatingExplanation(conditions) {
     return 'Geen nadere uitleg beschikbaar.';
   }
 
-  return parts.join(', ');
+  const isChallenging = waveHeight > 2.3 || windSpeed >= 18 || wavePeriod >= 12;
+  let levelNote = '';
+
+  if (level === 'beginner') {
+    levelNote = isChallenging
+      ? 'Let op: voor beginners kan dit pittig zijn.'
+      : 'Voor beginners oogt dit meestal vriendelijk.';
+  }
+
+  if (level === 'advanced') {
+    levelNote = isChallenging
+      ? 'Voor gevorderden kan dit juist een mooie uitdaging zijn.'
+      : 'Voor gevorderden zijn dit eerder rustige condities.';
+  }
+
+  if (!levelNote) {
+    return parts.join(', ');
+  }
+
+  return `${parts.join(', ')} ${levelNote}`;
 }
 
 function calculateSurfRating(conditions) {
@@ -163,11 +185,12 @@ function calculateSurfRating(conditions) {
     label: labels[clampedScore],
     stars: `${'★'.repeat(clampedScore)}${'☆'.repeat(5 - clampedScore)}`,
     ratingClass,
-    explanation: buildRatingExplanation(conditions)
+    explanation: buildRatingExplanation(conditions, currentLevel)
   };
 }
 
 function renderSurfRating(conditions) {
+  latestRatingConditions = conditions;
   surfRatingEl.classList.remove(...RATING_CLASS_NAMES);
 
   const rating = calculateSurfRating(conditions);
@@ -198,6 +221,18 @@ function setLegendExpanded(isExpanded) {
   legendToggleBtnEl.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
   legendToggleBtnEl.textContent = isExpanded ? 'Verberg uitleg' : 'Toon uitleg';
   ratingLegendBodyEl.hidden = !isExpanded;
+}
+
+function setCurrentLevel(level) {
+  if (!['all', 'beginner', 'advanced'].includes(level)) {
+    currentLevel = 'all';
+  } else {
+    currentLevel = level;
+  }
+
+  if (latestRatingConditions) {
+    renderSurfRating(latestRatingConditions);
+  }
 }
 
 function setActiveMapMarker(marker) {
@@ -974,6 +1009,13 @@ if (legendToggleBtnEl && ratingLegendBodyEl) {
   legendToggleBtnEl.addEventListener('click', () => {
     const isExpanded = legendToggleBtnEl.getAttribute('aria-expanded') === 'true';
     setLegendExpanded(!isExpanded);
+  });
+}
+
+if (levelSelectEl) {
+  levelSelectEl.value = 'all';
+  levelSelectEl.addEventListener('change', () => {
+    setCurrentLevel(levelSelectEl.value);
   });
 }
 

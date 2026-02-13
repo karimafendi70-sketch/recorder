@@ -271,6 +271,33 @@ body {
   border-color: #bbf7d0;
 }
 
+.level-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -0.15rem 0 0.65rem;
+}
+
+.level-filter-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.level-filter-select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.85rem;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.level-filter-select:focus-visible {
+  outline: 2px solid #94a3b8;
+  outline-offset: 2px;
+}
+
 .rating-explanation {
   margin: -0.35rem 0 0.9rem;
   padding: 0.55rem 0.7rem;
@@ -539,6 +566,19 @@ body {
     font-size: 0.9rem;
   }
 
+  .level-filter {
+    margin-bottom: 0.55rem;
+  }
+
+  .level-filter-label {
+    font-size: 0.82rem;
+  }
+
+  .level-filter-select {
+    font-size: 0.8rem;
+    padding: 0.28rem 0.45rem;
+  }
+
   .rating-explanation {
     margin: -0.2rem 0 0.65rem;
     padding: 0.5rem 0.6rem;
@@ -614,5 +654,9 @@ body {
 
   .rating-explanation {
     font-size: 0.82rem;
+  }
+
+  .level-filter {
+    gap: 0.4rem;
   }
 }
