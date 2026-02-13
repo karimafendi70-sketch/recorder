@@ -157,9 +157,9 @@
             </ul>
           </div>
         </div>
-        <section id="multiSpotOverview" class="multi-spot-overview" hidden aria-live="polite"></section>
-        <div id="dayOverview" class="day-overview" hidden>
-          <p id="dayOverviewTitle" class="day-overview-title">Overzicht komende dagen</p>
+        <section id="multiSpotOverview" class="multi-spot-overview" hidden aria-live="polite" aria-label="Beste spots voor deze dag"></section>
+        <div id="dayOverview" class="day-overview" hidden aria-label="Overzicht komende dagen">
+          <h3 id="dayOverviewTitle" class="day-overview-title">Overzicht komende dagen</h3>
           <div id="dayOverviewCards" class="day-overview-cards"></div>
         </div>
         <div id="timeSelector" class="time-selector" hidden aria-label="Selecteer tijdvak">
@@ -168,7 +168,7 @@
           <button id="timeSlot6h" class="time-slot-btn" type="button" data-offset="6">+6u</button>
           <button id="timeSlot9h" class="time-slot-btn" type="button" data-offset="9">+9u</button>
         </div>
-        <p id="noResultsWithFilters" class="filters-empty-message" hidden>Geen tijdvakken voldoen aan deze filters.</p>
+        <p id="noResultsWithFilters" class="filters-empty-message" role="status" aria-live="polite" hidden>Geen tijdvakken voldoen aan deze filters.</p>
         <div id="forecastListView" class="compact-forecast-view" hidden></div>
         <ul id="forecastSummaryList" class="forecast-list">
           <li><span id="forecastLabelWaveHeight">Golfhoogte</span><strong id="waveHeight">1.2 m</strong></li>
@@ -192,8 +192,8 @@
           </li>
           <li><span id="forecastLabelTemperature">Temperatuur</span><strong id="temperature">17 °C</strong></li>
         </ul>
-        <section id="slotDetail" class="slot-detail" aria-live="polite"></section>
-        <section id="dailySurfReport" class="daily-surf-report" aria-live="polite"></section>
+        <section id="slotDetail" class="slot-detail" aria-live="polite" aria-label="Slotdetails"></section>
+        <section id="dailySurfReport" class="daily-surf-report" aria-live="polite" aria-label="Surfverslag"></section>
 
         <section id="favoritesSection" class="favorites-block" aria-label="Favoriete surfspots">
           <h3 id="favoritesHeading">Jouw favorieten</h3>

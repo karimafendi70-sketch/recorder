@@ -505,7 +505,7 @@ const powerUserTranslations = {
     detailTitle: 'Slotdetails',
     detailSwellLabel: 'Swell',
     detailWindLabel: 'Wind',
-    detailConditionsLabel: 'Conditie',
+    detailConditionsLabel: 'Condities',
     detailAdviceLabel: 'Advies',
     detailSelectPrompt: 'Selecteer een tijdvak voor extra detail.',
     detailNoResults: 'Geen details beschikbaar met de huidige filters. Pas filters aan.',
@@ -544,7 +544,7 @@ const powerUserTranslations = {
     detailTitle: 'Slot details',
     detailSwellLabel: 'Swell',
     detailWindLabel: 'Wind',
-    detailConditionsLabel: 'Condition',
+    detailConditionsLabel: 'Conditions',
     detailAdviceLabel: 'Advice',
     detailSelectPrompt: 'Select a time slot to see more detail.',
     detailNoResults: 'No details available with current filters. Adjust filters to continue.',
@@ -773,7 +773,7 @@ const dailyReportTranslations = {
     skillAdviceAdvanced: 'vooral geschikt voor gevorderden'
   },
   en: {
-    dailyReportHeading: 'Daily surf report',
+    dailyReportHeading: 'Surf report',
     dailyReportInsufficient: 'Not enough data for a daily surf report.',
     dailyReportScorePrefix: 'Day score',
     dailyReportWindPrefix: 'Wind',
@@ -782,7 +782,7 @@ const dailyReportTranslations = {
     skillAdviceAdvanced: 'mostly suitable for advanced surfers'
   },
   fr: {
-    dailyReportHeading: 'Daily surf report',
+    dailyReportHeading: 'Surf report',
     dailyReportInsufficient: 'Not enough data for a daily surf report.',
     dailyReportScorePrefix: 'Day score',
     dailyReportWindPrefix: 'Wind',
@@ -791,7 +791,7 @@ const dailyReportTranslations = {
     skillAdviceAdvanced: 'mostly suitable for advanced surfers'
   },
   es: {
-    dailyReportHeading: 'Daily surf report',
+    dailyReportHeading: 'Surf report',
     dailyReportInsufficient: 'Not enough data for a daily surf report.',
     dailyReportScorePrefix: 'Day score',
     dailyReportWindPrefix: 'Wind',
@@ -800,7 +800,7 @@ const dailyReportTranslations = {
     skillAdviceAdvanced: 'mostly suitable for advanced surfers'
   },
   pt: {
-    dailyReportHeading: 'Daily surf report',
+    dailyReportHeading: 'Surf report',
     dailyReportInsufficient: 'Not enough data for a daily surf report.',
     dailyReportScorePrefix: 'Day score',
     dailyReportWindPrefix: 'Wind',
@@ -809,7 +809,7 @@ const dailyReportTranslations = {
     skillAdviceAdvanced: 'mostly suitable for advanced surfers'
   },
   de: {
-    dailyReportHeading: 'Daily surf report',
+    dailyReportHeading: 'Surf report',
     dailyReportInsufficient: 'Not enough data for a daily surf report.',
     dailyReportScorePrefix: 'Day score',
     dailyReportWindPrefix: 'Wind',
@@ -2018,7 +2018,7 @@ function renderDailySurfReport(spotId = getSpotKey(activeSpot), dayKey = current
 
   if (!spotId || !activeLiveCache) {
     dailySurfReportEl.innerHTML = `
-      <p class="daily-surf-report-title">${t('dailyReportHeading')}</p>
+      <h3 class="daily-surf-report-title">${t('dailyReportHeading')}</h3>
       <p class="daily-surf-report-line">${t('dailyReportInsufficient')}</p>
     `;
     return;
@@ -2031,7 +2031,7 @@ function renderDailySurfReport(spotId = getSpotKey(activeSpot), dayKey = current
 
   if (!resolvedDayKey || !groupedByDay[resolvedDayKey]) {
     dailySurfReportEl.innerHTML = `
-      <p class="daily-surf-report-title">${t('dailyReportHeading')}</p>
+      <h3 class="daily-surf-report-title">${t('dailyReportHeading')}</h3>
       <p class="daily-surf-report-line">${t('dailyReportInsufficient')}</p>
     `;
     return;
@@ -2041,7 +2041,7 @@ function renderDailySurfReport(spotId = getSpotKey(activeSpot), dayKey = current
   const reportLines = buildDailySurfReportLines(dayStats, resolvedDayKey, currentLanguage);
 
   dailySurfReportEl.innerHTML = `
-    <p class="daily-surf-report-title">${t('dailyReportHeading')}</p>
+    <h3 class="daily-surf-report-title">${t('dailyReportHeading')}</h3>
     ${reportLines
       .map((line) => `<p class="daily-surf-report-line">${line}</p>`)
       .join('')}
@@ -2125,7 +2125,7 @@ async function renderMultiSpotOverview(dayKey = currentDayKey) {
 
   const requestId = ++multiSpotRenderRequestId;
   renderMultiSpotOverviewState(`
-    <p class="multi-spot-title">${t('multiSpotOverviewTitle')}</p>
+    <h3 class="multi-spot-title">${t('multiSpotOverviewTitle')}</h3>
     <p class="multi-spot-hint">${t('multiSpotHint')}</p>
     <p class="multi-spot-empty">${t('multiSpotLoading')}</p>
   `);
@@ -2137,7 +2137,7 @@ async function renderMultiSpotOverview(dayKey = currentDayKey) {
 
   if (!topSpots.length) {
     renderMultiSpotOverviewState(`
-      <p class="multi-spot-title">${t('multiSpotOverviewTitle')}</p>
+      <h3 class="multi-spot-title">${t('multiSpotOverviewTitle')}</h3>
       <p class="multi-spot-hint">${t('multiSpotHint')}</p>
       <p class="multi-spot-empty">${t('multiSpotNoData')}</p>
     `);
@@ -2182,7 +2182,7 @@ async function renderMultiSpotOverview(dayKey = currentDayKey) {
     .join('');
 
   renderMultiSpotOverviewState(`
-    <p class="multi-spot-title">${t('multiSpotOverviewTitle')}</p>
+    <h3 class="multi-spot-title">${t('multiSpotOverviewTitle')}</h3>
     <p class="multi-spot-hint">${t('multiSpotHint')}</p>
     <ul class="multi-spot-list">${rowsHtml}</ul>
   `);
@@ -2205,7 +2205,7 @@ function renderSlotDetail(selectedSlotContext, options = {}) {
   const slotLabel = getTimeSlotLabel(selectedSlotContext);
 
   slotDetailEl.innerHTML = `
-    <p class="slot-detail-title">${t('detailTitle')} · ${slotLabel}</p>
+    <h3 class="slot-detail-title">${t('detailTitle')} · ${slotLabel}</h3>
     <p class="slot-detail-subtitle">${dateLabel}</p>
     <div class="slot-detail-grid">
       <div class="slot-detail-row">
@@ -2291,7 +2291,15 @@ function renderCompactForecastList() {
       const selectedClass = isSelected ? ' is-selected' : '';
 
       return `
-        <li class="compact-forecast-item${preferredClass}${selectedClass}" data-slot-key="${buildSlotKey(slotContext)}" data-slot-offset="${slotContext.offsetHours}">
+        <li
+          class="compact-forecast-item${preferredClass}${selectedClass}"
+          data-slot-key="${buildSlotKey(slotContext)}"
+          data-slot-offset="${slotContext.offsetHours}"
+          tabindex="0"
+          role="button"
+          aria-pressed="${isSelected ? 'true' : 'false'}"
+          aria-label="${getTimeSlotLabel(slotContext)}"
+        >
           <div class="compact-forecast-top">
             <span class="compact-forecast-time">${getTimeSlotLabel(slotContext)}</span>
             <span class="compact-forecast-time-meta">${formatCompactSlotTimeLabel(slotContext.time)}</span>
@@ -2828,7 +2836,11 @@ function setLanguage(lang, persist = true) {
   if (viewMapBtnEl) viewMapBtnEl.textContent = t('viewMap');
   if (viewListBtnEl) viewListBtnEl.textContent = t('viewList');
   if (dayOverviewTitleEl) dayOverviewTitleEl.textContent = t('dayOverviewTitle');
+  if (dayOverviewEl) dayOverviewEl.setAttribute('aria-label', t('dayOverviewTitle'));
   if (noResultsWithFiltersEl) noResultsWithFiltersEl.textContent = t('noResultsWithFilters');
+  if (slotDetailEl) slotDetailEl.setAttribute('aria-label', t('detailTitle'));
+  if (multiSpotOverviewEl) multiSpotOverviewEl.setAttribute('aria-label', t('multiSpotOverviewTitle'));
+  if (dailySurfReportEl) dailySurfReportEl.setAttribute('aria-label', t('dailyReportHeading'));
   if (ratingLegendEl) ratingLegendEl.setAttribute('aria-label', t('legendAria'));
   if (legendTitleEl) legendTitleEl.textContent = t('legendTitle');
   if (legendItemGoodEl) legendItemGoodEl.innerHTML = `<span class="legend-dot legend-dot-good" aria-hidden="true"></span>${t('legendItemGood')}`;
@@ -4178,6 +4190,18 @@ if (forecastListViewEl) {
     const item = event.target.closest('.compact-forecast-item');
     if (!item) return;
 
+    const offset = Number(item.dataset.slotOffset);
+    if (!Number.isFinite(offset)) return;
+    renderLiveOffset(offset);
+  });
+
+  forecastListViewEl.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+
+    const item = event.target.closest('.compact-forecast-item');
+    if (!item) return;
+
+    event.preventDefault();
     const offset = Number(item.dataset.slotOffset);
     if (!Number.isFinite(offset)) return;
     renderLiveOffset(offset);

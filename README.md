@@ -8,47 +8,54 @@ FreeSurfCast is een gratis, browser-only surf-forecast webapp met snelle uitleg 
 
 Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/recorder/).
 
-## Features (huidige staat)
+## Features
 
-- Kaart + forecast + rating + wind + swell: klik een spot op de kaart of via zoeken en bekijk tijdvakken, surf-rating, windrichting/-kracht en compacte swell-visualisatie.
-- Condition-tags per tijdvak: compacte labels (Clean/Choppy/Mixed) op basis van swell + wind versus (ruwe) kustoriëntatie per spot.
-- Power-user condities-filters: optionele toggles voor minimaal surfbaar, beginner-vriendelijk en clean-voorkeur zonder de basisflow te verbergen.
-- Meerdaags dagoverzicht: compacte 3–4 daagse cards met dagrange (min/max hoogte) en dominante conditie-tag.
-- Dagselectie + dagdelen: wissel snel tussen dagen; tijdvakken en lijstweergave tonen dan alleen slots binnen de gekozen dag (ochtend/middag/avond).
-- Compacte lijstweergave: naast kaartweergave is er een lijstmodus die per tijdvak snel hoogte/periode, wind en condition-tag toont.
-- Rijk slotdetailpaneel: extra laag onder de slots/lijst met uitgebreide swell-, wind- en conditie-uitleg plus korte advieszin per geselecteerd tijdvak (surf-forecast-achtige full-report stijl).
-- Multi-spot vergelijking: compact overzicht met topspots voor de actieve dag (huidige spot + favorieten), inclusief eenvoudige 0–10 kwaliteitsscore, beste tijdvak en kerncondities.
-- Automatisch dagrapport per spot: korte surf report-tekst per actieve dag/spot met hoogte-range, dominante swell/wind en skill-advies, geïnspireerd op surf-forecast-achtige samenvattingen.
-- Installable PWA-basis: manifest + service worker voor app-shell, zodat moderne browsers een install-optie tonen.
-- Wereldwijde spots + regiozoekervaring: spots uit Europa, Afrika/Atlantisch, Amerika's en Azië/Oceanië met regio-groepering in suggesties.
-- Meertaligheid + filters + persoonlijke state: NL/EN/FR/ES/PT/DE, niveau-filter (Alle niveaus/Beginner/Gevorderd), favorieten, last-used spot en reset-weergave.
-- Eenvoudige theme-keuze: handmatige light/dark toggle met behoud van keuze in localStorage.
-- UX-details: compacte help-uitleg, subtiele micro-interacties en korte statusmeldingen bij acties.
-- Performance + UX: eenvoudige forecast-caching per spot, responsive layout-polish voor mobiel en duidelijke statusfeedback.
+- Wereldwijde surfspots met regiozoekervaring via kaart en lijst.
+- Meerdaags overzicht (3–4 dagen) met min–max golfhoogte en dominante conditie per dag.
+- Tijdvakweergave met swell, wind, condities (Clean/Mixed/Choppy) en ratingcontext.
+- Slotdetailpaneel met compacte uitleg en advies per geselecteerd tijdvak.
+- Conditiefilters: minimaal surfbaar, geschikt voor beginners en voorkeur clean.
+- Kaartweergave en lijstweergave met gedeelde dag- en slotselectie.
+- Multi-spot overzicht met beste spots voor de actieve dag en kwaliteitsscore.
+- Dagelijks surf report per spot/dag met korte tekstsamenvatting.
+- PWA-basis: installable app-shell (manifest + service worker), forecasts blijven live.
 
-## Getting started
+## How to run
 
 - Vereisten:
-	- Moderne browser (Chrome, Edge, Firefox, Safari).
-	- Optioneel Node.js als je lokale helper-tests wilt draaien.
+	- Node.js 18+ en npm.
+	- Moderne browser (Chrome, Edge, Firefox of Safari).
+- Installatie:
+	- `npm install`
 - Lokaal draaien:
-	- Snelste optie: open index.html in je browser.
-	- Optioneel via script: `npm run serve` start een kleine lokale dev-server op poort 4173.
-	- Aanbevolen tijdens ontwikkeling: gebruik een kleine lokale dev-server (bijv. via `npm run serve` of VS Code Live Server).
-- Externe services:
-	- De app gebruikt Open-Meteo endpoints direct vanuit de client.
-	- Er is geen aparte API-key nodig voor de huidige setup.
+	- `npm run serve` (start een static server op poort 4173)
+	- Open daarna `http://localhost:4173`
+- Tests en checks:
+	- `npm run test-helpers`
+	- `npm run lint`
 
 ## Tech stack
 
-- Frontend:
-	- Plain HTML, CSS en JavaScript (geen framework).
-	- Leaflet voor kaartweergave en spot-markers.
-	- Fetch API voor live data-opvraging.
-- Interne structuur:
-	- app.js bevat de centrale app-flow (spots, forecast, i18n, state, opslag).
-	- style.css bevat layout, component-styling en responsive gedrag.
-	- tests/helpers.test.js bevat snelle helper-regressietests.
+- Vanilla HTML, CSS en JavaScript.
+- Leaflet voor kaartweergave en spot-markers.
+- Open-Meteo marine + weather endpoints voor live forecast-data.
+- PWA-basis met `manifest.json` en `service-worker.js`.
+- Lichte tooling: ESLint + helper-tests via Node.
+
+## Screenshots
+
+- Plaats screenshots in `docs/screenshots/` met bijvoorbeeld:
+	- `overview-map.png` (dagoverzicht + kaart)
+	- `list-slot-detail.png` (lijstweergave + detailpaneel)
+	- `multi-spot.png` (multi-spot overzicht)
+	- `daily-report-dark.png` (dagrapport in dark mode)
+
+## Project pitch
+
+FreeSurfCast is gebouwd als leer- en portfolio-project: een snelle surf-forecast ervaring zonder zware stack.
+De app combineert wereldwijde spots, condition-heuristiek en duidelijke dag/slot-samenvattingen in één compacte UI.
+De focus ligt op direct bruikbare surfcontext (niet alleen ruwe data), met extra hulp via filters, detail en surf report.
+Logische uitbreidingen zijn getij-data, meer spots/regio’s en aanvullende forecast-bronnen.
 
 ## Architectuur (kort)
 
@@ -114,28 +121,11 @@ Deze lijst is een ideeënverzameling en geen harde roadmap.
 - Meer wereldwijde surfspots (bijv. VS, Australië, Zuid-Amerika).
 - Uitgebreidere swell-analyse (richting, meerdere swell-bronnen).
 - Geavanceerdere filters (bijv. getij-info of uitgebreidere niveaufilters).
-- Donker thema (dark mode) als optionele weergave.
 - Kleine PWA-verbeteringen (installable prompt, eenvoudige offline fallback).
 - Eenvoudige end-to-end testflow (bijv. later met Playwright of Cypress).
 - Extra accessibility-tuning (screenreader-flow, skip-links, focusroutines).
 - Compacte spot-detailkaart met samenvatting per favoriet.
 
-## Changelog
+## Release notes
 
-- **v0.2.0 – release cleanup & UX maturity**
-	- Kaartintegratie afgerond met meerdere Europese spots.
-	- Niveau-filter toegevoegd (Beginner/Gevorderd) met context in rating-uitleg.
-	- Volledige meertalige UI (NL/EN/FR/ES/PT/DE).
-	- Windvisualisatie toegevoegd (richting + kracht met visuele pijl).
-	- Swell-/golfvisualisatie toegevoegd (hoogte + periode + compacte intensiteitsbalk).
-	- Favorieten, last-used spot en reset-weergave samengebracht in één consistente flow.
-	- Eenvoudige forecast-caching per spot geactiveerd voor snellere herselectie.
-
-- **v0.1.x (compact historisch)**
-	- v0.1.6: swell + reset-view basis.
-	- v0.1.5: meertalige info/disclaimer-sectie.
-	- v0.1.4: i18n taal-toggle en vertaalde kern-UI.
-	- v0.1.3: niveau-filter in rating-uitleg.
-	- v0.1.2: uitbreiding Europese spots.
-	- v0.1.1: legend-toggle en mobile polish.
-	- v0.1.0: eerste MVP (zoek/suggesties/tijdvakken/rating/favorieten).
+- Zie `CHANGELOG.md` voor de samenvatting van `v1.0.0`.

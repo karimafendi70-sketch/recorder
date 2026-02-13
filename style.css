@@ -958,6 +958,10 @@ body {
   margin: -0.2rem 0 0.58rem;
   font-size: 0.8rem;
   color: var(--soft-text);
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  padding: 0.44rem 0.52rem;
 }
 
 .compact-forecast-view {
@@ -1030,6 +1034,10 @@ body {
   margin: 0;
   font-size: 0.8rem;
   color: var(--soft-text);
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  padding: 0.42rem 0.48rem;
 }
 
 .multi-spot-overview {
@@ -1100,7 +1108,7 @@ body {
 .multi-spot-score {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--muted-text);
+  color: var(--text-color);
 }
 
 .multi-spot-meta {
@@ -1112,6 +1120,10 @@ body {
   margin: 0;
   font-size: 0.78rem;
   color: var(--soft-text);
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  padding: 0.42rem 0.48rem;
 }
 
 .slot-detail {
@@ -1171,6 +1183,28 @@ body {
   margin: 0;
   font-size: 0.8rem;
   color: var(--soft-text);
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  padding: 0.44rem 0.5rem;
+}
+
+body[data-theme='dark'] .time-slot-btn.slot-bad {
+  background: color-mix(in srgb, var(--soft-text) 26%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--soft-text) 44%, var(--panel-border));
+  color: var(--text-color);
+}
+
+body[data-theme='dark'] .time-slot-btn.slot-ok {
+  background: color-mix(in srgb, var(--muted-text) 20%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--muted-text) 34%, var(--panel-border));
+  color: var(--text-color);
+}
+
+body[data-theme='dark'] .time-slot-btn.slot-good {
+  background: color-mix(in srgb, var(--focus-ring) 22%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--focus-ring) 36%, var(--panel-border));
+  color: var(--text-color);
 }
 
 .daily-surf-report {
