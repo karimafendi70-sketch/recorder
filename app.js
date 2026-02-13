@@ -35,6 +35,8 @@ let activeTimeOffset = 0;
 let activeLiveCache = null;
 const liveForecastCacheBySpot = new Map();
 const favoriteSpotIds = new Set();
+const mapMarkersBySpotKey = new Map();
+let activeMapMarker = null;
 let activeSpot = null;
 
 function buildRatingExplanation(conditions) {
@@ -198,6 +200,22 @@ function setLegendExpanded(isExpanded) {
   ratingLegendBodyEl.hidden = !isExpanded;
 }
 
+function setActiveMapMarker(marker) {
+  if (!marker) return;
+  if (activeMapMarker && activeMapMarker !== marker) {
+    activeMapMarker.setZIndexOffset(0);
+  }
+  activeMapMarker = marker;
+  activeMapMarker.setZIndexOffset(400);
+}
+
+function highlightMapMarkerForSpot(spot) {
+  if (!spot) return;
+  const marker = mapMarkersBySpotKey.get(getSpotKey(spot));
+  if (!marker) return;
+  setActiveMapMarker(marker);
+}
+
 function initSpotMap() {
   if (!spotMapEl) return;
 
@@ -226,10 +244,15 @@ function initSpotMap() {
     markerBounds.push(markerPosition);
 
     const marker = window.L.marker(markerPosition).addTo(map);
+    mapMarkersBySpotKey.set(getSpotKey(spot), marker);
     marker.bindPopup(`<strong>${spot.naam}</strong><br>${spot.land}`);
     marker.bindTooltip(`${spot.naam} (${spot.land})`, {
       direction: 'top',
       offset: [0, -10]
+    });
+    marker.on('click', () => {
+      setActiveMapMarker(marker);
+      selectSpot(spot, 'map', spot.naam);
     });
   });
 
@@ -785,6 +808,10 @@ function buildSuccessMessage(spot, method, matchBy) {
     return `Favoriet geopend: ${spot.naam} (${spot.land})`;
   }
 
+  if (method === 'map') {
+    return `Spot gekozen via kaart: ${spot.naam} (${spot.land})`;
+  }
+
   const via = matchBy === 'land' ? 'land' : 'naam';
 
   if (method === 'fuzzy') {
@@ -797,6 +824,7 @@ function buildSuccessMessage(spot, method, matchBy) {
 function selectSpot(spot, method, query) {
   const matchBy = method === 'substring' ? detectSubstringMatchField(spot, query) : 'naam';
   updateForecastForSpot(spot);
+  highlightMapMarkerForSpot(spot);
   setSearchMessage(buildSuccessMessage(spot, method, matchBy), 'success');
   searchInputEl.value = spot.naam;
   hideSuggestions();
@@ -952,5 +980,6 @@ renderFavoritesList();
 updateFavoriteToggleForSpot(null);
 
 renderSpot(SURF_SPOTS[0], SURF_SPOTS[0]);
+highlightMapMarkerForSpot(SURF_SPOTS[0]);
 setSearchMessage('Typ een spotnaam en druk op Enter of klik op Zoeken.', '');
 updateForecastForSpot(SURF_SPOTS[0]);
