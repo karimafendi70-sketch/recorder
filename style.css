@@ -58,13 +58,50 @@ body {
 }
 
 .app {
-  width: min(920px, 100%);
+  width: min(1280px, 100%);
   margin: 0 auto;
   padding: 1rem;
 }
 
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.page-header {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.page-main {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.page-main-left,
+.page-main-right {
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+}
+
+.page-footer {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.panel-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  box-shadow: var(--panel-shadow);
+}
+
 .header {
-  margin-bottom: 1rem;
+  margin-bottom: 0;
+  padding: 0.8rem;
 }
 
 .header-top {
@@ -1847,6 +1884,51 @@ body[data-theme='dark'] .time-slot-btn.slot-good {
   color: var(--muted-text);
   font-size: 0.88rem;
   line-height: 1.4;
+}
+
+.page-main .forecast-card,
+.page-main .day-overview,
+.page-main .spot-map-section,
+.page-main .slot-detail,
+.page-main .multi-spot-overview,
+.page-main .daily-surf-report,
+.page-main .score-timeline,
+.page-main .daypart-heatmap,
+.page-main .user-preferences-panel,
+.page-main .favorites-block,
+.page-footer .info-section {
+  margin: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  background: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+}
+
+.page-main .forecast-card,
+.page-main .day-overview,
+.page-main .spot-map-section,
+.page-main .slot-detail,
+.page-main .multi-spot-overview,
+.page-main .daily-surf-report,
+.page-main .score-timeline,
+.page-main .daypart-heatmap,
+.page-main .user-preferences-panel,
+.page-main .favorites-block {
+  padding: 0.78rem;
+}
+
+.page-footer .info-section {
+  padding: 0.78rem;
+}
+
+.page-main .forecast-card {
+  margin-top: 0;
+}
+
+@media (max-width: 1024px) {
+  .page-main {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 620px) {
