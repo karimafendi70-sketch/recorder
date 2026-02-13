@@ -107,6 +107,7 @@ body {
   line-height: 1.56;
   background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 45%, var(--bg-gradient-end) 100%);
   color: var(--text-color);
+  overflow-x: clip;
 }
 
 h1 {
@@ -130,6 +131,7 @@ h3 {
 
 .app {
   width: min(1280px, 100%);
+  min-width: 0;
   margin: 0 auto;
   padding: 1rem;
 }
@@ -899,9 +901,15 @@ h3 {
   border-radius: 9px;
   background: var(--input-bg);
   padding: 0.42rem 0.48rem;
+  min-height: 2.5rem;
   color: var(--text-color);
   text-align: left;
   cursor: pointer;
+}
+
+.day-overview-card:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .day-overview-card.is-active {
@@ -1176,7 +1184,13 @@ h3 {
   border-radius: 8px;
   background: var(--input-bg);
   padding: 0.44rem 0.5rem;
+  min-height: 2.5rem;
   cursor: pointer;
+}
+
+.compact-forecast-item:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .compact-forecast-item.is-preferred {
@@ -1221,7 +1235,7 @@ h3 {
   border: 1px solid var(--panel-border);
   border-radius: 999px;
   padding: 0.12rem 0.44rem;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   line-height: 1;
   background: var(--input-bg);
@@ -1526,6 +1540,7 @@ h3 {
   border-radius: 8px;
   background: var(--input-bg);
   min-width: 2.9rem;
+  min-height: 2.5rem;
   padding: 0.28rem 0.24rem;
   display: grid;
   justify-items: center;
@@ -1568,13 +1583,13 @@ h3 {
 }
 
 .timeline-bar-score {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--muted-text);
 }
 
 .timeline-bar-time {
-  font-size: 0.69rem;
+  font-size: 0.75rem;
   color: var(--soft-text);
 }
 
@@ -1621,7 +1636,7 @@ h3 {
 }
 
 .daypart-heatmap-table th {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted-text);
   text-align: left;
 }
@@ -1644,9 +1659,10 @@ h3 {
   border-radius: 8px;
   background: var(--input-bg);
   color: var(--text-color);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.15;
+  min-height: 2.5rem;
   padding: 0.3rem 0.4rem;
   cursor: pointer;
 }
@@ -2047,7 +2063,7 @@ h3 {
   .compact-forecast-item,
   .multi-spot-item,
   .favorite-item-btn {
-    min-height: 2.25rem;
+    min-height: 2.5rem;
   }
 
   .spot-map-canvas {
@@ -2270,12 +2286,18 @@ h3 {
     list-style: none;
     cursor: pointer;
     user-select: none;
+    min-height: 2.5rem;
     padding: 0.56rem 0.62rem;
     font-size: 0.78rem;
     font-weight: 700;
     color: var(--text-color);
     background: var(--control-bg);
     border-bottom: 1px solid var(--panel-border);
+  }
+
+  .insights-summary:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 
   .insights-summary::-webkit-details-marker {
@@ -2357,7 +2379,7 @@ h3 {
 
   .timeline-bar-time,
   .timeline-bar-score {
-    font-size: 0.66rem;
+    font-size: 0.75rem;
   }
 
   .daypart-heatmap-table {
@@ -2369,7 +2391,7 @@ h3 {
   }
 
   .daypart-cell {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     padding: 0.28rem 0.35rem;
   }
 
@@ -2398,7 +2420,7 @@ h3 {
   }
 
   .control-current {
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     padding: 0.2rem 0.4rem;
   }
 
