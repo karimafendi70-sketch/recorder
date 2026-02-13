@@ -95,6 +95,8 @@ const LANGUAGE_STORAGE_KEY = 'freesurfcastLanguage';
 const THEME_STORAGE_KEY = 'freesurfcastTheme';
 const SUPPORTED_LANGUAGES = ['nl', 'en', 'fr', 'es', 'pt', 'de'];
 const SUPPORTED_THEMES = ['light', 'dark'];
+const REGION_ORDER = ['eu', 'af', 'am', 'ap'];
+const DEFAULT_REGION = 'eu';
 const RATING_CLASS_NAMES = ['rating-bad', 'rating-ok', 'rating-good', 'rating-neutral'];
 const SLOT_CLASS_NAMES = ['slot-bad', 'slot-ok', 'slot-good', 'slot-neutral'];
 const translations = {
@@ -534,6 +536,45 @@ const statusTranslations = {
   }
 };
 
+const regionTranslations = {
+  nl: {
+    regionEurope: 'Europa',
+    regionAfricaAtlantic: 'Afrika/Atlantisch',
+    regionAmericas: 'Amerika\'s',
+    regionAsiaPacific: 'Azië/Oceanië'
+  },
+  en: {
+    regionEurope: 'Europe',
+    regionAfricaAtlantic: 'Africa/Atlantic',
+    regionAmericas: 'Americas',
+    regionAsiaPacific: 'Asia/Oceania'
+  },
+  fr: {
+    regionEurope: 'Europe',
+    regionAfricaAtlantic: 'Afrique/Atlantique',
+    regionAmericas: 'Amériques',
+    regionAsiaPacific: 'Asie/Océanie'
+  },
+  es: {
+    regionEurope: 'Europa',
+    regionAfricaAtlantic: 'África/Atlántico',
+    regionAmericas: 'Américas',
+    regionAsiaPacific: 'Asia/Oceanía'
+  },
+  pt: {
+    regionEurope: 'Europa',
+    regionAfricaAtlantic: 'África/Atlântico',
+    regionAmericas: 'Américas',
+    regionAsiaPacific: 'Ásia/Oceania'
+  },
+  de: {
+    regionEurope: 'Europa',
+    regionAfricaAtlantic: 'Afrika/Atlantik',
+    regionAmericas: 'Amerika',
+    regionAsiaPacific: 'Asien/Ozeanien'
+  }
+};
+
 Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -589,6 +630,12 @@ Object.entries(helpTranslations).forEach(([lang, extraKeys]) => {
 });
 
 Object.entries(statusTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(regionTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
   }
@@ -1226,7 +1273,31 @@ function resetMapViewToDefault() {
     activeMapMarker = null;
   }
 
-  spotMapInstance.setView([44, 2], 2, {
+  const spotsWithCoordinates = SURF_SPOTS.filter(
+    (spot) => Number.isFinite(spot.latitude) && Number.isFinite(spot.longitude)
+  );
+
+  if (spotsWithCoordinates.length === 1) {
+    const singleSpot = spotsWithCoordinates[0];
+    spotMapInstance.setView([singleSpot.latitude, singleSpot.longitude], 4, {
+      animate: false
+    });
+    return;
+  }
+
+  if (spotsWithCoordinates.length > 1) {
+    const bounds = window.L.latLngBounds(
+      spotsWithCoordinates.map((spot) => [spot.latitude, spot.longitude])
+    );
+    spotMapInstance.fitBounds(bounds, {
+      padding: [24, 24],
+      maxZoom: 3,
+      animate: false
+    });
+    return;
+  }
+
+  spotMapInstance.setView([20, 0], 2, {
     animate: false
   });
 }
@@ -1254,10 +1325,8 @@ function initSpotMap() {
     (spot) => Number.isFinite(spot.latitude) && Number.isFinite(spot.longitude)
   );
 
-  const markerBounds = [];
   spotsWithCoordinates.forEach((spot) => {
     const markerPosition = [spot.latitude, spot.longitude];
-    markerBounds.push(markerPosition);
 
     const marker = window.L.marker(markerPosition).addTo(map);
     mapMarkersBySpotKey.set(getSpotKey(spot), marker);
@@ -1275,14 +1344,7 @@ function initSpotMap() {
     });
   });
 
-  if (markerBounds.length === 1) {
-    map.setView(markerBounds[0], 6);
-  } else if (markerBounds.length > 1) {
-    map.fitBounds(markerBounds, {
-      padding: [24, 24],
-      maxZoom: 4
-    });
-  }
+  resetMapViewToDefault();
 
   requestAnimationFrame(() => map.invalidateSize());
 }
@@ -1335,6 +1397,49 @@ function normalizeText(value) {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+}
+
+function getSpotRegion(spot) {
+  if (!spot?.region || typeof spot.region !== 'string') return DEFAULT_REGION;
+  return REGION_ORDER.includes(spot.region) ? spot.region : DEFAULT_REGION;
+}
+
+function getRegionLabelKey(region) {
+  const regionLabelByCode = {
+    eu: 'regionEurope',
+    af: 'regionAfricaAtlantic',
+    am: 'regionAmericas',
+    ap: 'regionAsiaPacific'
+  };
+
+  return regionLabelByCode[region] ?? 'regionEurope';
+}
+
+function sortSpotsByRegionAndName(spots) {
+  const regionIndexByCode = REGION_ORDER.reduce((accumulator, region, index) => {
+    accumulator[region] = index;
+    return accumulator;
+  }, {});
+
+  return [...spots].sort((leftSpot, rightSpot) => {
+    const leftRegion = getSpotRegion(leftSpot);
+    const rightRegion = getSpotRegion(rightSpot);
+    const leftIndex = regionIndexByCode[leftRegion] ?? Number.MAX_SAFE_INTEGER;
+    const rightIndex = regionIndexByCode[rightRegion] ?? Number.MAX_SAFE_INTEGER;
+
+    if (leftIndex !== rightIndex) {
+      return leftIndex - rightIndex;
+    }
+
+    const byName = leftSpot.naam.localeCompare(rightSpot.naam, 'nl', {
+      sensitivity: 'base'
+    });
+    if (byName !== 0) return byName;
+
+    return leftSpot.land.localeCompare(rightSpot.land, 'nl', {
+      sensitivity: 'base'
+    });
+  });
 }
 
 function getSpotKey(spot) {
@@ -1838,20 +1943,45 @@ function renderSuggestions(matches) {
     return;
   }
 
-  currentSuggestions = matches;
+  const sortedMatches = sortSpotsByRegionAndName(matches);
+  currentSuggestions = sortedMatches;
   activeSuggestionIndex = -1;
 
-  suggestionsListEl.innerHTML = matches
-    .map(
-      (spot, index) => `
-        <li>
-          <button class="suggestion-item" type="button" data-index="${index}">
-            <span class="suggestion-name">${spot.naam}</span>
-            <span class="suggestion-land">${spot.land}</span>
-          </button>
+  const groupedMatches = REGION_ORDER
+    .map((regionCode) => ({
+      regionCode,
+      spots: sortedMatches.filter((spot) => getSpotRegion(spot) === regionCode)
+    }))
+    .filter((group) => group.spots.length > 0);
+
+  let suggestionIndex = 0;
+
+  suggestionsListEl.innerHTML = groupedMatches
+    .map((group) => {
+      const headingHtml = `
+        <li class="suggestion-group-heading" role="presentation">
+          ${t(getRegionLabelKey(group.regionCode))}
         </li>
-      `
-    )
+      `;
+
+      const spotItemsHtml = group.spots
+        .map((spot) => {
+          const currentIndex = suggestionIndex;
+          suggestionIndex += 1;
+
+          return `
+            <li>
+              <button class="suggestion-item" type="button" data-index="${currentIndex}">
+                <span class="suggestion-name">${spot.naam}</span>
+                <span class="suggestion-land">${spot.land}</span>
+              </button>
+            </li>
+          `;
+        })
+        .join('');
+
+      return `${headingHtml}${spotItemsHtml}`;
+    })
     .join('');
 
   suggestionsListEl.hidden = false;
@@ -2017,17 +2147,17 @@ function resetView() {
     // storage kan geblokkeerd zijn; reset gaat verder
   }
 
-  resetMapViewToDefault();
-
   const defaultSpot = SURF_SPOTS[0] ?? null;
   if (defaultSpot) {
+    // Reset-strategie B: behoud een vaste default-spot, maar toon de kaart in wereld-overzicht.
     selectSpot(defaultSpot, 'restore', defaultSpot.naam, {
       silent: true,
-      centerMap: true,
+      centerMap: false,
       animateMap: false,
       mapZoom: 7,
       persistLastSpot: false
     });
+    resetMapViewToDefault();
   } else {
     resetMapViewToDefault();
     clearActiveLiveCache();
@@ -2278,6 +2408,7 @@ updateShareButtonForSpot(null);
 const deepLinkedSpot = getDeepLinkedSpotFromUrl();
 const restoredSpot = getLastSpotFromStorage();
 const initialSpot = deepLinkedSpot ?? restoredSpot ?? SURF_SPOTS[0];
+const shouldCenterOnInitialSpot = Boolean(deepLinkedSpot || restoredSpot);
 shouldShowFirstRunHint = !deepLinkedSpot && !restoredSpot;
 updateFirstRunHintVisibility();
 
@@ -2286,7 +2417,7 @@ setSearchMessage(t('searchHintDefault'), '');
 if (initialSpot) {
   selectSpot(initialSpot, 'restore', initialSpot.naam, {
     silent: true,
-    centerMap: true,
+    centerMap: shouldCenterOnInitialSpot,
     animateMap: false,
     mapZoom: 7
   });

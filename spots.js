@@ -1,6 +1,7 @@
 const SURF_SPOTS = [
   {
     id: 'scheveningen-nl',
+    region: 'eu',
     naam: 'Scheveningen',
     land: 'Nederland',
     latitude: 52.11,
@@ -13,6 +14,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'hossegor-fr',
+    region: 'eu',
     naam: 'Hossegor',
     land: 'Frankrijk',
     latitude: 43.665,
@@ -25,6 +27,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'jeffreys-bay-za',
+    region: 'af',
     naam: 'Jeffreys Bay',
     land: 'Zuid-Afrika',
     latitude: -34.05,
@@ -37,6 +40,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'pipeline-us-hi',
+    region: 'am',
     naam: 'Pipeline',
     land: 'Hawaï',
     latitude: 21.665,
@@ -49,6 +53,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'ericeira-pt',
+    region: 'eu',
     naam: 'Ericeira',
     land: 'Portugal',
     latitude: 38.963,
@@ -61,6 +66,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'peniche-pt',
+    region: 'eu',
     naam: 'Peniche',
     land: 'Portugal',
     latitude: 39.355,
@@ -73,6 +79,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'nazare-pt',
+    region: 'eu',
     naam: 'Nazaré',
     land: 'Portugal',
     latitude: 39.602,
@@ -85,6 +92,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'carcavelos-pt',
+    region: 'eu',
     naam: 'Carcavelos',
     land: 'Portugal',
     latitude: 38.676,
@@ -97,6 +105,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'mundaka-es',
+    region: 'eu',
     naam: 'Mundaka',
     land: 'Spanje',
     latitude: 43.408,
@@ -109,6 +118,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'zarautz-es',
+    region: 'eu',
     naam: 'Zarautz',
     land: 'Spanje',
     latitude: 43.287,
@@ -121,6 +131,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'sopelana-es',
+    region: 'eu',
     naam: 'Sopelana',
     land: 'Spanje',
     latitude: 43.379,
@@ -133,6 +144,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'biarritz-fr',
+    region: 'eu',
     naam: 'Biarritz',
     land: 'Frankrijk',
     latitude: 43.483,
@@ -145,6 +157,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'lacanau-fr',
+    region: 'eu',
     naam: 'Lacanau',
     land: 'Frankrijk',
     latitude: 45.0,
@@ -157,6 +170,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'la-torche-fr',
+    region: 'eu',
     naam: 'La Torche',
     land: 'Frankrijk',
     latitude: 47.84,
@@ -169,6 +183,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'newquay-uk',
+    region: 'eu',
     naam: 'Newquay',
     land: 'Verenigd Koninkrijk',
     latitude: 50.416,
@@ -181,6 +196,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'thurso-east-uk',
+    region: 'eu',
     naam: 'Thurso East',
     land: 'Verenigd Koninkrijk',
     latitude: 58.595,
@@ -193,6 +209,7 @@ const SURF_SPOTS = [
   },
   {
     id: 'uluwatu-id',
+    region: 'ap',
     naam: 'Uluwatu',
     land: 'Indonesië',
     latitude: -8.829,
@@ -202,5 +219,187 @@ const SURF_SPOTS = [
     windSnelheidKnopen: 9,
     windRichting: 'ZO',
     watertemperatuurC: 27
+  },
+  {
+    id: 'anchor-point-ma',
+    region: 'af',
+    naam: 'Anchor Point',
+    land: 'Marokko',
+    latitude: 30.544,
+    longitude: -9.709,
+    golfHoogteMeter: 1.9,
+    golfPeriodeSeconden: 11,
+    windSnelheidKnopen: 12,
+    windRichting: 'NO',
+    watertemperatuurC: 19
+  },
+  {
+    id: 'taghazout-ma',
+    region: 'af',
+    naam: 'Taghazout',
+    land: 'Marokko',
+    latitude: 30.545,
+    longitude: -9.711,
+    golfHoogteMeter: 1.8,
+    golfPeriodeSeconden: 10,
+    windSnelheidKnopen: 11,
+    windRichting: 'NO',
+    watertemperatuurC: 19
+  },
+  {
+    id: 'fuerteventura-es',
+    region: 'af',
+    naam: 'Fuerteventura',
+    land: 'Canarische Eilanden',
+    latitude: 28.357,
+    longitude: -14.053,
+    golfHoogteMeter: 1.7,
+    golfPeriodeSeconden: 10,
+    windSnelheidKnopen: 15,
+    windRichting: 'N',
+    watertemperatuurC: 22
+  },
+  {
+    id: 'lanzarote-es',
+    region: 'af',
+    naam: 'Lanzarote',
+    land: 'Canarische Eilanden',
+    latitude: 29.047,
+    longitude: -13.589,
+    golfHoogteMeter: 1.9,
+    golfPeriodeSeconden: 11,
+    windSnelheidKnopen: 14,
+    windRichting: 'N',
+    watertemperatuurC: 22
+  },
+  {
+    id: 'santa-cruz-us',
+    region: 'am',
+    naam: 'Santa Cruz',
+    land: 'Verenigde Staten',
+    latitude: 36.951,
+    longitude: -122.026,
+    golfHoogteMeter: 1.8,
+    golfPeriodeSeconden: 11,
+    windSnelheidKnopen: 10,
+    windRichting: 'NW',
+    watertemperatuurC: 15
+  },
+  {
+    id: 'huntington-beach-us',
+    region: 'am',
+    naam: 'Huntington Beach',
+    land: 'Verenigde Staten',
+    latitude: 33.659,
+    longitude: -117.998,
+    golfHoogteMeter: 1.4,
+    golfPeriodeSeconden: 9,
+    windSnelheidKnopen: 9,
+    windRichting: 'W',
+    watertemperatuurC: 18
+  },
+  {
+    id: 'la-jolla-us',
+    region: 'am',
+    naam: 'La Jolla',
+    land: 'Verenigde Staten',
+    latitude: 32.832,
+    longitude: -117.271,
+    golfHoogteMeter: 1.3,
+    golfPeriodeSeconden: 9,
+    windSnelheidKnopen: 8,
+    windRichting: 'W',
+    watertemperatuurC: 19
+  },
+  {
+    id: 'outer-banks-us',
+    region: 'am',
+    naam: 'Outer Banks',
+    land: 'Verenigde Staten',
+    latitude: 35.558,
+    longitude: -75.466,
+    golfHoogteMeter: 1.9,
+    golfPeriodeSeconden: 10,
+    windSnelheidKnopen: 14,
+    windRichting: 'ZW',
+    watertemperatuurC: 20
+  },
+  {
+    id: 'arpoador-br',
+    region: 'am',
+    naam: 'Arpoador',
+    land: 'Brazilië',
+    latitude: -22.987,
+    longitude: -43.191,
+    golfHoogteMeter: 1.5,
+    golfPeriodeSeconden: 9,
+    windSnelheidKnopen: 12,
+    windRichting: 'ZO',
+    watertemperatuurC: 24
+  },
+  {
+    id: 'punta-de-lobos-cl',
+    region: 'am',
+    naam: 'Punta de Lobos',
+    land: 'Chili',
+    latitude: -34.416,
+    longitude: -72.034,
+    golfHoogteMeter: 2.2,
+    golfPeriodeSeconden: 12,
+    windSnelheidKnopen: 13,
+    windRichting: 'Z',
+    watertemperatuurC: 15
+  },
+  {
+    id: 'canggu-id',
+    region: 'ap',
+    naam: 'Canggu',
+    land: 'Indonesië',
+    latitude: -8.648,
+    longitude: 115.136,
+    golfHoogteMeter: 1.8,
+    golfPeriodeSeconden: 10,
+    windSnelheidKnopen: 10,
+    windRichting: 'ZO',
+    watertemperatuurC: 28
+  },
+  {
+    id: 'gold-coast-au',
+    region: 'ap',
+    naam: 'Gold Coast',
+    land: 'Australië',
+    latitude: -28.016,
+    longitude: 153.43,
+    golfHoogteMeter: 1.6,
+    golfPeriodeSeconden: 10,
+    windSnelheidKnopen: 12,
+    windRichting: 'O',
+    watertemperatuurC: 24
+  },
+  {
+    id: 'manly-au',
+    region: 'ap',
+    naam: 'Manly',
+    land: 'Australië',
+    latitude: -33.797,
+    longitude: 151.288,
+    golfHoogteMeter: 1.5,
+    golfPeriodeSeconden: 9,
+    windSnelheidKnopen: 13,
+    windRichting: 'ZO',
+    watertemperatuurC: 22
+  },
+  {
+    id: 'raglan-nz',
+    region: 'ap',
+    naam: 'Raglan',
+    land: 'Nieuw-Zeeland',
+    latitude: -37.808,
+    longitude: 174.816,
+    golfHoogteMeter: 1.9,
+    golfPeriodeSeconden: 11,
+    windSnelheidKnopen: 11,
+    windRichting: 'ZW',
+    watertemperatuurC: 18
   }
 ];
