@@ -34,6 +34,14 @@ function getSwellClassName(waveHeight) {
   return 'swell-very-high';
 }
 
+function isChallengingConditions(conditions) {
+  const waveHeight = conditions?.golfHoogteMeter;
+  const wavePeriod = conditions?.golfPeriodeSeconden;
+  const windSpeed = conditions?.windSnelheidKnopen;
+
+  return waveHeight > 2.3 || windSpeed >= 18 || wavePeriod >= 12;
+}
+
 function assertEqual(actual, expected, label) {
   if (actual !== expected) {
     throw new Error(`${label} failed: expected "${expected}", got "${actual}"`);
@@ -67,13 +75,17 @@ function runWindSpeedTests() {
 
 function runSwellClassTests() {
   const cases = [
+    [Number.NaN, 'swell-low'],
     [0.3, 'swell-low'],
     [0.79, 'swell-low'],
     [0.8, 'swell-med'],
+    [1.0, 'swell-med'],
     [1.59, 'swell-med'],
     [1.6, 'swell-high'],
+    [2.0, 'swell-high'],
     [2.59, 'swell-high'],
-    [2.6, 'swell-very-high']
+    [2.6, 'swell-very-high'],
+    [3.4, 'swell-very-high']
   ];
 
   cases.forEach(([input, expected]) => {
@@ -81,10 +93,28 @@ function runSwellClassTests() {
   });
 }
 
+function runChallengingConditionsTests() {
+  const cases = [
+    [{ golfHoogteMeter: 2.31, golfPeriodeSeconden: 8, windSnelheidKnopen: 10 }, true],
+    [{ golfHoogteMeter: 2.2, golfPeriodeSeconden: 12, windSnelheidKnopen: 10 }, true],
+    [{ golfHoogteMeter: 2.2, golfPeriodeSeconden: 8, windSnelheidKnopen: 18 }, true],
+    [{ golfHoogteMeter: 2.3, golfPeriodeSeconden: 11, windSnelheidKnopen: 17 }, false]
+  ];
+
+  cases.forEach(([input, expected], index) => {
+    assertEqual(
+      isChallengingConditions(input),
+      expected,
+      `isChallengingConditions(case ${index + 1})`
+    );
+  });
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
   runSwellClassTests();
+  runChallengingConditionsTests();
   console.log('All tests passed');
 }
 

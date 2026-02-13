@@ -158,6 +158,11 @@ body {
   background: #075985;
 }
 
+.search-button:focus-visible {
+  outline: 2px solid #0284c7;
+  outline-offset: 2px;
+}
+
 .suggestions {
   margin: 0.45rem 0 0;
   padding: 0.35rem;
@@ -294,6 +299,11 @@ body {
   border-color: #d97706;
   background: #fef3c7;
   color: #92400e;
+}
+
+.favorite-toggle:focus-visible {
+  outline: 2px solid #0284c7;
+  outline-offset: 2px;
 }
 
 .forecast-meta {
@@ -514,6 +524,11 @@ body {
   filter: brightness(0.98);
 }
 
+.time-slot-btn:focus-visible {
+  outline: 2px solid #0284c7;
+  outline-offset: 2px;
+}
+
 .time-slot-btn.is-active {
   border-color: #0f172a;
   box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.18);
@@ -711,6 +726,12 @@ body {
 .favorite-item-btn:hover {
   background: #f1f5f9;
   border-color: #94a3b8;
+}
+
+.favorite-item-btn:focus-visible {
+  outline: 2px solid #0284c7;
+  outline-offset: 2px;
+  border-color: #0284c7;
 }
 
 .favorite-item-main {

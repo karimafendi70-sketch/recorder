@@ -22,7 +22,12 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 ## Kleine helper-tests
 
 - Run: `node tests/helpers.test.js`
-- Deze testset controleert windrichting-formattering, windsnelheid-formattering en swell-intensiteitsklassen op grenswaarden.
+- Deze testset controleert windrichting-formattering, windsnelheid-formattering, swell-intensiteitsklassen op grenswaarden en de helper voor niveau-/conditie-uitdaging.
+
+## Quality & tests
+
+- Basis-a11y is meegenomen: duidelijke focus-states en betekenisvolle aria-labels voor kerncontrols.
+- Voor regressiechecks van kernhelpers kun je snel lokaal draaien met `node tests/helpers.test.js`.
 
 ## Technische notities
 

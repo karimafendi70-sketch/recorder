@@ -321,6 +321,33 @@ const swellTranslations = {
   }
 };
 
+const accessibilityTranslations = {
+  nl: {
+    favoriteToggleAriaAdd: 'Markeer {spot} als favoriet',
+    favoriteToggleAriaRemove: 'Verwijder {spot} uit favorieten'
+  },
+  en: {
+    favoriteToggleAriaAdd: 'Mark {spot} as favorite',
+    favoriteToggleAriaRemove: 'Remove {spot} from favorites'
+  },
+  fr: {
+    favoriteToggleAriaAdd: 'Marquer {spot} en favori',
+    favoriteToggleAriaRemove: 'Retirer {spot} des favoris'
+  },
+  es: {
+    favoriteToggleAriaAdd: 'Marcar {spot} como favorito',
+    favoriteToggleAriaRemove: 'Quitar {spot} de favoritos'
+  },
+  pt: {
+    favoriteToggleAriaAdd: 'Marcar {spot} como favorito',
+    favoriteToggleAriaRemove: 'Remover {spot} dos favoritos'
+  },
+  de: {
+    favoriteToggleAriaAdd: '{spot} als Favorit markieren',
+    favoriteToggleAriaRemove: '{spot} aus Favoriten entfernen'
+  }
+};
+
 Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -340,6 +367,12 @@ Object.entries(favoritesTranslations).forEach(([lang, extraKeys]) => {
 });
 
 Object.entries(swellTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(accessibilityTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
   }
@@ -518,6 +551,14 @@ function updateControlBadges() {
   }
 }
 
+function isChallengingConditions(conditions) {
+  const waveHeight = conditions?.golfHoogteMeter;
+  const wavePeriod = conditions?.golfPeriodeSeconden;
+  const windSpeed = conditions?.windSnelheidKnopen;
+
+  return waveHeight > 2.3 || windSpeed >= 18 || wavePeriod >= 12;
+}
+
 function buildRatingExplanation(conditions, level = 'all') {
   const waveHeight = conditions?.golfHoogteMeter;
   const wavePeriod = conditions?.golfPeriodeSeconden;
@@ -579,7 +620,7 @@ function buildRatingExplanation(conditions, level = 'all') {
     return t('ratingNoDetails');
   }
 
-  const isChallenging = waveHeight > 2.3 || windSpeed >= 18 || wavePeriod >= 12;
+  const isChallenging = isChallengingConditions(conditions);
   let levelNote = '';
 
   if (level === 'beginner') {
@@ -1006,6 +1047,7 @@ function updateFavoriteToggleForSpot(spot) {
   if (!spot) {
     favoriteToggleBtnEl.textContent = t('favoriteButtonOff');
     favoriteToggleBtnEl.setAttribute('aria-pressed', 'false');
+    favoriteToggleBtnEl.setAttribute('aria-label', t('favoriteButtonOff'));
     favoriteToggleBtnEl.classList.remove('is-active');
     return;
   }
@@ -1013,6 +1055,12 @@ function updateFavoriteToggleForSpot(spot) {
   const isFavorite = isFavoriteSpot(spot);
   favoriteToggleBtnEl.textContent = isFavorite ? t('favoriteButtonOn') : t('favoriteButtonOff');
   favoriteToggleBtnEl.setAttribute('aria-pressed', isFavorite ? 'true' : 'false');
+  favoriteToggleBtnEl.setAttribute(
+    'aria-label',
+    isFavorite
+      ? t('favoriteToggleAriaRemove', { spot: spot.naam })
+      : t('favoriteToggleAriaAdd', { spot: spot.naam })
+  );
   favoriteToggleBtnEl.classList.toggle('is-active', isFavorite);
 }
 
