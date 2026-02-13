@@ -127,6 +127,59 @@ const DEFAULT_REGION = 'eu';
 const RATING_CLASS_NAMES = ['rating-bad', 'rating-ok', 'rating-good', 'rating-neutral'];
 const SLOT_CLASS_NAMES = ['slot-bad', 'slot-ok', 'slot-good', 'slot-neutral'];
 const VIEW_MODES = ['map', 'list'];
+const TIDE_REGION_BY_APP_REGION = {
+  eu: 'north-sea-atlantic',
+  af: 'atlantic-open',
+  am: 'pacific-mixed',
+  ap: 'reef-tropical'
+};
+
+const TIDE_REGION_BY_SPOT_ID = {
+  'scheveningen-nl': 'north-sea-atlantic',
+  'newquay-uk': 'north-sea-atlantic',
+  'ericeira-pt': 'atlantic-open',
+  'peniche-pt': 'atlantic-open',
+  'nazare-pt': 'atlantic-open',
+  'pipeline-us-hi': 'pacific-mixed',
+  'uluwatu-id': 'reef-tropical'
+};
+
+const TIDE_PROFILES_BY_REGION = {
+  'north-sea-atlantic': {
+    dayPartTideLevel: {
+      morning: 'mid',
+      afternoon: 'high',
+      evening: 'mid'
+    },
+    preferredLevels: ['mid', 'high']
+  },
+  'atlantic-open': {
+    dayPartTideLevel: {
+      morning: 'mid',
+      afternoon: 'high',
+      evening: 'low'
+    },
+    preferredLevels: ['mid', 'high']
+  },
+  'pacific-mixed': {
+    dayPartTideLevel: {
+      morning: 'high',
+      afternoon: 'mid',
+      evening: 'low'
+    },
+    preferredLevels: ['mid', 'high']
+  },
+  'reef-tropical': {
+    dayPartTideLevel: {
+      morning: 'mid',
+      afternoon: 'mid',
+      evening: 'high'
+    },
+    preferredLevels: ['mid']
+  }
+};
+
+// Heuristic tide model only: this approximates tide context per region/day-part and is not real-time tide data.
 const translations = {
   nl: {
     appTitle: 'FreeSurfCast',
@@ -819,6 +872,93 @@ const dailyReportTranslations = {
   }
 };
 
+const tideTranslations = {
+  nl: {
+    detailTideLabel: 'Getij',
+    tideLow: 'Laag',
+    tideMid: 'Mid',
+    tideHigh: 'Hoog',
+    tideBestMidHigh: 'Werkt meestal het best van mid tot hoog water.',
+    tideLessIdealNow: 'Het huidige getij is mogelijk minder ideaal voor deze spot.',
+    tideNoContext: 'Geen getijcontext beschikbaar.',
+    detailTideSupportive: 'Getij ondersteunt dit tijdvak meestal voor de meeste surfers.',
+    detailTideTrickier: 'Getij kan dit tijdvak lastiger maken, vooral in de shorebreak.',
+    dailyReportTideMostly: 'Getij: vooral {tideLabel} water tijdens de belangrijkste surfmomenten.',
+    dailyReportTideSupportive: 'De meeste sessies vallen in het voorkeurvenster van dit spot-profiel.',
+    dailyReportTideLessIdeal: 'Een deel van de sessies valt buiten het voorkeurvenster van dit spot-profiel.'
+  },
+  en: {
+    detailTideLabel: 'Tide',
+    tideLow: 'Low',
+    tideMid: 'Mid',
+    tideHigh: 'High',
+    tideBestMidHigh: 'Works best from mid to high tide.',
+    tideLessIdealNow: 'Current tide may be less ideal for this spot.',
+    tideNoContext: 'No tide context available.',
+    detailTideSupportive: 'Tide conditions are supportive for this time slot.',
+    detailTideTrickier: 'Tide might make this time slot trickier near shorebreak.',
+    dailyReportTideMostly: 'Tide: mostly {tideLabel} water during the main surf windows.',
+    dailyReportTideSupportive: 'Most sessions align with this spot profile\'s preferred tide window.',
+    dailyReportTideLessIdeal: 'Some sessions fall outside this spot profile\'s preferred tide window.'
+  },
+  fr: {
+    detailTideLabel: 'Tide',
+    tideLow: 'Low',
+    tideMid: 'Mid',
+    tideHigh: 'High',
+    tideBestMidHigh: 'Works best from mid to high tide.',
+    tideLessIdealNow: 'Current tide may be less ideal for this spot.',
+    tideNoContext: 'No tide context available.',
+    detailTideSupportive: 'Tide conditions are supportive for this time slot.',
+    detailTideTrickier: 'Tide might make this time slot trickier near shorebreak.',
+    dailyReportTideMostly: 'Tide: mostly {tideLabel} water during the main surf windows.',
+    dailyReportTideSupportive: 'Most sessions align with this spot profile\'s preferred tide window.',
+    dailyReportTideLessIdeal: 'Some sessions fall outside this spot profile\'s preferred tide window.'
+  },
+  es: {
+    detailTideLabel: 'Tide',
+    tideLow: 'Low',
+    tideMid: 'Mid',
+    tideHigh: 'High',
+    tideBestMidHigh: 'Works best from mid to high tide.',
+    tideLessIdealNow: 'Current tide may be less ideal for this spot.',
+    tideNoContext: 'No tide context available.',
+    detailTideSupportive: 'Tide conditions are supportive for this time slot.',
+    detailTideTrickier: 'Tide might make this time slot trickier near shorebreak.',
+    dailyReportTideMostly: 'Tide: mostly {tideLabel} water during the main surf windows.',
+    dailyReportTideSupportive: 'Most sessions align with this spot profile\'s preferred tide window.',
+    dailyReportTideLessIdeal: 'Some sessions fall outside this spot profile\'s preferred tide window.'
+  },
+  pt: {
+    detailTideLabel: 'Tide',
+    tideLow: 'Low',
+    tideMid: 'Mid',
+    tideHigh: 'High',
+    tideBestMidHigh: 'Works best from mid to high tide.',
+    tideLessIdealNow: 'Current tide may be less ideal for this spot.',
+    tideNoContext: 'No tide context available.',
+    detailTideSupportive: 'Tide conditions are supportive for this time slot.',
+    detailTideTrickier: 'Tide might make this time slot trickier near shorebreak.',
+    dailyReportTideMostly: 'Tide: mostly {tideLabel} water during the main surf windows.',
+    dailyReportTideSupportive: 'Most sessions align with this spot profile\'s preferred tide window.',
+    dailyReportTideLessIdeal: 'Some sessions fall outside this spot profile\'s preferred tide window.'
+  },
+  de: {
+    detailTideLabel: 'Tide',
+    tideLow: 'Low',
+    tideMid: 'Mid',
+    tideHigh: 'High',
+    tideBestMidHigh: 'Works best from mid to high tide.',
+    tideLessIdealNow: 'Current tide may be less ideal for this spot.',
+    tideNoContext: 'No tide context available.',
+    detailTideSupportive: 'Tide conditions are supportive for this time slot.',
+    detailTideTrickier: 'Tide might make this time slot trickier near shorebreak.',
+    dailyReportTideMostly: 'Tide: mostly {tideLabel} water during the main surf windows.',
+    dailyReportTideSupportive: 'Most sessions align with this spot profile\'s preferred tide window.',
+    dailyReportTideLessIdeal: 'Some sessions fall outside this spot profile\'s preferred tide window.'
+  }
+};
+
 const helpTranslations = {
   nl: {
     helpToggleLabel: 'Help',
@@ -1003,6 +1143,12 @@ Object.entries(helpTranslations).forEach(([lang, extraKeys]) => {
 });
 
 Object.entries(dailyReportTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(tideTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
   }
@@ -1219,6 +1365,14 @@ function getLiveSlotContext(offsetHours) {
 
   const mergedSpot = mergeWithFallbackSpot(activeLiveCache.spot, snapshot.values);
   const conditionTag = getSurfConditionTag(mergedSpot);
+  const tideLevel = getTideLevelForSlot(activeLiveCache.spot, {
+    time: snapshot.time,
+    dayPart: getDayPart(snapshot.time)
+  });
+  const tideSuitability = getTideSuitabilityForSlot(activeLiveCache.spot, {
+    time: snapshot.time,
+    dayPart: getDayPart(snapshot.time)
+  });
 
   return {
     offsetHours,
@@ -1228,6 +1382,8 @@ function getLiveSlotContext(offsetHours) {
     values: snapshot.values,
     mergedSpot,
     conditionTag,
+    tideLevel,
+    tideSuitability,
     minSurfable: isMinSurfableConditions(snapshot.values),
     challenging: isChallengingConditions(snapshot.values)
   };
@@ -1578,23 +1734,44 @@ function formatSwellDescription(slotContext) {
   return `${waveHeight} ${directionSegment} swell @ ${wavePeriod}`;
 }
 
-function formatSkillAdvice(slotContext) {
+function formatSkillAdvice(slotContext, options = {}) {
+  const includeTide = options.includeTide === true;
+
   if (!slotContext) return t('detailAdviceIntermediate');
-  if (slotContext.challenging || slotContext.conditionTag === 'choppy') return t('detailAdviceAdvanced');
-  if (slotContext.conditionTag === 'clean' && !slotContext.challenging) return t('detailAdviceBeginner');
-  return t('detailAdviceIntermediate');
+
+  let baseAdvice = t('detailAdviceIntermediate');
+  if (slotContext.challenging || slotContext.conditionTag === 'choppy') {
+    baseAdvice = t('detailAdviceAdvanced');
+  } else if (slotContext.conditionTag === 'clean' && !slotContext.challenging) {
+    baseAdvice = t('detailAdviceBeginner');
+  }
+
+  if (!includeTide || !slotContext.tideSuitability) {
+    return baseAdvice;
+  }
+
+  if (slotContext.tideSuitability === 'good') {
+    return `${baseAdvice} ${t('detailTideSupportive')}`;
+  }
+
+  return `${baseAdvice} ${t('detailTideTrickier')}`;
 }
 
 function buildSlotDetailLines(slotContext) {
   const windText = formatWindDescription(slotContext);
   const swellText = formatSwellDescription(slotContext);
   const conditionText = t(getConditionLabelKey(slotContext?.conditionTag ?? 'mixed'));
+  const tideLabel = slotContext?.tideLevel
+    ? t(getTideLabelKey(slotContext.tideLevel))
+    : null;
 
   return {
     windText,
     swellText,
     conditionText,
-    adviceText: formatSkillAdvice(slotContext),
+    tideText: tideLabel,
+    tideHintText: getTideHintText(slotContext),
+    adviceText: formatSkillAdvice(slotContext, { includeTide: true }),
     summaryText: t('detailSummaryLine', {
       windText,
       swellText,
@@ -1666,6 +1843,14 @@ function getSlotQualityScore(slotContext, options = {}) {
     reasons.push('challenging');
   }
 
+  if (slotContext.tideSuitability === 'good') {
+    score += 1;
+    reasons.push('tide-supportive');
+  } else if (slotContext.tideSuitability === 'less-ideal') {
+    score -= 1;
+    reasons.push('tide-less-ideal');
+  }
+
   if (includeActiveFilters && activeConditionFilters.minSurfable && !slotContext.minSurfable) {
     score -= 2;
     reasons.push('below-min-surfable-filter');
@@ -1706,6 +1891,8 @@ function getSpotDayScore(spot, dayKey, allSlotContextsForSpotAndDay, options = {
     .filter((slotContext) => (useActiveFilters ? passesHardConditionFilters(slotContext) : true));
 
   if (!filteredSlots.length) return null;
+
+  // Tide influence is already applied in getSlotQualityScore via tideSuitability.
 
   const scoredSlots = filteredSlots
     .map((slotContext) => {
@@ -1793,14 +1980,26 @@ function getSlotContextsForLiveCache(liveCache) {
     if (!snapshot) continue;
 
     const mergedSpot = mergeWithFallbackSpot(liveCache.spot, snapshot.values);
+    const dayPart = getDayPart(snapshot.time);
+    const tideLevel = getTideLevelForSlot(liveCache.spot, {
+      time: snapshot.time,
+      dayPart
+    });
+    const tideSuitability = getTideSuitabilityForSlot(liveCache.spot, {
+      time: snapshot.time,
+      dayPart
+    });
+
     slotContexts.push({
       offsetHours,
       time: snapshot.time,
       dayKey: getLocalDateKey(snapshot.time),
-      dayPart: getDayPart(snapshot.time),
+      dayPart,
       values: snapshot.values,
       mergedSpot,
       conditionTag: getSurfConditionTag(mergedSpot),
+      tideLevel,
+      tideSuitability,
       minSurfable: isMinSurfableConditions(snapshot.values),
       challenging: isChallengingConditions(snapshot.values)
     });
@@ -1885,6 +2084,21 @@ function buildDaySummaryStats(spotId, dayKey, groupedSlotsForDay) {
   const afternoonSlot = bestPartSlots.afternoon;
   const eveningSlot = bestPartSlots.evening;
 
+  const tideKnownSlots = daySlots.filter((slotContext) => Boolean(slotContext?.tideLevel));
+  const tideCounts = tideKnownSlots.reduce((accumulator, slotContext) => {
+    const key = slotContext.tideLevel;
+    accumulator[key] = (accumulator[key] ?? 0) + 1;
+    return accumulator;
+  }, {});
+  const dominantTideLevel = ['mid', 'high', 'low'].reduce((bestLevel, level) => {
+    const bestCount = tideCounts[bestLevel] ?? -1;
+    const levelCount = tideCounts[level] ?? 0;
+    return levelCount > bestCount ? level : bestLevel;
+  }, 'mid');
+  const supportiveTideRatio = tideKnownSlots.length
+    ? tideKnownSlots.filter((slotContext) => slotContext.tideSuitability === 'good').length / tideKnownSlots.length
+    : 0;
+
   const challengingRatio = daySlots.filter((slotContext) => slotContext.challenging).length / daySlots.length;
   let overallSkillLevel = 'intermediate';
   if (challengingRatio >= 0.5 || dominantConditionTag === 'choppy') {
@@ -1919,7 +2133,10 @@ function buildDaySummaryStats(spotId, dayKey, groupedSlotsForDay) {
     afternoonWindDesc: afternoonSlot ? formatWindDescription(afternoonSlot) : null,
     eveningWindDesc: eveningSlot ? formatWindDescription(eveningSlot) : null,
     overallSkillLevel,
-    overallScore: dayScore?.score ?? null
+    overallScore: dayScore?.score ?? null,
+    hasTideContext: tideKnownSlots.length > 0,
+    dominantTideLevel: tideKnownSlots.length ? dominantTideLevel : null,
+    supportiveTideRatio
   };
 }
 
@@ -1997,6 +2214,12 @@ function buildDailySurfReportLines(dayStats, dayKey, language = currentLanguage)
     ? `${languageCode === 'nl' ? 'Wind' : 'Wind'}: ${dayPartWindSegments.join(languageCode === 'nl' ? ', ' : ', ')}.`
     : null;
 
+  const tideLine = dayStats?.hasTideContext && dayStats?.dominantTideLevel
+    ? t('dailyReportTideMostly', {
+      tideLabel: t(getTideLabelKey(dayStats.dominantTideLevel)).toLowerCase()
+    })
+    : null;
+
   const skillAdviceByLevel = {
     beginner: languageCode === 'nl' ? 'meestal geschikt voor beginners' : 'usually suitable for beginners',
     intermediate: languageCode === 'nl' ? 'het beste voor intermediate surfers' : 'best for intermediate surfers',
@@ -2010,7 +2233,11 @@ function buildDailySurfReportLines(dayStats, dayKey, language = currentLanguage)
     ? `Advies: ${skillAdviceByLevel[dayStats.overallSkillLevel] ?? skillAdviceByLevel.intermediate}. ${scoreSegment}`
     : `Advice: ${skillAdviceByLevel[dayStats.overallSkillLevel] ?? skillAdviceByLevel.intermediate}. ${scoreSegment}`;
 
-  return [lineOne, lineTwo, lineThree].filter((line) => Boolean(line));
+  const tideAdvice = dayStats?.hasTideContext
+    ? (dayStats.supportiveTideRatio >= 0.5 ? t('dailyReportTideSupportive') : t('dailyReportTideLessIdeal'))
+    : null;
+
+  return [lineOne, lineTwo, tideLine, lineThree, tideAdvice].filter((line) => Boolean(line));
 }
 
 function renderDailySurfReport(spotId = getSpotKey(activeSpot), dayKey = currentDayKey) {
@@ -2222,6 +2449,14 @@ function renderSlotDetail(selectedSlotContext, options = {}) {
           <span class="condition-tag condition-tag-${selectedSlotContext.conditionTag}">${detailLines.conditionText}</span>
         </span>
       </div>
+      <div class="slot-detail-row slot-detail-tide">
+        <span class="slot-detail-label">${t('detailTideLabel')}</span>
+        <span class="slot-detail-value">
+          ${detailLines.tideText
+    ? `<span class="tide-badge tide-${selectedSlotContext.tideLevel}">${detailLines.tideText}</span> · ${detailLines.tideHintText}`
+    : detailLines.tideHintText}
+        </span>
+      </div>
       <div class="slot-detail-row">
         <span class="slot-detail-label">${t('detailAdviceLabel')}</span>
         <span class="slot-detail-value">${detailLines.adviceText}</span>
@@ -2286,6 +2521,7 @@ function renderCompactForecastList() {
       const windDirection = formatWindDirection(
         Number.isFinite(slot.windRichtingGraden) ? slot.windRichtingGraden : slot.windRichting
       );
+      const tideText = slotContext.tideLevel ? t(getTideLabelKey(slotContext.tideLevel)) : null;
       const preferredClass = isPreferredCleanSlot(slotContext) ? ' is-preferred' : '';
       const isSelected = buildSlotKey(slotContext) === currentSlotKey;
       const selectedClass = isSelected ? ' is-selected' : '';
@@ -2298,7 +2534,7 @@ function renderCompactForecastList() {
           tabindex="0"
           role="button"
           aria-pressed="${isSelected ? 'true' : 'false'}"
-          aria-label="${getTimeSlotLabel(slotContext)}"
+          aria-label="${getTimeSlotLabel(slotContext)}${tideText ? ` · ${t('detailTideLabel')}: ${tideText}` : ''}"
         >
           <div class="compact-forecast-top">
             <span class="compact-forecast-time">${getTimeSlotLabel(slotContext)}</span>
@@ -2307,6 +2543,7 @@ function renderCompactForecastList() {
           <div class="compact-forecast-meta">
             <span>${waveHeight} · ${wavePeriod}</span>
             <span>${windSpeed} ${windDirection}</span>
+            ${tideText ? `<span class="tide-badge tide-${slotContext.tideLevel}">${tideText}</span>` : ''}
             <span class="condition-tag condition-tag-${slotContext.conditionTag}">${conditionText}</span>
           </div>
         </li>
@@ -3225,6 +3462,55 @@ function getSpotById(spotId) {
   return SURF_SPOTS.find((spot) => getSpotKey(spot) === spotId) ?? null;
 }
 
+function getTideLabelKey(tideLevel) {
+  if (tideLevel === 'low') return 'tideLow';
+  if (tideLevel === 'high') return 'tideHigh';
+  return 'tideMid';
+}
+
+function getTideRegionKeyForSpot(spotOrId) {
+  const spot = typeof spotOrId === 'string' ? getSpotById(spotOrId) : spotOrId;
+  if (!spot) return null;
+
+  const spotId = getSpotKey(spot);
+  if (TIDE_REGION_BY_SPOT_ID[spotId]) {
+    return TIDE_REGION_BY_SPOT_ID[spotId];
+  }
+
+  const appRegion = getSpotRegion(spot);
+  return TIDE_REGION_BY_APP_REGION[appRegion] ?? null;
+}
+
+function getTideProfileForSpot(spotOrId) {
+  const tideRegionKey = getTideRegionKeyForSpot(spotOrId);
+  if (!tideRegionKey) return null;
+  return TIDE_PROFILES_BY_REGION[tideRegionKey] ?? null;
+}
+
+function getTideLevelForSlot(spotOrId, slotContext) {
+  const tideProfile = getTideProfileForSpot(spotOrId);
+  if (!tideProfile || !slotContext) return null;
+
+  const dayPart = DAY_PART_ORDER.includes(slotContext.dayPart) ? slotContext.dayPart : 'evening';
+  const tideLevel = tideProfile.dayPartTideLevel?.[dayPart] ?? null;
+  return ['low', 'mid', 'high'].includes(tideLevel) ? tideLevel : null;
+}
+
+function getTideSuitabilityForSlot(spotOrId, slotContext) {
+  const tideProfile = getTideProfileForSpot(spotOrId);
+  const tideLevel = getTideLevelForSlot(spotOrId, slotContext);
+  if (!tideProfile || !tideLevel) return null;
+
+  return tideProfile.preferredLevels?.includes(tideLevel) ? 'good' : 'less-ideal';
+}
+
+function getTideHintText(slotContext) {
+  if (!slotContext?.tideLevel) return t('tideNoContext');
+  if (slotContext.tideSuitability === 'good') return t('tideBestMidHigh');
+  if (slotContext.tideSuitability === 'less-ideal') return t('tideLessIdealNow');
+  return t('tideNoContext');
+}
+
 function getDeepLinkedSpotFromUrl() {
   try {
     const params = new URLSearchParams(window.location.search);
@@ -3565,7 +3851,18 @@ function updateTimeSelectorButtons() {
     button.hidden = !isAvailable;
     button.dataset.slotOffset = slotContext ? String(slotContext.offsetHours) : '';
     button.dataset.slotKey = slotContext ? buildSlotKey(slotContext) : '';
-    button.textContent = slotContext ? getTimeSlotLabel(slotContext) : t('timeSlotUnavailable');
+    if (slotContext) {
+      const timeLabel = getTimeSlotLabel(slotContext);
+      const tideLabel = slotContext.tideLevel ? t(getTideLabelKey(slotContext.tideLevel)) : null;
+      button.innerHTML = `
+        <span class="time-slot-main">${timeLabel}</span>
+        ${tideLabel ? `<span class="tide-badge tide-${slotContext.tideLevel}">${tideLabel}</span>` : ''}
+      `;
+      button.setAttribute('aria-label', tideLabel ? `${timeLabel} · ${t('detailTideLabel')}: ${tideLabel}` : timeLabel);
+    } else {
+      button.textContent = t('timeSlotUnavailable');
+      button.setAttribute('aria-label', t('timeSlotUnavailable'));
+    }
 
     if (!isVisibleByFilters) {
       button.classList.add('slot-neutral');

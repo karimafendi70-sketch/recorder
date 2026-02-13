@@ -29,6 +29,7 @@ From an engineering perspective, the interesting part is state consistency acros
 - Global spot browsing with region-aware search, map and list views.
 - Multi-day overview (up to 4 days) with min/max wave range and dominant condition tags.
 - Slot-level forecast context with swell, wind, and condition tags (Clean / Mixed / Choppy).
+- Approximate tide/water-level context per slot (Low / Mid / High) with spot-profile hints.
 - Slot detail panel with concise surf advice per selected time slot.
 - Condition filters for minimally surfable, beginner friendly, and prefer clean.
 - Shared day/slot selection model across map view, list view, detail panel, and reports.
@@ -76,6 +77,7 @@ From an engineering perspective, the interesting part is state consistency acros
 - Condition heuristics classify slots with simple tags using wind relation, wind speed, swell, and spot orientation.
 - Day/slot state (`currentDayKey`, `currentSlotKey`) is shared across map view, list view, detail panel, and summaries.
 - Score helpers (`getSlotQualityScore`, `getSpotDayScore`) power the multi-spot ranking and day-level interpretation.
+- Tide helpers map spot/region profiles to day-part tide levels and suitability hints.
 - Daily report helpers generate compact text summaries from the same slot/day state, without extra endpoints.
 - Translation keys + `setLanguage(...)` keep UI labels and feature text consistent across supported languages.
 
@@ -92,6 +94,7 @@ From an engineering perspective, the interesting part is state consistency acros
 	- `https://api.open-meteo.com/v1/forecast`
 - Forecast caching uses an in-memory `Map` with TTL (`FORECAST_CACHE_TTL_MS`).
 - Pending request dedupe prevents duplicate fetches for the same spot.
+- Tide context is heuristic (region/spot profile based), not real-time tide API data.
 - Theme system uses `data-theme` on `body` with CSS variables for light/dark styling.
 
 ## Contributing

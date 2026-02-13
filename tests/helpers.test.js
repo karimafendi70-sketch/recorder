@@ -253,6 +253,75 @@ function formatSkillAdvice(slotContext) {
   return 'intermediate';
 }
 
+const TIDE_REGION_BY_APP_REGION = {
+  eu: 'north-sea-atlantic',
+  af: 'atlantic-open',
+  am: 'pacific-mixed',
+  ap: 'reef-tropical'
+};
+
+const TIDE_REGION_BY_SPOT_ID = {
+  'scheveningen-nl': 'north-sea-atlantic',
+  'ericeira-pt': 'atlantic-open',
+  'pipeline-us-hi': 'pacific-mixed',
+  'uluwatu-id': 'reef-tropical'
+};
+
+const TIDE_PROFILES_BY_REGION = {
+  'north-sea-atlantic': {
+    dayPartTideLevel: { morning: 'mid', afternoon: 'high', evening: 'mid' },
+    preferredLevels: ['mid', 'high']
+  },
+  'atlantic-open': {
+    dayPartTideLevel: { morning: 'mid', afternoon: 'high', evening: 'low' },
+    preferredLevels: ['mid', 'high']
+  },
+  'pacific-mixed': {
+    dayPartTideLevel: { morning: 'high', afternoon: 'mid', evening: 'low' },
+    preferredLevels: ['mid', 'high']
+  },
+  'reef-tropical': {
+    dayPartTideLevel: { morning: 'mid', afternoon: 'mid', evening: 'high' },
+    preferredLevels: ['mid']
+  }
+};
+
+function getSpotRegionForTests(spotOrId) {
+  if (!spotOrId) return 'eu';
+  if (typeof spotOrId === 'string') return 'eu';
+  return spotOrId.region ?? 'eu';
+}
+
+function getTideRegionKeyForSpot(spotOrId) {
+  if (!spotOrId) return null;
+  const spotId = typeof spotOrId === 'string' ? spotOrId : spotOrId.id;
+  if (spotId && TIDE_REGION_BY_SPOT_ID[spotId]) {
+    return TIDE_REGION_BY_SPOT_ID[spotId];
+  }
+
+  const appRegion = getSpotRegionForTests(spotOrId);
+  return TIDE_REGION_BY_APP_REGION[appRegion] ?? null;
+}
+
+function getTideProfileForSpot(spotOrId) {
+  const key = getTideRegionKeyForSpot(spotOrId);
+  return key ? (TIDE_PROFILES_BY_REGION[key] ?? null) : null;
+}
+
+function getTideLevelForSlot(spotOrId, slotContext) {
+  const profile = getTideProfileForSpot(spotOrId);
+  if (!profile || !slotContext) return null;
+  const part = ['morning', 'afternoon', 'evening'].includes(slotContext.dayPart) ? slotContext.dayPart : 'evening';
+  return profile.dayPartTideLevel?.[part] ?? null;
+}
+
+function getTideSuitabilityForSlot(spotOrId, slotContext) {
+  const profile = getTideProfileForSpot(spotOrId);
+  const level = getTideLevelForSlot(spotOrId, slotContext);
+  if (!profile || !level) return null;
+  return profile.preferredLevels.includes(level) ? 'good' : 'less-ideal';
+}
+
 function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginnerFriendly: false, preferClean: false }) {
   if (!slotContext) {
     return {
@@ -311,6 +380,14 @@ function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginn
   if (slotContext.challenging) {
     score -= 2;
     reasons.push('challenging');
+  }
+
+  if (slotContext.tideSuitability === 'good') {
+    score += 1;
+    reasons.push('tide-supportive');
+  } else if (slotContext.tideSuitability === 'less-ideal') {
+    score -= 1;
+    reasons.push('tide-less-ideal');
   }
 
   if (filters.minSurfable && !slotContext.minSurfable) {
@@ -436,6 +513,20 @@ function buildDaySummaryStats(spotId, dayKey, groupedSlotsForDay) {
   const afternoonSlot = getBestSlotFromPartSlots(groupedSlotsForDay?.afternoon ?? []);
   const eveningSlot = getBestSlotFromPartSlots(groupedSlotsForDay?.evening ?? []);
 
+  const tideKnownSlots = daySlots.filter((slotContext) => Boolean(slotContext?.tideLevel));
+  const tideCounts = tideKnownSlots.reduce((accumulator, slotContext) => {
+    accumulator[slotContext.tideLevel] = (accumulator[slotContext.tideLevel] ?? 0) + 1;
+    return accumulator;
+  }, {});
+  const dominantTideLevel = ['mid', 'high', 'low'].reduce((bestLevel, level) => {
+    const bestCount = tideCounts[bestLevel] ?? -1;
+    const levelCount = tideCounts[level] ?? 0;
+    return levelCount > bestCount ? level : bestLevel;
+  }, 'mid');
+  const supportiveTideRatio = tideKnownSlots.length
+    ? tideKnownSlots.filter((slotContext) => slotContext.tideSuitability === 'good').length / tideKnownSlots.length
+    : 0;
+
   return {
     spotId,
     dayKey,
@@ -452,7 +543,10 @@ function buildDaySummaryStats(spotId, dayKey, groupedSlotsForDay) {
     morningWindDesc: morningSlot ? formatWindDescription(morningSlot) : null,
     afternoonWindDesc: afternoonSlot ? formatWindDescription(afternoonSlot) : null,
     eveningWindDesc: eveningSlot ? formatWindDescription(eveningSlot) : null,
-    overallSkillLevel
+    overallSkillLevel,
+    hasTideContext: tideKnownSlots.length > 0,
+    dominantTideLevel: tideKnownSlots.length ? dominantTideLevel : null,
+    supportiveTideRatio
   };
 }
 
@@ -483,14 +577,33 @@ function buildDailySurfReportLines(dayStats, dayKey, language = 'en') {
     .map(([part, value]) => `${part} ${value}`);
 
   const lineTwo = dayPartWindSegments.length ? `Wind: ${dayPartWindSegments.join(', ')}.` : null;
+  const tideLabelByLevel = {
+    low: languageCode === 'nl' ? 'laag' : 'low',
+    mid: languageCode === 'nl' ? 'mid' : 'mid',
+    high: languageCode === 'nl' ? 'hoog' : 'high'
+  };
+  const tideLine = dayStats?.hasTideContext && dayStats?.dominantTideLevel
+    ? (languageCode === 'nl'
+      ? `Getij: vooral ${tideLabelByLevel[dayStats.dominantTideLevel]} water tijdens de belangrijkste surfmomenten.`
+      : `Tide: mostly ${tideLabelByLevel[dayStats.dominantTideLevel]} water during the main surf windows.`)
+    : null;
   const adviceByLevel = {
     beginner: languageCode === 'nl' ? 'meestal geschikt voor beginners' : 'usually suitable for beginners',
     intermediate: languageCode === 'nl' ? 'het beste voor intermediate surfers' : 'best for intermediate surfers',
     advanced: languageCode === 'nl' ? 'vooral geschikt voor gevorderden' : 'mostly suitable for advanced surfers'
   };
   const lineThree = `${languageCode === 'nl' ? 'Advies' : 'Advice'}: ${adviceByLevel[dayStats.overallSkillLevel] ?? adviceByLevel.intermediate}.`;
+  const tideAdvice = dayStats?.hasTideContext
+    ? (dayStats.supportiveTideRatio >= 0.5
+      ? (languageCode === 'nl'
+        ? 'De meeste sessies vallen in het voorkeurvenster van dit spot-profiel.'
+        : 'Most sessions align with this spot profile\'s preferred tide window.')
+      : (languageCode === 'nl'
+        ? 'Een deel van de sessies valt buiten het voorkeurvenster van dit spot-profiel.'
+        : 'Some sessions fall outside this spot profile\'s preferred tide window.'))
+    : null;
 
-  return [lineOne, lineTwo, lineThree].filter((line) => Boolean(line));
+  return [lineOne, lineTwo, tideLine, lineThree, tideAdvice].filter((line) => Boolean(line));
 }
 
 function passesHardConditionFilters(slotContext, filters) {
@@ -782,6 +895,8 @@ function runMultiSpotScoreTests() {
     offsetHours: 3,
     conditionTag: 'clean',
     challenging: false,
+    tideSuitability: 'good',
+    tideLevel: 'mid',
     minSurfable: true,
     mergedSpot: {
       coastOrientationDeg: 270,
@@ -797,6 +912,8 @@ function runMultiSpotScoreTests() {
     offsetHours: 6,
     conditionTag: 'choppy',
     challenging: true,
+    tideSuitability: 'less-ideal',
+    tideLevel: 'low',
     minSurfable: true,
     mergedSpot: {
       coastOrientationDeg: 270,
@@ -832,12 +949,51 @@ function runMultiSpotScoreTests() {
   assertEqual(spotDay.bestSlotKey, '2026-02-13-3', 'getSpotDayScore(bestSlotKey)');
 }
 
+function runTideHelpersTests() {
+  const spot = { id: 'ericeira-pt', region: 'eu' };
+
+  const morningSlot = { dayPart: 'morning' };
+  const eveningSlot = { dayPart: 'evening' };
+
+  assertEqual(getTideLevelForSlot(spot, morningSlot), 'mid', 'getTideLevelForSlot(morning)');
+  assertEqual(getTideLevelForSlot(spot, eveningSlot), 'low', 'getTideLevelForSlot(evening)');
+  assertEqual(getTideSuitabilityForSlot(spot, morningSlot), 'good', 'getTideSuitabilityForSlot(good)');
+  assertEqual(getTideSuitabilityForSlot(spot, eveningSlot), 'less-ideal', 'getTideSuitabilityForSlot(less-ideal)');
+  assertEqual(getTideLevelForSlot({ id: 'unknown-spot', region: 'xx' }, morningSlot), null, 'getTideLevelForSlot(unknown)');
+}
+
+function runTideScoreImpactTests() {
+  const baseSlot = {
+    dayKey: '2026-02-13',
+    offsetHours: 3,
+    conditionTag: 'clean',
+    challenging: false,
+    minSurfable: true,
+    mergedSpot: {
+      coastOrientationDeg: 270,
+      windRichtingGraden: 90,
+      windSnelheidKnopen: 11,
+      golfHoogteMeter: 1.4,
+      golfPeriodeSeconden: 9
+    }
+  };
+
+  const scoreGoodTide = getSlotQualityScore({ ...baseSlot, tideSuitability: 'good' }).score;
+  const scoreBadTide = getSlotQualityScore({ ...baseSlot, tideSuitability: 'less-ideal' }).score;
+
+  if (!(scoreGoodTide > scoreBadTide)) {
+    throw new Error(`tide score impact failed: good=${scoreGoodTide}, lessIdeal=${scoreBadTide}`);
+  }
+}
+
 function runDailyReportTests() {
   const groupedSlotsForDay = {
     morning: [
       {
         conditionTag: 'clean',
         challenging: false,
+        tideLevel: 'mid',
+        tideSuitability: 'good',
         mergedSpot: {
           coastOrientationDeg: 270,
           windRichtingGraden: 90,
@@ -852,6 +1008,8 @@ function runDailyReportTests() {
       {
         conditionTag: 'mixed',
         challenging: false,
+        tideLevel: 'high',
+        tideSuitability: 'good',
         mergedSpot: {
           coastOrientationDeg: 270,
           windRichtingGraden: 80,
@@ -866,6 +1024,8 @@ function runDailyReportTests() {
       {
         conditionTag: 'choppy',
         challenging: true,
+        tideLevel: 'low',
+        tideSuitability: 'less-ideal',
         mergedSpot: {
           coastOrientationDeg: 270,
           windRichtingGraden: 270,
@@ -884,7 +1044,7 @@ function runDailyReportTests() {
   assertEqual(stats.maxHeight, 2.6, 'buildDaySummaryStats(maxHeight)');
 
   const reportLinesEn = buildDailySurfReportLines(stats, '2026-02-13', 'en').join(' ').toLowerCase();
-  if (!reportLinesEn.includes('swell') || !reportLinesEn.includes('advice')) {
+  if (!reportLinesEn.includes('swell') || !reportLinesEn.includes('advice') || !reportLinesEn.includes('tide')) {
     throw new Error(`buildDailySurfReportLines(en) missing expected keywords: ${reportLinesEn}`);
   }
 
@@ -914,7 +1074,9 @@ function runAll() {
   runDayPartTests();
   runSlotSelectionTests();
   runSlotDetailHelperTests();
+  runTideHelpersTests();
   runMultiSpotScoreTests();
+  runTideScoreImpactTests();
   runDailyReportTests();
   console.log('All tests passed');
 }
