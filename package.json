@@ -1,0 +1,11 @@
+{
+  "name": "freesurfcast",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Lightweight surf forecast web app",
+  "scripts": {
+    "serve": "npx serve -l 4173 .",
+    "test": "node tests/helpers.test.js",
+    "lint:js": "node --check app.js && node --check spots.js && node --check tests/helpers.test.js"
+  }
+}

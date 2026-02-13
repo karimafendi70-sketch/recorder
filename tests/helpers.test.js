@@ -59,7 +59,10 @@ function runWindDirectionTests() {
     [270, 'W'],
     [315, 'NW'],
     [360, 'N'],
-    [-10, 'N']
+    [-10, 'N'],
+    [' zo ', 'ZO'],
+    ['', '-'],
+    [null, '-']
   ];
 
   cases.forEach(([input, expected]) => {
@@ -71,6 +74,7 @@ function runWindSpeedTests() {
   assertEqual(formatWindSpeed(12), '12 kn', 'formatWindSpeed(12)');
   assertEqual(formatWindSpeed(12.6), '13 kn', 'formatWindSpeed(12.6)');
   assertEqual(formatWindSpeed(NaN), '-', 'formatWindSpeed(NaN)');
+  assertEqual(formatWindSpeed(Infinity), '-', 'formatWindSpeed(Infinity)');
 }
 
 function runSwellClassTests() {
@@ -98,7 +102,9 @@ function runChallengingConditionsTests() {
     [{ golfHoogteMeter: 2.31, golfPeriodeSeconden: 8, windSnelheidKnopen: 10 }, true],
     [{ golfHoogteMeter: 2.2, golfPeriodeSeconden: 12, windSnelheidKnopen: 10 }, true],
     [{ golfHoogteMeter: 2.2, golfPeriodeSeconden: 8, windSnelheidKnopen: 18 }, true],
-    [{ golfHoogteMeter: 2.3, golfPeriodeSeconden: 11, windSnelheidKnopen: 17 }, false]
+    [{ golfHoogteMeter: 2.3, golfPeriodeSeconden: 11, windSnelheidKnopen: 17 }, false],
+    [{ golfHoogteMeter: NaN, golfPeriodeSeconden: 8, windSnelheidKnopen: 10 }, false],
+    [{ golfHoogteMeter: 2.0, golfPeriodeSeconden: null, windSnelheidKnopen: 10 }, false]
   ];
 
   cases.forEach(([input, expected], index) => {

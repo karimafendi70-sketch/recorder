@@ -55,6 +55,13 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Run: `node tests/helpers.test.js`
 - Deze testset controleert windrichting-formattering, windsnelheid-formattering, swell-intensiteitsklassen op grenswaarden en de helper voor niveau-/conditie-uitdaging.
 
+## Developer scripts (licht)
+
+- Met `npm run serve` start je snel een lokale static server op poort 4173.
+- Met `npm run test` draai je de helper-tests.
+- Met `npm run lint:js` doe je een lichte JS-syntax-check (`node --check`) op de belangrijkste scripts.
+- Deze setup blijft bewust licht: geen bundler, geen zware lint-toolchain.
+
 ## Quality & tests
 
 - Basis-a11y is meegenomen: duidelijke focus-states en betekenisvolle aria-labels voor kerncontrols.
