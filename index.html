@@ -15,12 +15,25 @@
   <body>
     <div class="app">
       <header class="header">
-        <h1>FreeSurfCast</h1>
-        <p class="subtitle">Gratis surf-forecast met snelle, heldere uitleg.</p>
+        <div class="header-top">
+          <h1 id="appTitleHeading">FreeSurfCast</h1>
+          <div class="language-switch">
+            <label id="languageLabel" for="languageSelect">Taal / Language</label>
+            <select id="languageSelect" class="language-select" aria-label="Kies taal">
+              <option value="nl">NL</option>
+              <option value="en">EN</option>
+              <option value="fr">FR</option>
+              <option value="es">ES</option>
+              <option value="pt">PT</option>
+              <option value="de">DE</option>
+            </select>
+          </div>
+        </div>
+        <p id="appSubtitle" class="subtitle">Gratis surf-forecast met snelle, heldere uitleg.</p>
       </header>
 
-      <section class="search-section" aria-label="Zoek surfspot">
-        <label class="search-label" for="spotSearch">Zoek een surfspot</label>
+      <section id="searchSection" class="search-section" aria-label="Zoek surfspot">
+        <label id="searchLabel" class="search-label" for="spotSearch">Zoek een surfspot</label>
         <div class="search-row">
           <input
             id="spotSearch"
@@ -29,16 +42,16 @@
             placeholder="Bijv. Scheveningen of Portugal"
             autocomplete="off"
           />
-          <button class="search-button" type="button">Zoeken</button>
+          <button id="searchButton" class="search-button" type="button">Zoeken</button>
         </div>
         <ul id="suggestionsList" class="suggestions" hidden></ul>
         <p id="searchMessage" class="search-message" aria-live="polite"></p>
       </section>
 
       <section id="spotMapSection" class="spot-map-section" aria-label="Kaartweergave placeholder">
-        <h2 class="spot-map-title">Kaartweergave (binnenkort)</h2>
+        <h2 id="spotMapTitle" class="spot-map-title">Kaartweergave (binnenkort)</h2>
         <div id="spotMap" class="spot-map-canvas" aria-label="Kaart met surfspots"></div>
-        <p class="spot-map-note">Eerste kaartstap: markers tonen spots, klik voor naam en land.</p>
+        <p id="spotMapNote" class="spot-map-note">Eerste kaartstap: markers tonen spots, klik voor naam en land.</p>
       </section>
 
       <main class="forecast-card" aria-live="polite">
@@ -48,16 +61,16 @@
         </div>
         <p id="forecastMeta" class="forecast-meta">Bron: mock-data</p>
         <p id="surfRating" class="surf-rating rating-neutral">Surf rating: n.v.t.</p>
-        <div class="level-filter" aria-label="Niveau voor uitleg">
-          <label for="levelSelect" class="level-filter-label">Niveau</label>
+        <div id="levelFilterContainer" class="level-filter" aria-label="Niveau voor uitleg">
+          <label id="levelFilterLabel" for="levelSelect" class="level-filter-label">Niveau</label>
           <select id="levelSelect" class="level-filter-select">
-            <option value="all">Alle niveaus</option>
-            <option value="beginner">Beginner</option>
-            <option value="advanced">Gevorderd</option>
+            <option id="levelOptionAll" value="all">Alle niveaus</option>
+            <option id="levelOptionBeginner" value="beginner">Beginner</option>
+            <option id="levelOptionAdvanced" value="advanced">Gevorderd</option>
           </select>
         </div>
         <p id="ratingExplanation" class="rating-explanation">Waarom deze score? Nog geen extra uitleg beschikbaar.</p>
-        <div class="rating-legend" aria-label="Uitleg surf rating en windtermen">
+        <div id="ratingLegend" class="rating-legend" aria-label="Uitleg surf rating en windtermen">
           <button
             id="legendToggleBtn"
             class="legend-toggle"
@@ -68,31 +81,31 @@
             Toon uitleg
           </button>
           <div id="ratingLegendBody" class="rating-legend-body" hidden>
-            <p class="rating-legend-title">Korte legenda</p>
+            <p id="legendTitle" class="rating-legend-title">Korte legenda</p>
             <ul class="rating-legend-list">
-              <li><span class="legend-dot legend-dot-good" aria-hidden="true"></span>Groen (4–5/5): vaak goede surf met gunstige condities.</li>
-              <li><span class="legend-dot legend-dot-ok" aria-hidden="true"></span>Oranje (3/5): surfbaar, maar niet op z'n best.</li>
-              <li><span class="legend-dot legend-dot-bad" aria-hidden="true"></span>Rood (1–2/5): meestal lastige of mindere condities.</li>
-              <li><strong>Onshore:</strong> wind richting strand, golven worden vaak rommeliger.</li>
-              <li><strong>Offshore:</strong> wind van land naar zee, golven worden vaak cleaner.</li>
+              <li id="legendItemGood"><span class="legend-dot legend-dot-good" aria-hidden="true"></span>Groen (4–5/5): vaak goede surf met gunstige condities.</li>
+              <li id="legendItemMedium"><span class="legend-dot legend-dot-ok" aria-hidden="true"></span>Oranje (3/5): surfbaar, maar niet op z'n best.</li>
+              <li id="legendItemBad"><span class="legend-dot legend-dot-bad" aria-hidden="true"></span>Rood (1–2/5): meestal lastige of mindere condities.</li>
+              <li id="legendItemOnshore">Onshore: wind richting strand, golven worden vaak rommeliger.</li>
+              <li id="legendItemOffshore">Offshore: wind van land naar zee, golven worden vaak cleaner.</li>
             </ul>
           </div>
         </div>
         <div id="timeSelector" class="time-selector" hidden aria-label="Selecteer tijdvak">
-          <button class="time-slot-btn" type="button" data-offset="0">Nu</button>
-          <button class="time-slot-btn" type="button" data-offset="3">+3u</button>
-          <button class="time-slot-btn" type="button" data-offset="6">+6u</button>
-          <button class="time-slot-btn" type="button" data-offset="9">+9u</button>
+          <button id="timeSlotNow" class="time-slot-btn" type="button" data-offset="0">Nu</button>
+          <button id="timeSlot3h" class="time-slot-btn" type="button" data-offset="3">+3u</button>
+          <button id="timeSlot6h" class="time-slot-btn" type="button" data-offset="6">+6u</button>
+          <button id="timeSlot9h" class="time-slot-btn" type="button" data-offset="9">+9u</button>
         </div>
         <ul class="forecast-list">
-          <li><span>Golfhoogte</span><strong id="waveHeight">1.2 m</strong></li>
-          <li><span>Periode</span><strong id="wavePeriod">8 s</strong></li>
-          <li><span>Wind</span><strong id="wind">14 kn NO</strong></li>
-          <li><span>Temperatuur</span><strong id="temperature">17 °C</strong></li>
+          <li><span id="forecastLabelWaveHeight">Golfhoogte</span><strong id="waveHeight">1.2 m</strong></li>
+          <li><span id="forecastLabelWavePeriod">Periode</span><strong id="wavePeriod">8 s</strong></li>
+          <li><span id="forecastLabelWind">Wind</span><strong id="wind">14 kn NO</strong></li>
+          <li><span id="forecastLabelTemperature">Temperatuur</span><strong id="temperature">17 °C</strong></li>
         </ul>
 
-        <section class="favorites-block" aria-label="Favoriete surfspots">
-          <h3>Jouw favorieten</h3>
+        <section id="favoritesSection" class="favorites-block" aria-label="Favoriete surfspots">
+          <h3 id="favoritesHeading">Jouw favorieten</h3>
           <ul id="favoritesList" class="favorites-list"></ul>
         </section>
       </main>

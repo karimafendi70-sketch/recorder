@@ -25,6 +25,7 @@ Probeer FreeSurfCast direct op [GitHub Pages](https://karimafendi70-sketch.githu
 	- kleurcodes (rood/oranje/groen),
 	- korte uitleg: **Waarom deze rating?** met plus- en minpunten,
 	- eenvoudige niveau-filter: **Alle niveaus / Beginner / Gevorderd** voor nuance in de uitleg.
+- Meertalige UI-toggle met taalkeuze: **NL, EN, FR, ES, PT, DE** (taalvoorkeur wordt onthouden via `localStorage`).
 - Favorieten:
 	- spots markeren als favoriet,
 	- overzichtslijst met favorieten,
@@ -68,6 +69,10 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 - Deployen naar GitHub Pages of Vercel.
 
 ## Changelog
+
+- **v0.1.4 – i18n update**
+	- Eenvoudige meertalige taal-toggle toegevoegd (NL/EN/FR/ES/PT/DE) voor vaste UI-teksten, legend, rating-uitleg en niveau-filter.
+	- Gekozen taal wordt opgeslagen in `localStorage` en automatisch hersteld bij herladen.
 
 - **v0.1.3 – UX update**
 	- Basis niveau-filter toegevoegd bij de rating-uitleg (Alle niveaus, Beginner, Gevorderd) met subtiele context in de tekst.

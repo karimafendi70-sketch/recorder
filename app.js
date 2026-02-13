@@ -6,6 +6,34 @@ const temperatureEl = document.getElementById('temperature');
 const forecastMetaEl = document.getElementById('forecastMeta');
 const surfRatingEl = document.getElementById('surfRating');
 const ratingExplanationEl = document.getElementById('ratingExplanation');
+const appTitleHeadingEl = document.getElementById('appTitleHeading');
+const appSubtitleEl = document.getElementById('appSubtitle');
+const languageLabelEl = document.getElementById('languageLabel');
+const languageSelectEl = document.getElementById('languageSelect');
+const searchSectionEl = document.getElementById('searchSection');
+const searchLabelEl = document.getElementById('searchLabel');
+const searchButtonTextEl = document.getElementById('searchButton');
+const spotMapSectionEl = document.getElementById('spotMapSection');
+const spotMapTitleEl = document.getElementById('spotMapTitle');
+const spotMapNoteEl = document.getElementById('spotMapNote');
+const levelFilterLabelEl = document.getElementById('levelFilterLabel');
+const levelFilterContainerEl = document.getElementById('levelFilterContainer');
+const levelOptionAllEl = document.getElementById('levelOptionAll');
+const levelOptionBeginnerEl = document.getElementById('levelOptionBeginner');
+const levelOptionAdvancedEl = document.getElementById('levelOptionAdvanced');
+const ratingLegendEl = document.getElementById('ratingLegend');
+const legendTitleEl = document.getElementById('legendTitle');
+const legendItemGoodEl = document.getElementById('legendItemGood');
+const legendItemMediumEl = document.getElementById('legendItemMedium');
+const legendItemBadEl = document.getElementById('legendItemBad');
+const legendItemOnshoreEl = document.getElementById('legendItemOnshore');
+const legendItemOffshoreEl = document.getElementById('legendItemOffshore');
+const forecastLabelWaveHeightEl = document.getElementById('forecastLabelWaveHeight');
+const forecastLabelWavePeriodEl = document.getElementById('forecastLabelWavePeriod');
+const forecastLabelWindEl = document.getElementById('forecastLabelWind');
+const forecastLabelTemperatureEl = document.getElementById('forecastLabelTemperature');
+const favoritesHeadingEl = document.getElementById('favoritesHeading');
+const favoritesSectionEl = document.getElementById('favoritesSection');
 const levelSelectEl = document.getElementById('levelSelect');
 const legendToggleBtnEl = document.getElementById('legendToggleBtn');
 const ratingLegendBodyEl = document.getElementById('ratingLegendBody');
@@ -13,6 +41,10 @@ const spotMapEl = document.getElementById('spotMap');
 const favoriteToggleBtnEl = document.getElementById('favoriteToggleBtn');
 const favoritesListEl = document.getElementById('favoritesList');
 const timeSelectorEl = document.getElementById('timeSelector');
+const timeSlotNowEl = document.getElementById('timeSlotNow');
+const timeSlot3hEl = document.getElementById('timeSlot3h');
+const timeSlot6hEl = document.getElementById('timeSlot6h');
+const timeSlot9hEl = document.getElementById('timeSlot9h');
 const timeSlotButtons = Array.from(document.querySelectorAll('.time-slot-btn'));
 const searchInputEl = document.getElementById('spotSearch');
 const searchButtonEl = document.querySelector('.search-button');
@@ -27,8 +59,122 @@ const CACHE_TTL_MS = 10 * 60 * 1000;
 const FAVORITES_STORAGE_KEY = 'freeSurfCastFavorites';
 const OPEN_METEO_MARINE_BASE_URL = 'https://marine-api.open-meteo.com/v1/marine';
 const OPEN_METEO_WEATHER_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
+const LANGUAGE_STORAGE_KEY = 'freesurfcastLanguage';
+const SUPPORTED_LANGUAGES = ['nl', 'en', 'fr', 'es', 'pt', 'de'];
 const RATING_CLASS_NAMES = ['rating-bad', 'rating-ok', 'rating-good', 'rating-neutral'];
 const SLOT_CLASS_NAMES = ['slot-bad', 'slot-ok', 'slot-good', 'slot-neutral'];
+const translations = {
+  nl: {
+    appTitle: 'FreeSurfCast',
+    appSubtitle: 'Gratis surf-forecast met snelle, heldere uitleg.',
+    languageLabel: 'Taal / Language',
+    searchSectionAria: 'Zoek surfspot',
+    searchLabel: 'Zoek een surfspot',
+    searchPlaceholder: 'Bijv. Scheveningen of Portugal',
+    searchButton: 'Zoeken',
+    searchHintDefault: 'Typ een spotnaam en druk op Enter of klik op Zoeken.',
+    searchHintNoDirect: 'Geen directe match. Druk op Enter voor een slimme match.',
+    searchHintNotFound: 'Geen surfspot gevonden',
+    searchSuggestionsCount: '{count} suggestie(s) gevonden.',
+    mapSectionAria: 'Kaartweergave surfspots',
+    mapTitle: 'Kaartweergave',
+    mapNote: 'Klik op een marker om direct die spot te laden.',
+    mapAria: 'Kaart met surfspots',
+    mapLoadError: 'Kaart kon niet geladen worden.',
+    ratingPrefix: 'Surf rating',
+    ratingNotAvailable: 'n.v.t.',
+    ratingWhyPrefix: 'Waarom deze score?',
+    ratingNoDetails: 'Nog geen extra uitleg beschikbaar.',
+    ratingLabel1: 'Slecht',
+    ratingLabel2: 'Matig',
+    ratingLabel3: 'OK',
+    ratingLabel4: 'Goed',
+    ratingLabel5: 'Top',
+    expGoodHeight: '+ goede golfhoogte',
+    expDecentHeight: '+ redelijke golfhoogte',
+    expTooSmallHeight: '- te kleine golfhoogte',
+    expTooHighHeight: '- te hoge golfhoogte',
+    expLongPeriod: '+ lange periode',
+    expDecentPeriod: '+ redelijke periode',
+    expShortPeriod: '- korte periode',
+    expLightWind: '+ niet te harde wind',
+    expHardWind: '- harde wind',
+    expStrongWind: '- vrij stevige wind',
+    expGoodWindDir: '+ gunstige windrichting',
+    expOnshoreWind: '- onshore windrichting',
+    levelLabel: 'Niveau',
+    levelAll: 'Alle niveaus',
+    levelBeginner: 'Beginner',
+    levelAdvanced: 'Gevorderd',
+    levelBeginnerChallenging: 'Let op: voor beginners kan dit pittig zijn.',
+    levelBeginnerCalm: 'Voor beginners oogt dit meestal vriendelijk.',
+    levelAdvancedChallenging: 'Voor gevorderden kan dit juist een mooie uitdaging zijn.',
+    levelAdvancedCalm: 'Voor gevorderden zijn dit eerder rustige condities.',
+    legendAria: 'Uitleg surfscore en windtermen',
+    legendToggleShow: 'Toon uitleg',
+    legendToggleHide: 'Verberg uitleg',
+    legendTitle: 'Korte legenda',
+    legendItemGood: 'Groen (4–5/5): vaak goede surf met gunstige condities.',
+    legendItemMedium: 'Oranje (3/5): surfbaar, maar niet op z\'n best.',
+    legendItemBad: 'Rood (1–2/5): meestal lastige of mindere condities.',
+    legendItemOnshore: 'Onshore: wind richting strand, golven worden vaak rommeliger.',
+    legendItemOffshore: 'Offshore: wind van land naar zee, golven worden vaak cleaner.',
+    timeSelectorAria: 'Selecteer tijdvak',
+    timeNow: 'Nu',
+    timePlus3h: '+3u',
+    timePlus6h: '+6u',
+    timePlus9h: '+9u',
+    timeSlotUnavailable: 'Niet beschikbaar voor dit tijdvak',
+    forecastWaveHeight: 'Golfhoogte',
+    forecastWavePeriod: 'Periode',
+    forecastWind: 'Wind',
+    forecastTemperature: 'Temperatuur',
+    favoritesHeading: 'Jouw favorieten',
+    favoritesEmpty: 'Nog geen favorieten',
+    favoriteButtonOff: '☆ Favoriet',
+    favoriteButtonOn: '★ Favoriet',
+    favoriteOpened: 'Favoriet geopend: {spot} ({country})',
+    favoriteAdded: 'Favoriet toegevoegd: {spot}',
+    favoriteRemoved: 'Favoriet verwijderd: {spot}',
+    mapSelected: 'Spot gekozen via kaart: {spot} ({country})',
+    searchLoadedVia: 'Forecast geladen via {via}: {spot} ({country})',
+    searchBestVia: 'Geen exacte match, beste resultaat via {via}: {spot} ({country})',
+    viaName: 'naam',
+    viaCountry: 'land',
+    liveNoTimeslot: 'Dit tijdvak heeft geen beschikbare live data.',
+    forecastMetaMock: 'Bron: mock-data',
+    forecastMetaMissingCoords: 'Bron: mock-data (spot mist coördinaten).',
+    forecastMetaLoading: 'Live data laden via Open-Meteo voor {spot}...',
+    forecastMetaLive: 'Live via Open-Meteo · {timeLabel}',
+    forecastMetaError: 'Live API fout voor {spot}, fallback naar mock-data.',
+    searchApiError: 'Live API fout voor {spot}. Mock-data gebruikt.',
+    fallbackUnknownTime: 'onbekend tijdstip'
+  },
+  en: {
+    appTitle: 'FreeSurfCast', appSubtitle: 'Free surf forecast with fast, clear explanations.', languageLabel: 'Language',
+    searchSectionAria: 'Search surf spot', searchLabel: 'Search a surf spot', searchPlaceholder: 'E.g. Scheveningen or Portugal', searchButton: 'Search',
+    searchHintDefault: 'Type a spot name and press Enter or click Search.', searchHintNoDirect: 'No direct match. Press Enter for smart matching.', searchHintNotFound: 'No surf spot found', searchSuggestionsCount: '{count} suggestion(s) found.',
+    mapSectionAria: 'Surf spot map', mapTitle: 'Map view', mapNote: 'Click a marker to load that spot.', mapAria: 'Map with surf spots', mapLoadError: 'Map could not be loaded.',
+    ratingPrefix: 'Surf rating', ratingNotAvailable: 'n/a', ratingWhyPrefix: 'Why this score?', ratingNoDetails: 'No additional explanation available yet.',
+    ratingLabel1: 'Poor', ratingLabel2: 'Fair', ratingLabel3: 'OK', ratingLabel4: 'Good', ratingLabel5: 'Great',
+    expGoodHeight: '+ good wave height', expDecentHeight: '+ decent wave height', expTooSmallHeight: '- waves too small', expTooHighHeight: '- waves too high', expLongPeriod: '+ long period', expDecentPeriod: '+ decent period', expShortPeriod: '- short period', expLightWind: '+ not too much wind', expHardWind: '- strong wind', expStrongWind: '- fairly strong wind', expGoodWindDir: '+ favorable wind direction', expOnshoreWind: '- onshore wind direction',
+    levelLabel: 'Level', levelAll: 'All levels', levelBeginner: 'Beginner', levelAdvanced: 'Advanced', levelBeginnerChallenging: 'Note: this may feel challenging for beginners.', levelBeginnerCalm: 'For beginners, these conditions look manageable.', levelAdvancedChallenging: 'For advanced surfers, this can be a nice challenge.', levelAdvancedCalm: 'For advanced surfers, these are rather mellow conditions.',
+    legendAria: 'Surf score and wind legend', legendToggleShow: 'Show explanation', legendToggleHide: 'Hide explanation', legendTitle: 'Quick legend', legendItemGood: 'Green (4–5/5): often good surf with favorable conditions.', legendItemMedium: 'Orange (3/5): surfable, but not at its best.', legendItemBad: 'Red (1–2/5): often tricky or weak conditions.', legendItemOnshore: 'Onshore: wind blows toward shore, waves often get messier.', legendItemOffshore: 'Offshore: wind blows from land to sea, waves are often cleaner.',
+    timeSelectorAria: 'Select time slot', timeNow: 'Now', timePlus3h: '+3h', timePlus6h: '+6h', timePlus9h: '+9h', timeSlotUnavailable: 'Not available for this time slot', forecastWaveHeight: 'Wave height', forecastWavePeriod: 'Period', forecastWind: 'Wind', forecastTemperature: 'Temperature', favoritesHeading: 'Your favorites', favoritesEmpty: 'No favorites yet', favoriteButtonOff: '☆ Favorite', favoriteButtonOn: '★ Favorite', favoriteOpened: 'Favorite opened: {spot} ({country})', favoriteAdded: 'Favorite added: {spot}', favoriteRemoved: 'Favorite removed: {spot}', mapSelected: 'Spot selected via map: {spot} ({country})', searchLoadedVia: 'Forecast loaded via {via}: {spot} ({country})', searchBestVia: 'No exact match, best result via {via}: {spot} ({country})', viaName: 'name', viaCountry: 'country', liveNoTimeslot: 'This time slot has no live data available.', forecastMetaMock: 'Source: mock data', forecastMetaMissingCoords: 'Source: mock data (spot has no coordinates).', forecastMetaLoading: 'Loading live data from Open-Meteo for {spot}...', forecastMetaLive: 'Live via Open-Meteo · {timeLabel}', forecastMetaError: 'Live API error for {spot}, fallback to mock data.', searchApiError: 'Live API error for {spot}. Using mock data.', fallbackUnknownTime: 'unknown time'
+  },
+  fr: {
+    appTitle: 'FreeSurfCast', appSubtitle: 'Prévision surf gratuite avec explications claires.', languageLabel: 'Langue', searchSectionAria: 'Recherche spot de surf', searchLabel: 'Rechercher un spot', searchPlaceholder: 'Ex. Scheveningen ou Portugal', searchButton: 'Rechercher', searchHintDefault: 'Tapez un spot puis Entrée ou Rechercher.', searchHintNoDirect: 'Pas de correspondance directe. Appuyez sur Entrée pour une recherche intelligente.', searchHintNotFound: 'Aucun spot trouvé', searchSuggestionsCount: '{count} suggestion(s) trouvée(s).', mapSectionAria: 'Carte des spots', mapTitle: 'Vue carte', mapNote: 'Cliquez sur un marqueur pour charger ce spot.', mapAria: 'Carte avec spots de surf', mapLoadError: 'Carte indisponible.', ratingPrefix: 'Score surf', ratingNotAvailable: 'n.d.', ratingWhyPrefix: 'Pourquoi ce score ?', ratingNoDetails: 'Pas encore d\'explication supplémentaire.', ratingLabel1: 'Faible', ratingLabel2: 'Moyen', ratingLabel3: 'OK', ratingLabel4: 'Bon', ratingLabel5: 'Top', expGoodHeight: '+ bonne hauteur de vagues', expDecentHeight: '+ hauteur correcte', expTooSmallHeight: '- vagues trop petites', expTooHighHeight: '- vagues trop hautes', expLongPeriod: '+ longue période', expDecentPeriod: '+ période correcte', expShortPeriod: '- période courte', expLightWind: '+ vent modéré', expHardWind: '- vent fort', expStrongWind: '- vent assez fort', expGoodWindDir: '+ direction favorable', expOnshoreWind: '- vent onshore', levelLabel: 'Niveau', levelAll: 'Tous niveaux', levelBeginner: 'Débutant', levelAdvanced: 'Avancé', levelBeginnerChallenging: 'Attention : cela peut être exigeant pour un débutant.', levelBeginnerCalm: 'Pour un débutant, ces conditions restent accessibles.', levelAdvancedChallenging: 'Pour un surfeur avancé, c\'est un bon défi.', levelAdvancedCalm: 'Pour un surfeur avancé, c\'est plutôt calme.', legendAria: 'Légende score surf et vent', legendToggleShow: 'Afficher l\'explication', legendToggleHide: 'Masquer l\'explication', legendTitle: 'Légende rapide', legendItemGood: 'Vert (4–5/5) : souvent de bonnes conditions.', legendItemMedium: 'Orange (3/5) : surfable, sans être optimal.', legendItemBad: 'Rouge (1–2/5) : conditions souvent faibles ou difficiles.', legendItemOnshore: 'Onshore : vent vers la plage, vagues plus désordonnées.', legendItemOffshore: 'Offshore : vent de la terre vers la mer, vagues plus propres.', timeSelectorAria: 'Choisir un créneau', timeNow: 'Maintenant', timePlus3h: '+3h', timePlus6h: '+6h', timePlus9h: '+9h', timeSlotUnavailable: 'Indisponible pour ce créneau', forecastWaveHeight: 'Hauteur', forecastWavePeriod: 'Période', forecastWind: 'Vent', forecastTemperature: 'Température', favoritesHeading: 'Vos favoris', favoritesEmpty: 'Aucun favori', favoriteButtonOff: '☆ Favori', favoriteButtonOn: '★ Favori', favoriteOpened: 'Favori ouvert : {spot} ({country})', favoriteAdded: 'Favori ajouté : {spot}', favoriteRemoved: 'Favori retiré : {spot}', mapSelected: 'Spot choisi via la carte : {spot} ({country})', searchLoadedVia: 'Prévision chargée via {via} : {spot} ({country})', searchBestVia: 'Pas de correspondance exacte, meilleur résultat via {via} : {spot} ({country})', viaName: 'nom', viaCountry: 'pays', liveNoTimeslot: 'Aucune donnée live pour ce créneau.', forecastMetaMock: 'Source : données mock', forecastMetaMissingCoords: 'Source : données mock (coordonnées manquantes).', forecastMetaLoading: 'Chargement live Open-Meteo pour {spot}...', forecastMetaLive: 'Live via Open-Meteo · {timeLabel}', forecastMetaError: 'Erreur API live pour {spot}, retour aux données mock.', searchApiError: 'Erreur API live pour {spot}. Données mock utilisées.', fallbackUnknownTime: 'heure inconnue'
+  },
+  es: {
+    appTitle: 'FreeSurfCast', appSubtitle: 'Pronóstico de surf gratis con explicaciones claras.', languageLabel: 'Idioma', searchSectionAria: 'Buscar spot de surf', searchLabel: 'Buscar un spot', searchPlaceholder: 'Ej. Scheveningen o Portugal', searchButton: 'Buscar', searchHintDefault: 'Escribe un spot y pulsa Enter o Buscar.', searchHintNoDirect: 'Sin coincidencia directa. Pulsa Enter para coincidencia inteligente.', searchHintNotFound: 'No se encontró ningún spot', searchSuggestionsCount: '{count} sugerencia(s) encontrada(s).', mapSectionAria: 'Mapa de spots', mapTitle: 'Vista de mapa', mapNote: 'Haz clic en un marcador para cargar ese spot.', mapAria: 'Mapa con spots de surf', mapLoadError: 'No se pudo cargar el mapa.', ratingPrefix: 'Valoración surf', ratingNotAvailable: 'n/d', ratingWhyPrefix: '¿Por qué esta puntuación?', ratingNoDetails: 'Aún no hay explicación adicional.', ratingLabel1: 'Malo', ratingLabel2: 'Regular', ratingLabel3: 'OK', ratingLabel4: 'Bueno', ratingLabel5: 'Top', expGoodHeight: '+ buena altura', expDecentHeight: '+ altura aceptable', expTooSmallHeight: '- olas muy pequeñas', expTooHighHeight: '- olas muy grandes', expLongPeriod: '+ período largo', expDecentPeriod: '+ período aceptable', expShortPeriod: '- período corto', expLightWind: '+ viento moderado', expHardWind: '- viento fuerte', expStrongWind: '- viento bastante fuerte', expGoodWindDir: '+ dirección favorable', expOnshoreWind: '- viento onshore', levelLabel: 'Nivel', levelAll: 'Todos los niveles', levelBeginner: 'Principiante', levelAdvanced: 'Avanzado', levelBeginnerChallenging: 'Ojo: para principiantes puede ser exigente.', levelBeginnerCalm: 'Para principiantes, suele verse manejable.', levelAdvancedChallenging: 'Para avanzados, puede ser un buen reto.', levelAdvancedCalm: 'Para avanzados, son condiciones más tranquilas.', legendAria: 'Leyenda de puntuación y viento', legendToggleShow: 'Mostrar explicación', legendToggleHide: 'Ocultar explicación', legendTitle: 'Leyenda rápida', legendItemGood: 'Verde (4–5/5): condiciones normalmente buenas.', legendItemMedium: 'Naranja (3/5): surfeable, pero no ideal.', legendItemBad: 'Rojo (1–2/5): condiciones flojas o difíciles.', legendItemOnshore: 'Onshore: viento hacia la costa, olas más desordenadas.', legendItemOffshore: 'Offshore: viento de tierra al mar, olas más limpias.', timeSelectorAria: 'Seleccionar franja horaria', timeNow: 'Ahora', timePlus3h: '+3h', timePlus6h: '+6h', timePlus9h: '+9h', timeSlotUnavailable: 'No disponible para esta franja', forecastWaveHeight: 'Altura de ola', forecastWavePeriod: 'Período', forecastWind: 'Viento', forecastTemperature: 'Temperatura', favoritesHeading: 'Tus favoritos', favoritesEmpty: 'Aún no hay favoritos', favoriteButtonOff: '☆ Favorito', favoriteButtonOn: '★ Favorito', favoriteOpened: 'Favorito abierto: {spot} ({country})', favoriteAdded: 'Favorito añadido: {spot}', favoriteRemoved: 'Favorito eliminado: {spot}', mapSelected: 'Spot elegido en el mapa: {spot} ({country})', searchLoadedVia: 'Pronóstico cargado por {via}: {spot} ({country})', searchBestVia: 'Sin coincidencia exacta, mejor resultado por {via}: {spot} ({country})', viaName: 'nombre', viaCountry: 'país', liveNoTimeslot: 'Esta franja no tiene datos en vivo.', forecastMetaMock: 'Fuente: datos mock', forecastMetaMissingCoords: 'Fuente: datos mock (spot sin coordenadas).', forecastMetaLoading: 'Cargando datos en vivo de Open-Meteo para {spot}...', forecastMetaLive: 'En vivo vía Open-Meteo · {timeLabel}', forecastMetaError: 'Error de API en vivo para {spot}, usando mock.', searchApiError: 'Error de API en vivo para {spot}. Usando mock.', fallbackUnknownTime: 'hora desconocida'
+  },
+  pt: {
+    appTitle: 'FreeSurfCast', appSubtitle: 'Previsão de surf gratuita com explicações claras.', languageLabel: 'Idioma', searchSectionAria: 'Pesquisar pico de surf', searchLabel: 'Pesquisar um pico', searchPlaceholder: 'Ex.: Scheveningen ou Portugal', searchButton: 'Pesquisar', searchHintDefault: 'Digite um pico e pressione Enter ou Pesquisar.', searchHintNoDirect: 'Sem correspondência direta. Pressione Enter para busca inteligente.', searchHintNotFound: 'Nenhum pico encontrado', searchSuggestionsCount: '{count} sugestão(ões) encontrada(s).', mapSectionAria: 'Mapa de picos', mapTitle: 'Mapa', mapNote: 'Clique num marcador para carregar esse pico.', mapAria: 'Mapa com picos de surf', mapLoadError: 'Não foi possível carregar o mapa.', ratingPrefix: 'Classificação do surf', ratingNotAvailable: 'n/d', ratingWhyPrefix: 'Por que esta pontuação?', ratingNoDetails: 'Sem explicação adicional no momento.', ratingLabel1: 'Fraco', ratingLabel2: 'Médio', ratingLabel3: 'OK', ratingLabel4: 'Bom', ratingLabel5: 'Ótimo', expGoodHeight: '+ boa altura de onda', expDecentHeight: '+ altura razoável', expTooSmallHeight: '- ondas muito pequenas', expTooHighHeight: '- ondas muito grandes', expLongPeriod: '+ período longo', expDecentPeriod: '+ período razoável', expShortPeriod: '- período curto', expLightWind: '+ vento moderado', expHardWind: '- vento forte', expStrongWind: '- vento relativamente forte', expGoodWindDir: '+ direção favorável', expOnshoreWind: '- vento onshore', levelLabel: 'Nível', levelAll: 'Todos os níveis', levelBeginner: 'Iniciante', levelAdvanced: 'Avançado', levelBeginnerChallenging: 'Atenção: para iniciantes pode ser puxado.', levelBeginnerCalm: 'Para iniciantes, tende a ser mais tranquilo.', levelAdvancedChallenging: 'Para avançados, pode ser um bom desafio.', levelAdvancedCalm: 'Para avançados, são condições mais calmas.', legendAria: 'Legenda de pontuação e vento', legendToggleShow: 'Mostrar explicação', legendToggleHide: 'Ocultar explicação', legendTitle: 'Legenda rápida', legendItemGood: 'Verde (4–5/5): normalmente boas condições.', legendItemMedium: 'Laranja (3/5): surfável, mas não ideal.', legendItemBad: 'Vermelho (1–2/5): condições fracas ou difíceis.', legendItemOnshore: 'Onshore: vento para a praia, ondas mais mexidas.', legendItemOffshore: 'Offshore: vento da terra para o mar, ondas mais limpas.', timeSelectorAria: 'Selecionar horário', timeNow: 'Agora', timePlus3h: '+3h', timePlus6h: '+6h', timePlus9h: '+9h', timeSlotUnavailable: 'Indisponível para este horário', forecastWaveHeight: 'Altura da onda', forecastWavePeriod: 'Período', forecastWind: 'Vento', forecastTemperature: 'Temperatura', favoritesHeading: 'Seus favoritos', favoritesEmpty: 'Ainda sem favoritos', favoriteButtonOff: '☆ Favorito', favoriteButtonOn: '★ Favorito', favoriteOpened: 'Favorito aberto: {spot} ({country})', favoriteAdded: 'Favorito adicionado: {spot}', favoriteRemoved: 'Favorito removido: {spot}', mapSelected: 'Pico escolhido no mapa: {spot} ({country})', searchLoadedVia: 'Previsão carregada por {via}: {spot} ({country})', searchBestVia: 'Sem correspondência exata, melhor resultado por {via}: {spot} ({country})', viaName: 'nome', viaCountry: 'país', liveNoTimeslot: 'Este horário não tem dados ao vivo.', forecastMetaMock: 'Fonte: dados mock', forecastMetaMissingCoords: 'Fonte: dados mock (pico sem coordenadas).', forecastMetaLoading: 'Carregando dados ao vivo do Open-Meteo para {spot}...', forecastMetaLive: 'Ao vivo via Open-Meteo · {timeLabel}', forecastMetaError: 'Erro da API ao vivo para {spot}, usando mock.', searchApiError: 'Erro da API ao vivo para {spot}. Usando mock.', fallbackUnknownTime: 'horário desconhecido'
+  },
+  de: {
+    appTitle: 'FreeSurfCast', appSubtitle: 'Kostenlose Surf-Vorhersage mit klaren Erklärungen.', languageLabel: 'Sprache', searchSectionAria: 'Surfspot suchen', searchLabel: 'Einen Surfspot suchen', searchPlaceholder: 'Z. B. Scheveningen oder Portugal', searchButton: 'Suchen', searchHintDefault: 'Spot eingeben und Enter drücken oder Suchen klicken.', searchHintNoDirect: 'Keine direkte Übereinstimmung. Enter für smarte Suche drücken.', searchHintNotFound: 'Kein Surfspot gefunden', searchSuggestionsCount: '{count} Vorschlag/Vorschläge gefunden.', mapSectionAria: 'Surfspot-Karte', mapTitle: 'Kartenansicht', mapNote: 'Marker anklicken, um den Spot zu laden.', mapAria: 'Karte mit Surfspots', mapLoadError: 'Karte konnte nicht geladen werden.', ratingPrefix: 'Surf-Bewertung', ratingNotAvailable: 'k. A.', ratingWhyPrefix: 'Warum diese Bewertung?', ratingNoDetails: 'Noch keine zusätzliche Erklärung verfügbar.', ratingLabel1: 'Schlecht', ratingLabel2: 'Mäßig', ratingLabel3: 'OK', ratingLabel4: 'Gut', ratingLabel5: 'Top', expGoodHeight: '+ gute Wellenhöhe', expDecentHeight: '+ ordentliche Wellenhöhe', expTooSmallHeight: '- Wellen zu klein', expTooHighHeight: '- Wellen zu hoch', expLongPeriod: '+ lange Periode', expDecentPeriod: '+ ordentliche Periode', expShortPeriod: '- kurze Periode', expLightWind: '+ nicht zu starker Wind', expHardWind: '- starker Wind', expStrongWind: '- recht kräftiger Wind', expGoodWindDir: '+ günstige Windrichtung', expOnshoreWind: '- onshore Windrichtung', levelLabel: 'Niveau', levelAll: 'Alle Niveaus', levelBeginner: 'Anfänger', levelAdvanced: 'Fortgeschritten', levelBeginnerChallenging: 'Hinweis: Für Anfänger kann das anspruchsvoll sein.', levelBeginnerCalm: 'Für Anfänger wirken die Bedingungen meist machbar.', levelAdvancedChallenging: 'Für Fortgeschrittene kann das eine gute Herausforderung sein.', levelAdvancedCalm: 'Für Fortgeschrittene sind das eher ruhige Bedingungen.', legendAria: 'Legende für Surfscore und Wind', legendToggleShow: 'Erklärung anzeigen', legendToggleHide: 'Erklärung ausblenden', legendTitle: 'Kurze Legende', legendItemGood: 'Grün (4–5/5): oft gute Bedingungen.', legendItemMedium: 'Orange (3/5): surfbar, aber nicht optimal.', legendItemBad: 'Rot (1–2/5): oft schwierig oder schwach.', legendItemOnshore: 'Onshore: Wind Richtung Strand, Wellen oft unruhiger.', legendItemOffshore: 'Offshore: Wind von Land aufs Meer, Wellen oft sauberer.', timeSelectorAria: 'Zeitfenster wählen', timeNow: 'Jetzt', timePlus3h: '+3h', timePlus6h: '+6h', timePlus9h: '+9h', timeSlotUnavailable: 'Für dieses Zeitfenster nicht verfügbar', forecastWaveHeight: 'Wellenhöhe', forecastWavePeriod: 'Periode', forecastWind: 'Wind', forecastTemperature: 'Temperatur', favoritesHeading: 'Deine Favoriten', favoritesEmpty: 'Noch keine Favoriten', favoriteButtonOff: '☆ Favorit', favoriteButtonOn: '★ Favorit', favoriteOpened: 'Favorit geöffnet: {spot} ({country})', favoriteAdded: 'Favorit hinzugefügt: {spot}', favoriteRemoved: 'Favorit entfernt: {spot}', mapSelected: 'Spot über Karte gewählt: {spot} ({country})', searchLoadedVia: 'Vorhersage geladen über {via}: {spot} ({country})', searchBestVia: 'Keine exakte Übereinstimmung, bestes Ergebnis über {via}: {spot} ({country})', viaName: 'Name', viaCountry: 'Land', liveNoTimeslot: 'Für dieses Zeitfenster sind keine Live-Daten verfügbar.', forecastMetaMock: 'Quelle: Mock-Daten', forecastMetaMissingCoords: 'Quelle: Mock-Daten (Spot ohne Koordinaten).', forecastMetaLoading: 'Live-Daten von Open-Meteo für {spot} werden geladen ...', forecastMetaLive: 'Live über Open-Meteo · {timeLabel}', forecastMetaError: 'Live-API-Fehler für {spot}, Fallback auf Mock-Daten.', searchApiError: 'Live-API-Fehler für {spot}. Mock-Daten werden verwendet.', fallbackUnknownTime: 'unbekannte Zeit'
+  }
+};
 let currentSuggestions = [];
 let activeSuggestionIndex = -1;
 let liveRequestId = 0;
@@ -41,6 +187,32 @@ let activeMapMarker = null;
 let activeSpot = null;
 let currentLevel = 'all';
 let latestRatingConditions = null;
+let currentLanguage = 'nl';
+
+function t(key, vars = {}) {
+  const languagePack = translations[currentLanguage] ?? translations.nl;
+  const fallbackPack = translations.nl;
+  let template = languagePack[key] ?? fallbackPack[key] ?? key;
+
+  Object.entries(vars).forEach(([variable, value]) => {
+    template = template.replaceAll(`{${variable}}`, String(value));
+  });
+
+  return template;
+}
+
+function getLocaleForLanguage() {
+  const localeByLanguage = {
+    nl: 'nl-NL',
+    en: 'en-GB',
+    fr: 'fr-FR',
+    es: 'es-ES',
+    pt: 'pt-PT',
+    de: 'de-DE'
+  };
+
+  return localeByLanguage[currentLanguage] ?? 'nl-NL';
+}
 
 function buildRatingExplanation(conditions, level = 'all') {
   const waveHeight = conditions?.golfHoogteMeter;
@@ -53,45 +225,45 @@ function buildRatingExplanation(conditions, level = 'all') {
     !Number.isFinite(wavePeriod) ||
     !Number.isFinite(windSpeed)
   ) {
-    return 'Geen nadere uitleg beschikbaar.';
+    return t('ratingNoDetails');
   }
 
   const positives = [];
   const negatives = [];
 
   if (waveHeight >= 1.2 && waveHeight <= 2.8) {
-    positives.push('+ goede golfhoogte');
+    positives.push(t('expGoodHeight'));
   } else if ((waveHeight >= 0.7 && waveHeight < 1.2) || (waveHeight > 2.8 && waveHeight <= 3.5)) {
-    positives.push('+ redelijke golfhoogte');
+    positives.push(t('expDecentHeight'));
   } else if (waveHeight < 0.7) {
-    negatives.push('- te kleine golfhoogte');
+    negatives.push(t('expTooSmallHeight'));
   } else {
-    negatives.push('- te hoge golfhoogte');
+    negatives.push(t('expTooHighHeight'));
   }
 
   if (wavePeriod >= 8) {
-    positives.push('+ lange periode');
+    positives.push(t('expLongPeriod'));
   } else if (wavePeriod >= 6) {
-    positives.push('+ redelijke periode');
+    positives.push(t('expDecentPeriod'));
   } else {
-    negatives.push('- korte periode');
+    negatives.push(t('expShortPeriod'));
   }
 
   if (windSpeed <= 12) {
-    positives.push('+ niet te harde wind');
+    positives.push(t('expLightWind'));
   } else if (windSpeed >= 22) {
-    negatives.push('- harde wind');
+    negatives.push(t('expHardWind'));
   } else if (windSpeed >= 16) {
-    negatives.push('- vrij stevige wind');
+    negatives.push(t('expStrongWind'));
   }
 
   if (typeof windDirection === 'string') {
     const normalizedDirection = windDirection.toUpperCase();
     if (['O', 'NO', 'ZO'].includes(normalizedDirection)) {
-      positives.push('+ gunstige windrichting');
+      positives.push(t('expGoodWindDir'));
     }
     if (['W', 'NW', 'ZW'].includes(normalizedDirection)) {
-      negatives.push('- onshore windrichting');
+      negatives.push(t('expOnshoreWind'));
     }
   }
 
@@ -100,7 +272,7 @@ function buildRatingExplanation(conditions, level = 'all') {
   const parts = [...shortPositives, ...shortNegatives];
 
   if (!parts.length) {
-    return 'Geen nadere uitleg beschikbaar.';
+    return t('ratingNoDetails');
   }
 
   const isChallenging = waveHeight > 2.3 || windSpeed >= 18 || wavePeriod >= 12;
@@ -108,14 +280,14 @@ function buildRatingExplanation(conditions, level = 'all') {
 
   if (level === 'beginner') {
     levelNote = isChallenging
-      ? 'Let op: voor beginners kan dit pittig zijn.'
-      : 'Voor beginners oogt dit meestal vriendelijk.';
+      ? t('levelBeginnerChallenging')
+      : t('levelBeginnerCalm');
   }
 
   if (level === 'advanced') {
     levelNote = isChallenging
-      ? 'Voor gevorderden kan dit juist een mooie uitdaging zijn.'
-      : 'Voor gevorderden zijn dit eerder rustige condities.';
+      ? t('levelAdvancedChallenging')
+      : t('levelAdvancedCalm');
   }
 
   if (!levelNote) {
@@ -137,7 +309,7 @@ function calculateSurfRating(conditions) {
     !Number.isFinite(windSpeed)
   ) {
     return {
-      explanation: 'Geen nadere uitleg beschikbaar.'
+      explanation: t('ratingNoDetails')
     };
   }
 
@@ -173,11 +345,11 @@ function calculateSurfRating(conditions) {
   if (clampedScore >= 4) ratingClass = 'rating-good';
 
   const labels = {
-    1: 'Slecht',
-    2: 'Matig',
-    3: 'OK',
-    4: 'Goed',
-    5: 'Top'
+    1: t('ratingLabel1'),
+    2: t('ratingLabel2'),
+    3: t('ratingLabel3'),
+    4: t('ratingLabel4'),
+    5: t('ratingLabel5')
   };
 
   return {
@@ -196,15 +368,15 @@ function renderSurfRating(conditions) {
   const rating = calculateSurfRating(conditions);
 
   if (!rating?.score) {
-    surfRatingEl.textContent = 'Surf rating: n.v.t.';
+    surfRatingEl.textContent = `${t('ratingPrefix')}: ${t('ratingNotAvailable')}`;
     surfRatingEl.classList.add('rating-neutral');
-    ratingExplanationEl.textContent = 'Waarom deze score? Nog geen extra uitleg beschikbaar.';
+    ratingExplanationEl.textContent = `${t('ratingWhyPrefix')} ${t('ratingNoDetails')}`;
     return;
   }
 
-  surfRatingEl.textContent = `Surf rating: ${rating.stars} ${rating.score}/5 – ${rating.label}`;
+  surfRatingEl.textContent = `${t('ratingPrefix')}: ${rating.stars} ${rating.score}/5 – ${rating.label}`;
   surfRatingEl.classList.add(rating.ratingClass);
-  ratingExplanationEl.textContent = `Waarom deze score? ${rating.explanation}`;
+  ratingExplanationEl.textContent = `${t('ratingWhyPrefix')} ${rating.explanation}`;
 }
 
 function renderSpot(spot, ratingConditions = spot) {
@@ -219,8 +391,70 @@ function renderSpot(spot, ratingConditions = spot) {
 function setLegendExpanded(isExpanded) {
   if (!legendToggleBtnEl || !ratingLegendBodyEl) return;
   legendToggleBtnEl.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-  legendToggleBtnEl.textContent = isExpanded ? 'Verberg uitleg' : 'Toon uitleg';
+  legendToggleBtnEl.textContent = isExpanded ? t('legendToggleHide') : t('legendToggleShow');
   ratingLegendBodyEl.hidden = !isExpanded;
+}
+
+function setLanguage(lang, persist = true) {
+  currentLanguage = SUPPORTED_LANGUAGES.includes(lang) ? lang : 'nl';
+
+  if (persist) {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, currentLanguage);
+  }
+
+  document.documentElement.lang = currentLanguage;
+  document.title = t('appTitle');
+
+  if (appTitleHeadingEl) appTitleHeadingEl.textContent = t('appTitle');
+  if (appSubtitleEl) appSubtitleEl.textContent = t('appSubtitle');
+  if (languageLabelEl) languageLabelEl.textContent = t('languageLabel');
+  if (languageSelectEl) {
+    languageSelectEl.value = currentLanguage;
+    languageSelectEl.setAttribute('aria-label', t('languageLabel'));
+  }
+  if (searchSectionEl) searchSectionEl.setAttribute('aria-label', t('searchSectionAria'));
+  if (searchLabelEl) searchLabelEl.textContent = t('searchLabel');
+  if (searchInputEl) searchInputEl.placeholder = t('searchPlaceholder');
+  if (searchButtonTextEl) searchButtonTextEl.textContent = t('searchButton');
+  if (spotMapSectionEl) spotMapSectionEl.setAttribute('aria-label', t('mapSectionAria'));
+  if (spotMapTitleEl) spotMapTitleEl.textContent = t('mapTitle');
+  if (spotMapNoteEl) spotMapNoteEl.textContent = t('mapNote');
+  if (spotMapEl) spotMapEl.setAttribute('aria-label', t('mapAria'));
+  if (levelFilterLabelEl) levelFilterLabelEl.textContent = t('levelLabel');
+  if (levelFilterContainerEl) levelFilterContainerEl.setAttribute('aria-label', t('levelLabel'));
+  if (levelOptionAllEl) levelOptionAllEl.textContent = t('levelAll');
+  if (levelOptionBeginnerEl) levelOptionBeginnerEl.textContent = t('levelBeginner');
+  if (levelOptionAdvancedEl) levelOptionAdvancedEl.textContent = t('levelAdvanced');
+  if (ratingLegendEl) ratingLegendEl.setAttribute('aria-label', t('legendAria'));
+  if (legendTitleEl) legendTitleEl.textContent = t('legendTitle');
+  if (legendItemGoodEl) legendItemGoodEl.innerHTML = `<span class="legend-dot legend-dot-good" aria-hidden="true"></span>${t('legendItemGood')}`;
+  if (legendItemMediumEl) legendItemMediumEl.innerHTML = `<span class="legend-dot legend-dot-ok" aria-hidden="true"></span>${t('legendItemMedium')}`;
+  if (legendItemBadEl) legendItemBadEl.innerHTML = `<span class="legend-dot legend-dot-bad" aria-hidden="true"></span>${t('legendItemBad')}`;
+  if (legendItemOnshoreEl) legendItemOnshoreEl.textContent = t('legendItemOnshore');
+  if (legendItemOffshoreEl) legendItemOffshoreEl.textContent = t('legendItemOffshore');
+  if (timeSelectorEl) timeSelectorEl.setAttribute('aria-label', t('timeSelectorAria'));
+  if (timeSlotNowEl) timeSlotNowEl.textContent = t('timeNow');
+  if (timeSlot3hEl) timeSlot3hEl.textContent = t('timePlus3h');
+  if (timeSlot6hEl) timeSlot6hEl.textContent = t('timePlus6h');
+  if (timeSlot9hEl) timeSlot9hEl.textContent = t('timePlus9h');
+  if (forecastLabelWaveHeightEl) forecastLabelWaveHeightEl.textContent = t('forecastWaveHeight');
+  if (forecastLabelWavePeriodEl) forecastLabelWavePeriodEl.textContent = t('forecastWavePeriod');
+  if (forecastLabelWindEl) forecastLabelWindEl.textContent = t('forecastWind');
+  if (forecastLabelTemperatureEl) forecastLabelTemperatureEl.textContent = t('forecastTemperature');
+  if (favoritesHeadingEl) favoritesHeadingEl.textContent = t('favoritesHeading');
+  if (favoritesSectionEl) favoritesSectionEl.setAttribute('aria-label', t('favoritesHeading'));
+
+  setLegendExpanded(legendToggleBtnEl?.getAttribute('aria-expanded') === 'true');
+  updateFavoriteToggleForSpot(activeSpot);
+  renderFavoritesList();
+  if (activeLiveCache) {
+    renderLiveOffset(activeTimeOffset);
+  } else {
+    setForecastMeta(t('forecastMetaMock'));
+  }
+  if (latestRatingConditions) {
+    renderSurfRating(latestRatingConditions);
+  }
 }
 
 function setCurrentLevel(level) {
@@ -255,7 +489,7 @@ function initSpotMap() {
   if (!spotMapEl) return;
 
   if (typeof window.L === 'undefined') {
-    spotMapEl.textContent = 'Kaart kon niet geladen worden.';
+    spotMapEl.textContent = t('mapLoadError');
     return;
   }
 
@@ -394,14 +628,14 @@ function isFavoriteSpot(spot) {
 
 function updateFavoriteToggleForSpot(spot) {
   if (!spot) {
-    favoriteToggleBtnEl.textContent = '☆ Favoriet';
+    favoriteToggleBtnEl.textContent = t('favoriteButtonOff');
     favoriteToggleBtnEl.setAttribute('aria-pressed', 'false');
     favoriteToggleBtnEl.classList.remove('is-active');
     return;
   }
 
   const isFavorite = isFavoriteSpot(spot);
-  favoriteToggleBtnEl.textContent = isFavorite ? '★ Favoriet' : '☆ Favoriet';
+  favoriteToggleBtnEl.textContent = isFavorite ? t('favoriteButtonOn') : t('favoriteButtonOff');
   favoriteToggleBtnEl.setAttribute('aria-pressed', isFavorite ? 'true' : 'false');
   favoriteToggleBtnEl.classList.toggle('is-active', isFavorite);
 }
@@ -410,7 +644,7 @@ function renderFavoritesList() {
   const favorites = SURF_SPOTS.filter((spot) => favoriteSpotIds.has(getSpotKey(spot)));
 
   if (!favorites.length) {
-    favoritesListEl.innerHTML = '<li class="favorites-empty">Nog geen favorieten</li>';
+    favoritesListEl.innerHTML = `<li class="favorites-empty">${t('favoritesEmpty')}</li>`;
     return;
   }
 
@@ -581,7 +815,7 @@ function updateTimeSelectorButtons() {
 
     button.disabled = !isAvailable;
     button.classList.toggle('is-active', offset === activeTimeOffset && isAvailable);
-    button.title = isAvailable ? '' : 'Niet beschikbaar voor dit tijdvak';
+    button.title = isAvailable ? '' : t('timeSlotUnavailable');
   });
 }
 
@@ -621,15 +855,15 @@ function renderLiveOffset(offsetHours) {
   renderSpot(mergedSpot, snapshot.values);
 
   const tijdLabel = snapshot.time
-    ? new Date(snapshot.time).toLocaleString('nl-NL', {
+    ? new Date(snapshot.time).toLocaleString(getLocaleForLanguage(), {
         hour: '2-digit',
         minute: '2-digit',
         day: '2-digit',
         month: '2-digit'
       })
-    : 'onbekend tijdstip';
+    : t('fallbackUnknownTime');
 
-  setForecastMeta(`Live via Open-Meteo · ${tijdLabel}`, 'live');
+  setForecastMeta(t('forecastMetaLive', { timeLabel: tijdLabel }), 'live');
   setActiveTimeSlotButton(offsetHours);
   return true;
 }
@@ -644,7 +878,7 @@ async function updateForecastForSpot(spot) {
 
   if (!hasCoordinates) {
     clearActiveLiveCache();
-    setForecastMeta('Bron: mock-data (spot mist coördinaten).');
+    setForecastMeta(t('forecastMetaMissingCoords'));
     return;
   }
 
@@ -663,7 +897,7 @@ async function updateForecastForSpot(spot) {
 
   const requestId = ++liveRequestId;
   clearActiveLiveCache();
-  setForecastMeta(`Live data laden via Open-Meteo voor ${spot.naam}...`);
+  setForecastMeta(t('forecastMetaLoading', { spot: spot.naam }));
 
   try {
     const liveForecast = await fetchLiveForecastForSpot(spot);
@@ -688,8 +922,8 @@ async function updateForecastForSpot(spot) {
 
     clearActiveLiveCache();
     renderSpot(spot, spot);
-    setForecastMeta(`Live API fout voor ${spot.naam}, fallback naar mock-data.`, 'error');
-    setSearchMessage(`Live API fout voor ${spot.naam}. Mock-data gebruikt.`, 'error');
+    setForecastMeta(t('forecastMetaError', { spot: spot.naam }), 'error');
+    setSearchMessage(t('searchApiError', { spot: spot.naam }), 'error');
   }
 }
 
@@ -844,24 +1078,24 @@ function findBestMatchingSpot(query, spots) {
 
 function buildSuccessMessage(spot, method, matchBy) {
   if (method === 'favorite') {
-    return `Favoriet geopend: ${spot.naam} (${spot.land})`;
+    return t('favoriteOpened', { spot: spot.naam, country: spot.land });
   }
 
   if (method === 'map') {
-    return `Spot gekozen via kaart: ${spot.naam} (${spot.land})`;
+    return t('mapSelected', { spot: spot.naam, country: spot.land });
   }
 
-  const via = matchBy === 'land' ? 'land' : 'naam';
+  const via = matchBy === 'land' ? t('viaCountry') : t('viaName');
 
   if (method === 'fuzzy') {
-    return `Geen exacte match, beste resultaat via ${via}: ${spot.naam} (${spot.land})`;
+    return t('searchBestVia', { via, spot: spot.naam, country: spot.land });
   }
 
-  return `Forecast geladen via ${via}: ${spot.naam} (${spot.land})`;
+  return t('searchLoadedVia', { via, spot: spot.naam, country: spot.land });
 }
 
 function selectSpot(spot, method, query) {
-  const matchBy = method === 'substring' ? detectSubstringMatchField(spot, query) : 'naam';
+  const matchBy = method === 'substring' ? detectSubstringMatchField(spot, query) : 'name';
   updateForecastForSpot(spot);
   highlightMapMarkerForSpot(spot);
   setSearchMessage(buildSuccessMessage(spot, method, matchBy), 'success');
@@ -891,7 +1125,7 @@ function handleSearch() {
   }
 
   hideSuggestions();
-  setSearchMessage('Geen surfspot gevonden', 'error');
+  setSearchMessage(t('searchHintNotFound'), 'error');
 }
 
 function selectSuggestionByIndex(index) {
@@ -908,7 +1142,7 @@ function handleInputSuggestions() {
 
   if (!normalizedQuery) {
     hideSuggestions();
-    setSearchMessage('Typ een spotnaam en druk op Enter of klik op Zoeken.', '');
+    setSearchMessage(t('searchHintDefault'), '');
     return;
   }
 
@@ -916,9 +1150,9 @@ function handleInputSuggestions() {
   renderSuggestions(matches);
 
   if (!matches.length) {
-    setSearchMessage('Geen directe match. Druk op Enter voor een slimme match.', '');
+    setSearchMessage(t('searchHintNoDirect'), '');
   } else {
-    setSearchMessage(`${matches.length} suggestie(s) gevonden.`, '');
+    setSearchMessage(t('searchSuggestionsCount', { count: matches.length }), '');
   }
 }
 
@@ -972,7 +1206,7 @@ timeSelectorEl.addEventListener('click', (event) => {
   const offset = Number(button.dataset.offset);
   const rendered = renderLiveOffset(offset);
   if (!rendered) {
-    setSearchMessage('Dit tijdvak heeft geen beschikbare live data.', 'error');
+    setSearchMessage(t('liveNoTimeslot'), 'error');
   }
 });
 
@@ -982,10 +1216,10 @@ favoriteToggleBtnEl.addEventListener('click', () => {
   const activeSpotId = getSpotKey(activeSpot);
   if (favoriteSpotIds.has(activeSpotId)) {
     favoriteSpotIds.delete(activeSpotId);
-    setSearchMessage(`Favoriet verwijderd: ${activeSpot.naam}`, '');
+    setSearchMessage(t('favoriteRemoved', { spot: activeSpot.naam }), '');
   } else {
     favoriteSpotIds.add(activeSpotId);
-    setSearchMessage(`Favoriet toegevoegd: ${activeSpot.naam}`, 'success');
+    setSearchMessage(t('favoriteAdded', { spot: activeSpot.naam }), 'success');
   }
 
   saveFavoritesToStorage();
@@ -1019,6 +1253,18 @@ if (levelSelectEl) {
   });
 }
 
+if (languageSelectEl) {
+  languageSelectEl.addEventListener('change', () => {
+    setLanguage(languageSelectEl.value);
+    if (!searchInputEl.value.trim()) {
+      setSearchMessage(t('searchHintDefault'), '');
+    }
+  });
+}
+
+const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+setLanguage(savedLanguage ?? 'nl', false);
+
 initSpotMap();
 
 loadFavoritesFromStorage();
@@ -1027,5 +1273,6 @@ updateFavoriteToggleForSpot(null);
 
 renderSpot(SURF_SPOTS[0], SURF_SPOTS[0]);
 highlightMapMarkerForSpot(SURF_SPOTS[0]);
-setSearchMessage('Typ een spotnaam en druk op Enter of klik op Zoeken.', '');
+setForecastMeta(t('forecastMetaMock'));
+setSearchMessage(t('searchHintDefault'), '');
 updateForecastForSpot(SURF_SPOTS[0]);
