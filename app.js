@@ -979,6 +979,14 @@ function getLiveSlotContext(offsetHours) {
   };
 }
 
+function getAllLiveSlotContexts() {
+  if (!activeLiveCache) return [];
+
+  return TIME_SLOT_OFFSETS
+    .map((offset) => getLiveSlotContext(offset))
+    .filter((slotContext) => Boolean(slotContext));
+}
+
 function passesHardConditionFilters(slotContext) {
   if (!slotContext) return false;
 
@@ -999,10 +1007,8 @@ function isPreferredCleanSlot(slotContext) {
 }
 
 function getFirstFilteredAvailableOffset() {
-  return TIME_SLOT_OFFSETS.find((offset) => {
-    const slotContext = getLiveSlotContext(offset);
-    return Boolean(slotContext) && passesHardConditionFilters(slotContext);
-  });
+  const firstMatch = getAllLiveSlotContexts().find((slotContext) => passesHardConditionFilters(slotContext));
+  return firstMatch?.offsetHours;
 }
 
 function updateNoResultsWithFiltersMessage(hasFilteredResults) {
@@ -1049,9 +1055,7 @@ function renderCompactForecastList() {
     return;
   }
 
-  const filteredSlots = TIME_SLOT_OFFSETS
-    .map((offset) => getLiveSlotContext(offset))
-    .filter((slotContext) => Boolean(slotContext) && passesHardConditionFilters(slotContext));
+  const filteredSlots = getAllLiveSlotContexts().filter((slotContext) => passesHardConditionFilters(slotContext));
 
   updateNoResultsWithFiltersMessage(filteredSlots.length > 0);
 
@@ -2089,6 +2093,16 @@ function isCacheEntryFresh(cacheEntry) {
   return Date.now() - cacheEntry.fetchedAt <= FORECAST_CACHE_TTL_MS;
 }
 
+function getOrCreatePendingForecastRequest(spotKey, spot) {
+  let pendingRequest = pendingForecastRequests.get(spotKey);
+  if (!pendingRequest) {
+    pendingRequest = fetchLiveForecastForSpot(spot);
+    pendingForecastRequests.set(spotKey, pendingRequest);
+  }
+
+  return pendingRequest;
+}
+
 function buildMarineApiUrl(latitude, longitude) {
   const params = new URLSearchParams({
     latitude: String(latitude),
@@ -2226,10 +2240,13 @@ function updateTimeSelectorButtons() {
 
   timeSelectorEl.hidden = false;
   let hasFilteredResults = false;
+  const slotContextsByOffset = new Map(
+    getAllLiveSlotContexts().map((slotContext) => [slotContext.offsetHours, slotContext])
+  );
 
   timeSlotButtons.forEach((button) => {
     const offset = Number(button.dataset.offset);
-    const slotContext = getLiveSlotContext(offset);
+    const slotContext = slotContextsByOffset.get(offset) ?? null;
     const isAvailable = Boolean(slotContext);
     const isVisibleByFilters = isAvailable && passesHardConditionFilters(slotContext);
 
@@ -2359,12 +2376,7 @@ async function updateForecastForSpot(spot) {
   setForecastMeta(t('forecastMetaLoading', { spot: spot.naam }));
 
   try {
-    let fetchPromise = pendingForecastRequests.get(spotKey);
-    if (!fetchPromise) {
-      fetchPromise = fetchLiveForecastForSpot(spot);
-      pendingForecastRequests.set(spotKey, fetchPromise);
-    }
-
+    const fetchPromise = getOrCreatePendingForecastRequest(spotKey, spot);
     const liveForecast = await fetchPromise;
 
     pendingForecastRequests.delete(spotKey);
@@ -2923,6 +2935,21 @@ function detectPreferredLanguage() {
   return 'nl';
 }
 
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+
+  const isSecureProtocol = window.location.protocol === 'https:';
+  const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  if (!isSecureProtocol && !isLocalHost) {
+    return;
+  }
+
+  const serviceWorkerUrl = new URL('service-worker.js', window.location.href);
+  navigator.serviceWorker.register(serviceWorkerUrl.href).catch((error) => {
+    console.error('Service worker registratie mislukt:', error);
+  });
+}
+
 const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
 const initialLanguage = SUPPORTED_LANGUAGES.includes(savedLanguage)
   ? savedLanguage
@@ -2953,3 +2980,5 @@ if (initialSpot) {
     mapZoom: 7
   });
 }
+
+registerServiceWorker();

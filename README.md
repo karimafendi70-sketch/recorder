@@ -14,6 +14,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Condition-tags per tijdvak: compacte labels (Clean/Choppy/Mixed) op basis van swell + wind versus (ruwe) kustoriëntatie per spot.
 - Power-user condities-filters: optionele toggles voor minimaal surfbaar, beginner-vriendelijk en clean-voorkeur zonder de basisflow te verbergen.
 - Compacte lijstweergave: naast kaartweergave is er een lijstmodus die per tijdvak snel hoogte/periode, wind en condition-tag toont.
+- Installable PWA-basis: manifest + service worker voor app-shell, zodat moderne browsers een install-optie tonen.
 - Wereldwijde spots + regiozoekervaring: spots uit Europa, Afrika/Atlantisch, Amerika's en Azië/Oceanië met regio-groepering in suggesties.
 - Meertaligheid + filters + persoonlijke state: NL/EN/FR/ES/PT/DE, niveau-filter (Alle niveaus/Beginner/Gevorderd), favorieten, last-used spot en reset-weergave.
 - Eenvoudige theme-keuze: handmatige light/dark toggle met behoud van keuze in localStorage.
@@ -52,6 +53,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - fetchLiveForecastForSpot(...) haalt live data op bij Open-Meteo en vult snapshots per tijdvak.
 - Helpers voor conditieclassificatie bepalen per tijdvak een eenvoudige surf-tag op basis van windrichting, windsnelheid, swell en spotoriëntatie.
 - Extra filter-state en view-state sturen zowel tijdvakknoppen als compacte lijstrendering op basis van dezelfde live snapshots/helpers.
+- Manifest (`manifest.json`) en service worker (`service-worker.js`) verzorgen lichte shell-caching van statische assets (geen zware offline forecast-cache).
 - translations met t(...) en setLanguage(...) verzorgen alle meertalige UI-labels.
 - localStorage bewaart taal, favorieten en last-used spot.
 - forecastCache en pendingForecastRequests beperken onnodige API-calls en dubbele requests.
@@ -82,6 +84,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 	- `https://marine-api.open-meteo.com/v1/marine`
 	- `https://api.open-meteo.com/v1/forecast`
 - Forecast-caching gebruikt een in-memory `Map` met TTL in `app.js` (`FORECAST_CACHE_TTL_MS`).
+- Pending request-dedupe voorkomt dubbele forecast-fetches voor dezelfde spot tijdens gelijktijdige requests.
 - Favorieten worden in de UI alfabetisch gesorteerd voor consistente leesbaarheid.
 - Zoeksuggesties worden gegroepeerd op regio (Europa, Afrika/Atlantisch, Amerika's, Azië/Oceanië).
 - Bij een eerste bezoek zonder opgeslagen taalvoorkeur probeert de app te starten in je browsertaal (indien ondersteund); daarna blijft je eigen taalkeuze leidend.
