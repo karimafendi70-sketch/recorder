@@ -92,6 +92,8 @@ const timeSelectorEl = document.getElementById('timeSelector');
 const multiSpotOverviewEl = document.getElementById('multiSpotOverview');
 const slotDetailEl = document.getElementById('slotDetail');
 const dailySurfReportEl = document.getElementById('dailySurfReport');
+const scoreTimelineEl = document.getElementById('scoreTimeline');
+const daypartHeatmapEl = document.getElementById('daypartHeatmap');
 const timeSlotNowEl = document.getElementById('timeSlotNow');
 const timeSlot3hEl = document.getElementById('timeSlot3h');
 const timeSlot6hEl = document.getElementById('timeSlot6h');
@@ -1070,6 +1072,69 @@ const scoreExplanationTranslations = {
   }
 };
 
+const timelineHeatmapTranslations = {
+  nl: {
+    scoreTimelineTitle: 'Score over de dag',
+    scoreTimelineHint: 'Filter-gevoelige slotscore per tijdvak voor de actieve dag.',
+    scoreTimelineNoData: 'Onvoldoende data voor een score-tijdlijn.',
+    daypartHeatmapTitle: 'Spots per dagdeel',
+    daypartHeatmapHint: 'Vergelijking op basis van beste dagdeelscore (zonder actieve filters).',
+    daypartHeatmapNoData: 'Nog geen bruikbare spotscores voor deze dag.',
+    daypartHeatmapSpotCol: 'Spot',
+    heatmapCellAria: '{spot} {dayPart}: score {score}'
+  },
+  en: {
+    scoreTimelineTitle: 'Score over time',
+    scoreTimelineHint: 'Filter-aware slot score per time slot for the active day.',
+    scoreTimelineNoData: 'Not enough data for a score timeline.',
+    daypartHeatmapTitle: 'Spots vs dayparts',
+    daypartHeatmapHint: 'Comparison based on best daypart score (without active filters).',
+    daypartHeatmapNoData: 'No usable spot scores for this day yet.',
+    daypartHeatmapSpotCol: 'Spot',
+    heatmapCellAria: '{spot} {dayPart}: score {score}'
+  },
+  fr: {
+    scoreTimelineTitle: 'Score over time',
+    scoreTimelineHint: 'Filter-aware slot score per time slot for the active day.',
+    scoreTimelineNoData: 'Not enough data for a score timeline.',
+    daypartHeatmapTitle: 'Spots vs dayparts',
+    daypartHeatmapHint: 'Comparison based on best daypart score (without active filters).',
+    daypartHeatmapNoData: 'No usable spot scores for this day yet.',
+    daypartHeatmapSpotCol: 'Spot',
+    heatmapCellAria: '{spot} {dayPart}: score {score}'
+  },
+  es: {
+    scoreTimelineTitle: 'Score over time',
+    scoreTimelineHint: 'Filter-aware slot score per time slot for the active day.',
+    scoreTimelineNoData: 'Not enough data for a score timeline.',
+    daypartHeatmapTitle: 'Spots vs dayparts',
+    daypartHeatmapHint: 'Comparison based on best daypart score (without active filters).',
+    daypartHeatmapNoData: 'No usable spot scores for this day yet.',
+    daypartHeatmapSpotCol: 'Spot',
+    heatmapCellAria: '{spot} {dayPart}: score {score}'
+  },
+  pt: {
+    scoreTimelineTitle: 'Score over time',
+    scoreTimelineHint: 'Filter-aware slot score per time slot for the active day.',
+    scoreTimelineNoData: 'Not enough data for a score timeline.',
+    daypartHeatmapTitle: 'Spots vs dayparts',
+    daypartHeatmapHint: 'Comparison based on best daypart score (without active filters).',
+    daypartHeatmapNoData: 'No usable spot scores for this day yet.',
+    daypartHeatmapSpotCol: 'Spot',
+    heatmapCellAria: '{spot} {dayPart}: score {score}'
+  },
+  de: {
+    scoreTimelineTitle: 'Score over time',
+    scoreTimelineHint: 'Filter-aware slot score per time slot for the active day.',
+    scoreTimelineNoData: 'Not enough data for a score timeline.',
+    daypartHeatmapTitle: 'Spots vs dayparts',
+    daypartHeatmapHint: 'Comparison based on best daypart score (without active filters).',
+    daypartHeatmapNoData: 'No usable spot scores for this day yet.',
+    daypartHeatmapSpotCol: 'Spot',
+    heatmapCellAria: '{spot} {dayPart}: score {score}'
+  }
+};
+
 const helpTranslations = {
   nl: {
     helpToggleLabel: 'Help',
@@ -1266,6 +1331,12 @@ Object.entries(tideTranslations).forEach(([lang, extraKeys]) => {
 });
 
 Object.entries(scoreExplanationTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(timelineHeatmapTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
   }
@@ -2187,6 +2258,233 @@ function buildScoreExplanationLines(breakdown, language = currentLanguage, slotC
     .map((line) => line.text);
 }
 
+function getScoreClassSuffix(score) {
+  if (!Number.isFinite(score)) return 'neutral';
+  if (score >= 7) return 'good';
+  if (score >= 4.5) return 'ok';
+  return 'poor';
+}
+
+function buildTimelineDataForDay(spotId, dayKey, allSlotsForSpotAndDay) {
+  if (!spotId || !dayKey || !Array.isArray(allSlotsForSpotAndDay)) return [];
+
+  return allSlotsForSpotAndDay
+    .filter((slotContext) => slotContext?.dayKey === dayKey)
+    .filter((slotContext) => passesHardConditionFilters(slotContext))
+    .sort((left, right) => left.offsetHours - right.offsetHours)
+    .map((slotContext) => {
+      const quality = slotContext.quality ?? getSlotQualityScore(slotContext, { includeActiveFilters: true });
+      const timeLabel = slotContext?.time
+        ? new Date(slotContext.time).toLocaleTimeString(getLocaleForLanguage(), {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+        : t('fallbackUnknownTime');
+
+      return {
+        time: timeLabel,
+        dayPart: slotContext.dayPart,
+        score: quality.score,
+        quality,
+        slotKey: buildSlotKey(slotContext),
+        slotOffset: slotContext.offsetHours
+      };
+    });
+}
+
+function buildDaypartHeatmapData(dayKey, candidateSpots) {
+  if (!dayKey || !Array.isArray(candidateSpots) || !candidateSpots.length) return [];
+
+  return candidateSpots
+    .map((spot) => {
+      const spotKey = getSpotKey(spot);
+      const liveCache = activeLiveCache && activeSpot && getSpotKey(activeSpot) === spotKey
+        ? activeLiveCache
+        : forecastCache.get(spotKey)?.data;
+
+      if (!liveCache) {
+        return {
+          spotId: spotKey,
+          spotName: `${spot.naam} (${spot.land})`,
+          scoresByDayPart: {
+            morning: null,
+            afternoon: null,
+            evening: null
+          },
+          hasAnyScore: false
+        };
+      }
+
+      const slotsForDay = getSlotContextsForLiveCache(liveCache)
+        .filter((slotContext) => slotContext?.dayKey === dayKey);
+
+      const scoresByDayPart = DAY_PART_ORDER.reduce((accumulator, dayPart) => {
+        const partSlots = slotsForDay
+          .filter((slotContext) => slotContext?.dayPart === dayPart)
+          .map((slotContext) => ({
+            slotContext,
+            quality: slotContext.qualityNoFilters ?? getSlotQualityScore(slotContext, { includeActiveFilters: false })
+          }))
+          .sort((left, right) => right.quality.score - left.quality.score);
+
+        const best = partSlots[0] ?? null;
+        accumulator[dayPart] = best
+          ? {
+            score: best.quality.score,
+            slotOffset: best.slotContext.offsetHours,
+            slotKey: buildSlotKey(best.slotContext)
+          }
+          : null;
+
+        return accumulator;
+      }, {});
+
+      const hasAnyScore = DAY_PART_ORDER.some((dayPart) => Number.isFinite(scoresByDayPart[dayPart]?.score));
+
+      return {
+        spotId: spotKey,
+        spotName: `${spot.naam} (${spot.land})`,
+        scoresByDayPart,
+        hasAnyScore
+      };
+    })
+    .filter((row) => row.hasAnyScore);
+}
+
+function renderScoreTimeline(spotId = activeSpot ? getSpotKey(activeSpot) : null, dayKey = currentDayKey) {
+  if (!scoreTimelineEl) return;
+
+  if (!spotId || !dayKey || !activeLiveCache) {
+    scoreTimelineEl.innerHTML = '';
+    scoreTimelineEl.hidden = true;
+    return;
+  }
+
+  const timelineData = buildTimelineDataForDay(spotId, dayKey, getAllLiveSlotContexts());
+
+  if (timelineData.length < 2) {
+    scoreTimelineEl.innerHTML = `
+      <h3 class="score-timeline-title">${t('scoreTimelineTitle')}</h3>
+      <p class="score-timeline-hint">${t('scoreTimelineHint')}</p>
+      <p class="score-timeline-empty">${t('scoreTimelineNoData')}</p>
+    `;
+    scoreTimelineEl.hidden = false;
+    return;
+  }
+
+  const barsHtml = timelineData
+    .map((point) => {
+      const score = Number.isFinite(point.score) ? point.score : 0;
+      const barHeight = Math.max(12, Math.round(score * 7));
+      const scoreClass = `is-${getScoreClassSuffix(score)}`;
+      const isActive = point.slotKey === currentSlotKey;
+
+      return `
+        <button
+          type="button"
+          class="timeline-bar ${scoreClass}${isActive ? ' is-active' : ''}"
+          data-slot-offset="${point.slotOffset}"
+          aria-label="${point.time}: ${score.toFixed(1)}/10"
+        >
+          <span class="timeline-bar-value" style="height: ${barHeight}px"></span>
+          <span class="timeline-bar-score">${score.toFixed(1)}</span>
+          <span class="timeline-bar-time">${point.time}</span>
+        </button>
+      `;
+    })
+    .join('');
+
+  scoreTimelineEl.innerHTML = `
+    <h3 class="score-timeline-title">${t('scoreTimelineTitle')}</h3>
+    <p class="score-timeline-hint">${t('scoreTimelineHint')}</p>
+    <div class="score-timeline-bars">${barsHtml}</div>
+  `;
+  scoreTimelineEl.hidden = false;
+}
+
+function renderDaypartHeatmap(dayKey = currentDayKey) {
+  if (!daypartHeatmapEl) return;
+
+  const candidateSpots = getMultiSpotCandidateSpots();
+  if (!dayKey || !candidateSpots.length) {
+    daypartHeatmapEl.innerHTML = '';
+    daypartHeatmapEl.hidden = true;
+    return;
+  }
+
+  const rows = buildDaypartHeatmapData(dayKey, candidateSpots);
+  if (!rows.length) {
+    daypartHeatmapEl.innerHTML = `
+      <h3 class="daypart-heatmap-title">${t('daypartHeatmapTitle')}</h3>
+      <p class="daypart-heatmap-hint">${t('daypartHeatmapHint')}</p>
+      <p class="daypart-heatmap-empty">${t('daypartHeatmapNoData')}</p>
+    `;
+    daypartHeatmapEl.hidden = false;
+    return;
+  }
+
+  const headerCols = DAY_PART_ORDER
+    .map((dayPart) => `<th scope="col">${t(getPartLabelKey(dayPart))}</th>`)
+    .join('');
+
+  const bodyRows = rows
+    .map((row) => {
+      const partCells = DAY_PART_ORDER
+        .map((dayPart) => {
+          const entry = row.scoresByDayPart[dayPart];
+          if (!entry || !Number.isFinite(entry.score)) {
+            return '<td><span class="daypart-cell is-empty">—</span></td>';
+          }
+
+          const scoreClass = `is-${getScoreClassSuffix(entry.score)}`;
+          return `
+            <td>
+              <button
+                type="button"
+                class="daypart-cell ${scoreClass}"
+                data-spot-id="${row.spotId}"
+                data-day-key="${dayKey}"
+                data-slot-offset="${entry.slotOffset}"
+                aria-label="${t('heatmapCellAria', {
+    spot: row.spotName,
+    dayPart: t(getPartLabelKey(dayPart)),
+    score: entry.score.toFixed(1)
+  })}"
+              >
+                ${entry.score.toFixed(1)}
+              </button>
+            </td>
+          `;
+        })
+        .join('');
+
+      return `
+        <tr>
+          <th scope="row" class="daypart-spot-name">${row.spotName}</th>
+          ${partCells}
+        </tr>
+      `;
+    })
+    .join('');
+
+  daypartHeatmapEl.innerHTML = `
+    <h3 class="daypart-heatmap-title">${t('daypartHeatmapTitle')}</h3>
+    <p class="daypart-heatmap-hint">${t('daypartHeatmapHint')}</p>
+    <div class="daypart-heatmap-table-wrap">
+      <table class="daypart-heatmap-table">
+        <thead>
+          <tr>
+            <th scope="col">${t('daypartHeatmapSpotCol')}</th>
+            ${headerCols}
+          </tr>
+        </thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+    </div>
+  `;
+  daypartHeatmapEl.hidden = false;
+}
+
 function getMaxAvailableOffsetHoursForCache(liveCache) {
   if (!liveCache) return 0;
 
@@ -2517,6 +2815,8 @@ function renderDailySurfReport(spotId = getSpotKey(activeSpot), dayKey = current
       <h3 class="daily-surf-report-title">${t('dailyReportHeading')}</h3>
       <p class="daily-surf-report-line">${t('dailyReportInsufficient')}</p>
     `;
+    renderScoreTimeline(null, null);
+    renderDaypartHeatmap(null);
     return;
   }
 
@@ -2530,6 +2830,8 @@ function renderDailySurfReport(spotId = getSpotKey(activeSpot), dayKey = current
       <h3 class="daily-surf-report-title">${t('dailyReportHeading')}</h3>
       <p class="daily-surf-report-line">${t('dailyReportInsufficient')}</p>
     `;
+    renderScoreTimeline(spotId, null);
+    renderDaypartHeatmap(null);
     return;
   }
 
@@ -2542,6 +2844,9 @@ function renderDailySurfReport(spotId = getSpotKey(activeSpot), dayKey = current
       .map((line) => `<p class="daily-surf-report-line">${line}</p>`)
       .join('')}
   `;
+
+  renderScoreTimeline(spotId, resolvedDayKey);
+  renderDaypartHeatmap(resolvedDayKey);
 }
 
 function getMultiSpotCandidateSpots() {
@@ -3368,6 +3673,8 @@ function setLanguage(lang, persist = true) {
   if (slotDetailEl) slotDetailEl.setAttribute('aria-label', t('detailTitle'));
   if (multiSpotOverviewEl) multiSpotOverviewEl.setAttribute('aria-label', t('multiSpotOverviewTitle'));
   if (dailySurfReportEl) dailySurfReportEl.setAttribute('aria-label', t('dailyReportHeading'));
+  if (scoreTimelineEl) scoreTimelineEl.setAttribute('aria-label', t('scoreTimelineTitle'));
+  if (daypartHeatmapEl) daypartHeatmapEl.setAttribute('aria-label', t('daypartHeatmapTitle'));
   if (ratingLegendEl) ratingLegendEl.setAttribute('aria-label', t('legendAria'));
   if (legendTitleEl) legendTitleEl.textContent = t('legendTitle');
   if (legendItemGoodEl) legendItemGoodEl.innerHTML = `<span class="legend-dot legend-dot-good" aria-hidden="true"></span>${t('legendItemGood')}`;
@@ -4817,6 +5124,42 @@ if (multiSpotOverviewEl) {
     preferredInitialOffset = bestOffset;
     preferredSlotOffset = bestOffset;
     selectSpot(selectedSpot, 'favorite', selectedSpot.naam);
+  });
+}
+
+if (scoreTimelineEl) {
+  scoreTimelineEl.addEventListener('click', (event) => {
+    const bar = event.target.closest('.timeline-bar');
+    if (!bar) return;
+
+    const offset = Number(bar.dataset.slotOffset);
+    if (!Number.isFinite(offset)) return;
+    renderLiveOffset(offset);
+  });
+}
+
+if (daypartHeatmapEl) {
+  daypartHeatmapEl.addEventListener('click', (event) => {
+    const cell = event.target.closest('.daypart-cell');
+    if (!cell || cell.classList.contains('is-empty')) return;
+
+    const spot = getSpotById(cell.dataset.spotId);
+    const slotOffset = Number(cell.dataset.slotOffset);
+    const dayKey = cell.dataset.dayKey;
+    if (!spot || !Number.isFinite(slotOffset)) return;
+
+    const activeSpotKey = activeSpot ? getSpotKey(activeSpot) : null;
+    if (activeSpotKey && activeSpotKey === getSpotKey(spot) && activeLiveCache) {
+      if (dayKey) {
+        currentDayKey = dayKey;
+      }
+      renderLiveOffset(slotOffset);
+      return;
+    }
+
+    preferredInitialOffset = slotOffset;
+    preferredSlotOffset = slotOffset;
+    selectSpot(spot, 'favorite', spot.naam);
   });
 }
 

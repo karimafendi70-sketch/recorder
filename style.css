@@ -1322,6 +1322,204 @@ body[data-theme='dark'] .time-slot-btn.slot-good {
   color: var(--muted-text);
 }
 
+.score-timeline {
+  margin: -0.05rem 0 0.78rem;
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  background: var(--control-bg);
+  padding: 0.52rem 0.6rem;
+}
+
+.score-timeline-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.score-timeline-hint {
+  margin: 0.2rem 0 0.46rem;
+  font-size: 0.76rem;
+  color: var(--soft-text);
+}
+
+.score-timeline-empty {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--soft-text);
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  padding: 0.42rem 0.48rem;
+}
+
+.score-timeline-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.34rem;
+  overflow-x: auto;
+  padding-bottom: 0.12rem;
+}
+
+.timeline-bar {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  min-width: 2.9rem;
+  padding: 0.28rem 0.24rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.16rem;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.timeline-bar:hover,
+.timeline-bar:focus-visible {
+  background: var(--interactive-hover);
+}
+
+.timeline-bar:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.timeline-bar-value {
+  width: 0.95rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted-text) 30%, var(--panel-border));
+}
+
+.timeline-bar.is-ok .timeline-bar-value {
+  background: color-mix(in srgb, var(--muted-text) 55%, var(--focus-ring));
+}
+
+.timeline-bar.is-good .timeline-bar-value {
+  background: color-mix(in srgb, var(--focus-ring) 70%, var(--primary-bg));
+}
+
+.timeline-bar.is-poor .timeline-bar-value {
+  background: color-mix(in srgb, var(--soft-text) 55%, var(--panel-border));
+}
+
+.timeline-bar.is-active {
+  border-color: var(--text-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--text-color) 16%, transparent);
+}
+
+.timeline-bar-score {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted-text);
+}
+
+.timeline-bar-time {
+  font-size: 0.69rem;
+  color: var(--soft-text);
+}
+
+.daypart-heatmap {
+  margin: -0.05rem 0 0.78rem;
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  background: var(--control-bg);
+  padding: 0.52rem 0.6rem;
+}
+
+.daypart-heatmap-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.daypart-heatmap-hint {
+  margin: 0.2rem 0 0.46rem;
+  font-size: 0.76rem;
+  color: var(--soft-text);
+}
+
+.daypart-heatmap-empty {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--soft-text);
+  border: 1px dashed var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  padding: 0.42rem 0.48rem;
+}
+
+.daypart-heatmap-table-wrap {
+  overflow-x: auto;
+}
+
+.daypart-heatmap-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0.28rem;
+  min-width: 360px;
+}
+
+.daypart-heatmap-table th {
+  font-size: 0.72rem;
+  color: var(--muted-text);
+  text-align: left;
+}
+
+.daypart-spot-name {
+  white-space: nowrap;
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.daypart-cell {
+  width: 100%;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.3rem 0.4rem;
+  cursor: pointer;
+}
+
+.daypart-cell.is-empty {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  cursor: default;
+  color: var(--soft-text);
+  border-style: dashed;
+}
+
+.daypart-cell.is-good {
+  background: color-mix(in srgb, var(--focus-ring) 22%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--focus-ring) 38%, var(--panel-border));
+}
+
+.daypart-cell.is-ok {
+  background: color-mix(in srgb, var(--muted-text) 14%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--muted-text) 28%, var(--panel-border));
+}
+
+.daypart-cell.is-poor {
+  background: color-mix(in srgb, var(--soft-text) 15%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--soft-text) 30%, var(--panel-border));
+}
+
+.daypart-cell:hover,
+.daypart-cell:focus-visible {
+  background: var(--interactive-hover);
+}
+
+.daypart-cell:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .forecast-list li {
   display: flex;
   justify-content: space-between;
@@ -1780,6 +1978,35 @@ body[data-theme='dark'] .time-slot-btn.slot-good {
   .daily-surf-report {
     padding: 0.48rem 0.54rem;
     margin-bottom: 0.68rem;
+  }
+
+  .score-timeline,
+  .daypart-heatmap {
+    padding: 0.48rem 0.54rem;
+    margin-bottom: 0.68rem;
+  }
+
+  .score-timeline-bars {
+    gap: 0.28rem;
+  }
+
+  .timeline-bar {
+    min-width: 2.55rem;
+    padding: 0.26rem 0.2rem;
+  }
+
+  .timeline-bar-time,
+  .timeline-bar-score {
+    font-size: 0.66rem;
+  }
+
+  .daypart-heatmap-table {
+    min-width: 320px;
+  }
+
+  .daypart-cell {
+    font-size: 0.7rem;
+    padding: 0.28rem 0.35rem;
   }
 
   .daily-surf-report-line {

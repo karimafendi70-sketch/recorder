@@ -650,6 +650,75 @@ function buildDailySurfReportLines(dayStats, dayKey, language = 'en') {
   return [lineOne, lineTwo, tideLine, lineThree, tideAdvice].filter((line) => Boolean(line));
 }
 
+function buildTimelineDataForDay(spotId, dayKey, allSlotsForSpotAndDay, filters = {}) {
+  if (!spotId || !dayKey || !Array.isArray(allSlotsForSpotAndDay)) return [];
+
+  return allSlotsForSpotAndDay
+    .filter((slotContext) => slotContext?.dayKey === dayKey)
+    .filter((slotContext) => passesHardConditionFilters(slotContext, filters))
+    .sort((left, right) => left.offsetHours - right.offsetHours)
+    .map((slotContext) => {
+      const quality = slotContext.quality ?? getSlotQualityScore(slotContext, filters);
+      const time = slotContext.time
+        ? new Date(slotContext.time).toISOString().slice(11, 16)
+        : '-';
+
+      return {
+        time,
+        dayPart: slotContext.dayPart,
+        score: quality.score,
+        quality,
+        slotKey: buildSlotKey(slotContext),
+        slotOffset: slotContext.offsetHours
+      };
+    });
+}
+
+function buildDaypartHeatmapData(dayKey, candidateSpots, slotsBySpotId = {}) {
+  if (!dayKey || !Array.isArray(candidateSpots) || !candidateSpots.length) return [];
+
+  const dayParts = ['morning', 'afternoon', 'evening'];
+
+  return candidateSpots
+    .map((spot) => {
+      const spotId = spot.id;
+      const slotsForDay = (slotsBySpotId[spotId] ?? []).filter((slotContext) => slotContext?.dayKey === dayKey);
+
+      const scoresByDayPart = dayParts.reduce((accumulator, dayPart) => {
+        const best = slotsForDay
+          .filter((slotContext) => slotContext?.dayPart === dayPart)
+          .map((slotContext) => ({
+            slotContext,
+            score: (slotContext.qualityNoFilters ?? getSlotQualityScore(slotContext, {
+              minSurfable: false,
+              beginnerFriendly: false,
+              preferClean: false
+            })).score
+          }))
+          .sort((left, right) => right.score - left.score)[0] ?? null;
+
+        accumulator[dayPart] = best
+          ? {
+            score: best.score,
+            slotOffset: best.slotContext.offsetHours,
+            slotKey: buildSlotKey(best.slotContext)
+          }
+          : null;
+        return accumulator;
+      }, {});
+
+      const hasAnyScore = dayParts.some((dayPart) => Number.isFinite(scoresByDayPart[dayPart]?.score));
+
+      return {
+        spotId,
+        spotName: spot.name,
+        scoresByDayPart,
+        hasAnyScore
+      };
+    })
+    .filter((row) => row.hasAnyScore);
+}
+
 function passesHardConditionFilters(slotContext, filters) {
   if (!slotContext) return false;
 
@@ -1120,6 +1189,74 @@ function runDailyReportTests() {
   assertEqual(fallback, 'Not enough data for a daily surf report.', 'buildDailySurfReportLines(fallback)');
 }
 
+function runTimelineDataTests() {
+  const slots = [
+    {
+      dayKey: '2026-02-13',
+      dayPart: 'afternoon',
+      offsetHours: 6,
+      time: '2026-02-13T12:00:00Z',
+      quality: { score: 5.5 }
+    },
+    {
+      dayKey: '2026-02-13',
+      dayPart: 'morning',
+      offsetHours: 0,
+      time: '2026-02-13T06:00:00Z',
+      quality: { score: 7.1 }
+    },
+    {
+      dayKey: '2026-02-13',
+      dayPart: 'evening',
+      offsetHours: 9,
+      time: '2026-02-13T15:00:00Z',
+      quality: { score: 4.2 }
+    },
+    {
+      dayKey: '2026-02-14',
+      dayPart: 'morning',
+      offsetHours: 0,
+      time: '2026-02-14T06:00:00Z',
+      quality: { score: 8.0 }
+    }
+  ];
+
+  const timeline = buildTimelineDataForDay('spot-a', '2026-02-13', slots, {
+    minSurfable: false,
+    beginnerFriendly: false,
+    preferClean: false
+  });
+
+  assertEqual(timeline.length, 3, 'buildTimelineDataForDay(length)');
+  assertEqual(timeline[0].slotOffset, 0, 'buildTimelineDataForDay(order-0)');
+  assertEqual(timeline[1].slotOffset, 6, 'buildTimelineDataForDay(order-1)');
+  assertEqual(timeline[2].dayPart, 'evening', 'buildTimelineDataForDay(dayPart-evening)');
+}
+
+function runDaypartHeatmapTests() {
+  const candidateSpots = [
+    { id: 'spot-a', name: 'Spot A' },
+    { id: 'spot-b', name: 'Spot B' }
+  ];
+
+  const slotsBySpotId = {
+    'spot-a': [
+      { dayKey: '2026-02-13', dayPart: 'morning', offsetHours: 0, qualityNoFilters: { score: 6.0 } },
+      { dayKey: '2026-02-13', dayPart: 'morning', offsetHours: 3, qualityNoFilters: { score: 7.2 } },
+      { dayKey: '2026-02-13', dayPart: 'afternoon', offsetHours: 6, qualityNoFilters: { score: 5.4 } }
+    ],
+    'spot-b': [
+      { dayKey: '2026-02-13', dayPart: 'morning', offsetHours: 0, qualityNoFilters: { score: 4.0 } },
+      { dayKey: '2026-02-13', dayPart: 'evening', offsetHours: 9, qualityNoFilters: { score: 8.3 } }
+    ]
+  };
+
+  const heatmap = buildDaypartHeatmapData('2026-02-13', candidateSpots, slotsBySpotId);
+  assertEqual(heatmap.length, 2, 'buildDaypartHeatmapData(rows)');
+  assertEqual(heatmap[0].scoresByDayPart.morning.score, 7.2, 'buildDaypartHeatmapData(best-morning)');
+  assertEqual(heatmap[1].scoresByDayPart.evening.score, 8.3, 'buildDaypartHeatmapData(best-evening)');
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
@@ -1137,6 +1274,8 @@ function runAll() {
   runMultiSpotScoreTests();
   runTideScoreImpactTests();
   runDailyReportTests();
+  runTimelineDataTests();
+  runDaypartHeatmapTests();
   console.log('All tests passed');
 }
 
