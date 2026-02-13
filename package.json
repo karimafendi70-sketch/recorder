@@ -5,7 +5,11 @@
   "description": "Lightweight surf forecast web app",
   "scripts": {
     "serve": "npx serve -l 4173 .",
-    "test": "node tests/helpers.test.js",
-    "lint:js": "node --check app.js && node --check spots.js && node --check tests/helpers.test.js"
+    "test-helpers": "node tests/helpers.test.js",
+    "test": "npm run test-helpers",
+    "lint": "eslint app.js tests/helpers.test.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1"
   }
 }

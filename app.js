@@ -4,7 +4,6 @@ const wavePeriodEl = document.getElementById('wavePeriod');
 const windEl = document.getElementById('wind');
 const windIconEl = document.getElementById('windIcon');
 const windTextEl = document.getElementById('windText');
-const swellInfoEl = document.getElementById('swellInfo');
 const swellBarEl = document.getElementById('swellBar');
 const swellTextEl = document.getElementById('swellText');
 const temperatureEl = document.getElementById('temperature');

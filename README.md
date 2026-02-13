@@ -23,7 +23,8 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 	- Optioneel Node.js als je lokale helper-tests wilt draaien.
 - Lokaal draaien:
 	- Snelste optie: open index.html in je browser.
-	- Aanbevolen tijdens ontwikkeling: gebruik een kleine lokale dev-server, bijvoorbeeld VS Code Live Server of npx serve.
+	- Optioneel via script: `npm run serve` start een kleine lokale dev-server op poort 4173.
+	- Aanbevolen tijdens ontwikkeling: gebruik een kleine lokale dev-server (bijv. via `npm run serve` of VS Code Live Server).
 - Externe services:
 	- De app gebruikt Open-Meteo endpoints direct vanuit de client.
 	- Er is geen aparte API-key nodig voor de huidige setup.
@@ -54,18 +55,20 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 
 - Run: `node tests/helpers.test.js`
 - Deze testset controleert windrichting-formattering, windsnelheid-formattering, swell-intensiteitsklassen op grenswaarden en de helper voor niveau-/conditie-uitdaging.
+- Via npm-script kan ook: `npm run test-helpers`.
 
 ## Developer scripts (licht)
 
 - Met `npm run serve` start je snel een lokale static server op poort 4173.
-- Met `npm run test` draai je de helper-tests.
-- Met `npm run lint:js` doe je een lichte JS-syntax-check (`node --check`) op de belangrijkste scripts.
-- Deze setup blijft bewust licht: geen bundler, geen zware lint-toolchain.
+- Met `npm run test` (of `npm run test-helpers`) draai je de helper-tests.
+- Met `npm run lint` draai je een minimale ESLint-check op de belangrijkste JS-bestanden.
+- Deze setup blijft bewust licht: geen bundler, geen grote toolchain.
 
 ## Quality & tests
 
 - Basis-a11y is meegenomen: duidelijke focus-states en betekenisvolle aria-labels voor kerncontrols.
 - Voor regressiechecks van kernhelpers kun je snel lokaal draaien met `node tests/helpers.test.js`.
+- Voor een basis-lintcheck kun je optioneel `npm install` en daarna `npm run lint` draaien.
 
 ## Technische notities
 

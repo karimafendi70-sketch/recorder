@@ -104,7 +104,9 @@ function runChallengingConditionsTests() {
     [{ golfHoogteMeter: 2.2, golfPeriodeSeconden: 8, windSnelheidKnopen: 18 }, true],
     [{ golfHoogteMeter: 2.3, golfPeriodeSeconden: 11, windSnelheidKnopen: 17 }, false],
     [{ golfHoogteMeter: NaN, golfPeriodeSeconden: 8, windSnelheidKnopen: 10 }, false],
-    [{ golfHoogteMeter: 2.0, golfPeriodeSeconden: null, windSnelheidKnopen: 10 }, false]
+    [{ golfHoogteMeter: 2.0, golfPeriodeSeconden: null, windSnelheidKnopen: 10 }, false],
+    [{ golfHoogteMeter: 2.29, golfPeriodeSeconden: 11.9, windSnelheidKnopen: 17.9 }, false],
+    [undefined, false]
   ];
 
   cases.forEach(([input, expected], index) => {
