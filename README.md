@@ -12,6 +12,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 
 - Kaart + forecast + rating + wind + swell: klik een spot op de kaart of via zoeken en bekijk tijdvakken, surf-rating, windrichting/-kracht en compacte swell-visualisatie.
 - Meertaligheid + filters + persoonlijke state: NL/EN/FR/ES/PT/DE, niveau-filter (Alle niveaus/Beginner/Gevorderd), favorieten, last-used spot en reset-weergave.
+- Eenvoudige theme-keuze: handmatige light/dark toggle met behoud van keuze in localStorage.
 - Performance + UX: eenvoudige forecast-caching per spot, responsive layout-polish voor mobiel en duidelijke statusfeedback.
 
 ## Getting started
@@ -66,6 +67,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Forecast-caching gebruikt een in-memory `Map` met TTL in `app.js` (`FORECAST_CACHE_TTL_MS`).
 - Favorieten worden in de UI alfabetisch gesorteerd voor consistente leesbaarheid.
 - Bij een eerste bezoek zonder opgeslagen taalvoorkeur probeert de app te starten in je browsertaal (indien ondersteund); daarna blijft je eigen taalkeuze leidend.
+- Theming gebruikt `data-theme` op de body en CSS-variabelen voor light/dark-styling.
 
 ## Contributing
 

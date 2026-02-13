@@ -17,6 +17,9 @@ const languageLabelEl = document.getElementById('languageLabel');
 const languageSelectEl = document.getElementById('languageSelect');
 const languageSwitchEl = document.getElementById('languageSwitch');
 const languageCurrentBadgeEl = document.getElementById('languageCurrentBadge');
+const themeSwitchEl = document.getElementById('themeSwitch');
+const themeLabelEl = document.getElementById('themeLabel');
+const themeToggleBtnEl = document.getElementById('themeToggleBtn');
 const searchSectionEl = document.getElementById('searchSection');
 const searchLabelEl = document.getElementById('searchLabel');
 const searchButtonTextEl = document.getElementById('searchButton');
@@ -83,7 +86,9 @@ const LAST_SPOT_STORAGE_KEY = 'freesurfcastLastSpotId';
 const OPEN_METEO_MARINE_BASE_URL = 'https://marine-api.open-meteo.com/v1/marine';
 const OPEN_METEO_WEATHER_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 const LANGUAGE_STORAGE_KEY = 'freesurfcastLanguage';
+const THEME_STORAGE_KEY = 'freesurfcastTheme';
 const SUPPORTED_LANGUAGES = ['nl', 'en', 'fr', 'es', 'pt', 'de'];
+const SUPPORTED_THEMES = ['light', 'dark'];
 const RATING_CLASS_NAMES = ['rating-bad', 'rating-ok', 'rating-good', 'rating-neutral'];
 const SLOT_CLASS_NAMES = ['slot-bad', 'slot-ok', 'slot-good', 'slot-neutral'];
 const translations = {
@@ -406,6 +411,45 @@ const legendHelpTranslations = {
   }
 };
 
+const themeTranslations = {
+  nl: {
+    themeToggleLabel: 'Thema',
+    themeLight: 'Licht',
+    themeDark: 'Donker',
+    themeToggleAria: 'Wissel tussen licht en donker thema'
+  },
+  en: {
+    themeToggleLabel: 'Theme',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    themeToggleAria: 'Switch between light and dark theme'
+  },
+  fr: {
+    themeToggleLabel: 'Thème',
+    themeLight: 'Clair',
+    themeDark: 'Sombre',
+    themeToggleAria: 'Basculer entre thème clair et sombre'
+  },
+  es: {
+    themeToggleLabel: 'Tema',
+    themeLight: 'Claro',
+    themeDark: 'Oscuro',
+    themeToggleAria: 'Cambiar entre tema claro y oscuro'
+  },
+  pt: {
+    themeToggleLabel: 'Tema',
+    themeLight: 'Claro',
+    themeDark: 'Escuro',
+    themeToggleAria: 'Alternar entre tema claro e escuro'
+  },
+  de: {
+    themeToggleLabel: 'Thema',
+    themeLight: 'Hell',
+    themeDark: 'Dunkel',
+    themeToggleAria: 'Zwischen hellem und dunklem Thema wechseln'
+  }
+};
+
 Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -448,6 +492,12 @@ Object.entries(legendHelpTranslations).forEach(([lang, extraKeys]) => {
   }
 });
 
+Object.entries(themeTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
 let currentSuggestions = [];
 let activeSuggestionIndex = -1;
 let liveRequestId = 0;
@@ -463,6 +513,7 @@ let activeSpot = null;
 let currentLevel = 'all';
 let latestRatingConditions = null;
 let currentLanguage = 'nl';
+let currentTheme = 'light';
 let shareStatusTimeoutId = null;
 
 function t(key, vars = {}) {
@@ -619,6 +670,10 @@ function updateControlBadges() {
 
   if (levelFilterContainerEl) {
     levelFilterContainerEl.classList.toggle('is-active', Boolean(levelSelectEl?.value));
+  }
+
+  if (themeSwitchEl) {
+    themeSwitchEl.classList.toggle('is-active', currentTheme === 'dark');
   }
 }
 
@@ -812,6 +867,55 @@ function setLegendExpanded(isExpanded) {
   ratingLegendBodyEl.hidden = !isExpanded;
 }
 
+function updateThemeToggleUI() {
+  if (themeLabelEl) {
+    themeLabelEl.textContent = t('themeToggleLabel');
+  }
+
+  if (themeSwitchEl) {
+    themeSwitchEl.setAttribute('aria-label', t('themeToggleLabel'));
+  }
+
+  if (!themeToggleBtnEl) return;
+
+  const isDarkTheme = currentTheme === 'dark';
+  themeToggleBtnEl.textContent = isDarkTheme ? t('themeDark') : t('themeLight');
+  themeToggleBtnEl.setAttribute('aria-pressed', isDarkTheme ? 'true' : 'false');
+  themeToggleBtnEl.setAttribute('aria-label', t('themeToggleAria'));
+}
+
+function setTheme(theme, persist = false) {
+  currentTheme = SUPPORTED_THEMES.includes(theme) ? theme : 'light';
+  document.body.setAttribute('data-theme', currentTheme);
+  updateThemeToggleUI();
+
+  if (persist) {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, currentTheme);
+    } catch {
+      // storage kan geblokkeerd zijn; dan stil overslaan
+    }
+  }
+
+  updateControlBadges();
+}
+
+function detectPreferredTheme() {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+}
+
+function getStoredTheme() {
+  try {
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    return SUPPORTED_THEMES.includes(savedTheme) ? savedTheme : null;
+  } catch {
+    return null;
+  }
+}
+
 function setLanguage(lang, persist = true) {
   currentLanguage = SUPPORTED_LANGUAGES.includes(lang) ? lang : 'nl';
 
@@ -829,6 +933,7 @@ function setLanguage(lang, persist = true) {
     languageSelectEl.value = currentLanguage;
     languageSelectEl.setAttribute('aria-label', t('languageLabel'));
   }
+  if (themeSwitchEl) themeSwitchEl.setAttribute('aria-label', t('themeToggleLabel'));
   if (searchSectionEl) searchSectionEl.setAttribute('aria-label', t('searchSectionAria'));
   if (searchLabelEl) searchLabelEl.textContent = t('searchLabel');
   if (searchInputEl) searchInputEl.placeholder = t('searchPlaceholder');
@@ -891,6 +996,7 @@ function setLanguage(lang, persist = true) {
     renderSurfRating(latestRatingConditions);
   }
 
+  updateThemeToggleUI();
   updateShareButtonForSpot(activeSpot);
   updateControlBadges();
 }
@@ -1958,11 +2064,21 @@ if (languageSelectEl) {
   });
 }
 
+if (themeToggleBtnEl) {
+  themeToggleBtnEl.addEventListener('click', () => {
+    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme, true);
+  });
+}
+
 if (resetViewButtonEl) {
   resetViewButtonEl.addEventListener('click', () => {
     resetView();
   });
 }
+
+const storedTheme = getStoredTheme();
+setTheme(storedTheme ?? detectPreferredTheme(), false);
 
 function detectPreferredLanguage() {
   const browserLanguages = Array.isArray(navigator.languages) && navigator.languages.length

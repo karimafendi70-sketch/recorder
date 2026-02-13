@@ -17,17 +17,31 @@
       <header class="header">
         <div class="header-top">
           <h1 id="appTitleHeading">FreeSurfCast</h1>
-          <div id="languageSwitch" class="language-switch control-group">
-            <label id="languageLabel" for="languageSelect">Taal / Language</label>
-            <select id="languageSelect" class="language-select" aria-label="Kies taal">
-              <option value="nl">NL</option>
-              <option value="en">EN</option>
-              <option value="fr">FR</option>
-              <option value="es">ES</option>
-              <option value="pt">PT</option>
-              <option value="de">DE</option>
-            </select>
-            <span id="languageCurrentBadge" class="control-current" aria-hidden="true">NL</span>
+          <div class="header-controls">
+            <div id="languageSwitch" class="language-switch control-group">
+              <label id="languageLabel" for="languageSelect">Taal / Language</label>
+              <select id="languageSelect" class="language-select" aria-label="Kies taal">
+                <option value="nl">NL</option>
+                <option value="en">EN</option>
+                <option value="fr">FR</option>
+                <option value="es">ES</option>
+                <option value="pt">PT</option>
+                <option value="de">DE</option>
+              </select>
+              <span id="languageCurrentBadge" class="control-current" aria-hidden="true">NL</span>
+            </div>
+            <div id="themeSwitch" class="theme-switch control-group" aria-label="Thema">
+              <span id="themeLabel" class="theme-label">Thema</span>
+              <button
+                id="themeToggleBtn"
+                class="theme-toggle-btn"
+                type="button"
+                aria-label="Wissel thema"
+                aria-pressed="false"
+              >
+                Light
+              </button>
+            </div>
           </div>
         </div>
         <p id="appSubtitle" class="subtitle">Gratis surf-forecast met snelle, heldere uitleg.</p>
