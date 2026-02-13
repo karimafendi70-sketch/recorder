@@ -1,131 +1,117 @@
-# README
+# FreeSurfCast
 
-## FreeSurfCast
-
-FreeSurfCast is een gratis, browser-only surf-forecast webapp met snelle uitleg per spot, gebaseerd op Open-Meteo data en een wereldwijde spotset.
+FreeSurfCast is a custom surf forecast web app inspired by surf-forecast.com, built to turn raw marine/weather data into practical surf decisions.
 
 ## Live demo
 
-Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/recorder/).
+Try FreeSurfCast on [GitHub Pages](https://karimafendi70-sketch.github.io/recorder/).
+
+## Project pitch
+
+### English
+
+FreeSurfCast is a custom surf forecast web app inspired by surf-forecast.com, focused on turning raw weather signals into actionable surf decisions. It combines a 4-day multi-day overview, condition tags (Clean / Mixed / Choppy), beginner-vs-advanced filters, a multi-spot “best spots today” view, and an automatic daily surf report for each day/spot. The project is built with vanilla JavaScript, browser APIs, API-based forecast integration, and a lightweight PWA setup (manifest + service worker), with helper tests and linting for reliability. It showcases my ability to manage complex front-end state while keeping UI/UX clear and data interpretation practical.
+
+### Nederlands (kort)
+
+FreeSurfCast is een custom surf forecast webapp, geïnspireerd door surf-forecast.com, die ruwe forecast-data omzet in direct bruikbare surfkeuzes. De app combineert een 4-daags overzicht, condition tags (Clean / Mixed / Choppy), filters voor beginners en gevorderden, een multi-spot “best spots today”-overzicht en een automatisch daily surf report. Hiermee laat ik zien dat ik complexe front-end state, UX en data-heuristieken in één consistente applicatie kan samenbrengen.
+
+## Project overview
+
+FreeSurfCast started as both a practical surfer tool and a portfolio project. Instead of building another generic weather dashboard, the goal was to create a focused surf experience inspired by surf-forecast-style workflows: quickly compare spots, understand conditions at a glance, and decide where/when to surf next.
+
+The app solves three common decision problems for surfers: where conditions are best now or later today, whether the session is likely beginner-friendly or more demanding, and how to get a readable daily summary without manually parsing every chart and metric. Condition tags, multi-day cards, day-part grouping, and per-slot detail/advice reduce the “data-to-decision” gap.
+
+From an engineering perspective, the interesting part is state consistency across multiple views and summaries. The app combines forecast inputs into per-slot and per-day heuristics, then reuses the same core state for map view, list view, multi-spot ranking, and daily surf report text. This keeps UI behavior predictable while still supporting richer analysis.
 
 ## Features
 
-- Wereldwijde surfspots met regiozoekervaring via kaart en lijst.
-- Meerdaags overzicht (3–4 dagen) met min–max golfhoogte en dominante conditie per dag.
-- Tijdvakweergave met swell, wind, condities (Clean/Mixed/Choppy) en ratingcontext.
-- Slotdetailpaneel met compacte uitleg en advies per geselecteerd tijdvak.
-- Conditiefilters: minimaal surfbaar, geschikt voor beginners en voorkeur clean.
-- Kaartweergave en lijstweergave met gedeelde dag- en slotselectie.
-- Multi-spot overzicht met beste spots voor de actieve dag en kwaliteitsscore.
-- Dagelijks surf report per spot/dag met korte tekstsamenvatting.
-- PWA-basis: installable app-shell (manifest + service worker), forecasts blijven live.
+- Global spot browsing with region-aware search, map and list views.
+- Multi-day overview (up to 4 days) with min/max wave range and dominant condition tags.
+- Slot-level forecast context with swell, wind, and condition tags (Clean / Mixed / Choppy).
+- Slot detail panel with concise surf advice per selected time slot.
+- Condition filters for minimally surfable, beginner friendly, and prefer clean.
+- Shared day/slot selection model across map view, list view, detail panel, and reports.
+- Multi-spot “best spots today” overview with score and best time guidance.
+- Automatic daily surf report text per active day and spot.
+- Installable PWA shell (manifest + service worker), with live forecast fetching.
 
 ## How to run
 
-- Vereisten:
-	- Node.js 18+ en npm.
-	- Moderne browser (Chrome, Edge, Firefox of Safari).
-- Installatie:
+- Requirements:
+	- Node.js 18+ and npm.
+	- Modern browser (Chrome, Edge, Firefox, or Safari).
+- Install:
 	- `npm install`
-- Lokaal draaien:
-	- `npm run serve` (start een static server op poort 4173)
-	- Open daarna `http://localhost:4173`
-- Tests en checks:
+- Local run:
+	- `npm run serve` (starts a static server on port 4173)
+	- Open `http://localhost:4173`
+- Validation:
 	- `npm run test-helpers`
 	- `npm run lint`
 
 ## Tech stack
 
-- Vanilla HTML, CSS en JavaScript.
-- Leaflet voor kaartweergave en spot-markers.
-- Open-Meteo marine + weather endpoints voor live forecast-data.
-- PWA-basis met `manifest.json` en `service-worker.js`.
-- Lichte tooling: ESLint + helper-tests via Node.
+- Vanilla HTML, CSS, and JavaScript.
+- Browser APIs (Fetch, localStorage, Clipboard, URL state).
+- Leaflet for map rendering and spot markers.
+- Open-Meteo marine + weather endpoints for forecast inputs.
+- PWA setup with `manifest.json` and `service-worker.js`.
+- Lightweight tooling: ESLint + helper tests.
 
 ## Screenshots
 
-- Plaats screenshots in `docs/screenshots/` met bijvoorbeeld:
-	- `overview-map.png` (dagoverzicht + kaart)
-	- `list-slot-detail.png` (lijstweergave + detailpaneel)
-	- `multi-spot.png` (multi-spot overzicht)
-	- `daily-report-dark.png` (dagrapport in dark mode)
+- Add screenshots in `docs/screenshots/`, for example:
+	- `overview-map.png` (multi-day overview + map)
+	- `list-slot-detail.png` (list view + slot detail panel)
+	- `multi-spot.png` (multi-spot best spots overview)
+	- `daily-report-dark.png` (daily surf report in dark mode)
 
-## Project pitch
+## Architecture (short)
 
-FreeSurfCast is gebouwd als leer- en portfolio-project: een snelle surf-forecast ervaring zonder zware stack.
-De app combineert wereldwijde spots, condition-heuristiek en duidelijke dag/slot-samenvattingen in één compacte UI.
-De focus ligt op direct bruikbare surfcontext (niet alleen ruwe data), met extra hulp via filters, detail en surf report.
-Logische uitbreidingen zijn getij-data, meer spots/regio’s en aanvullende forecast-bronnen.
-
-## Architectuur (kort)
-
-- SURF_SPOTS is de bron voor wereldwijde spotdata, regio-indeling en marker-opbouw.
-- selectSpot(...) is de centrale selectieflow voor kaart, zoekresultaten, favorieten, deep-link en restore.
-- updateForecastForSpot(...) stuurt de forecast-update en UI-rendering aan.
-- fetchLiveForecastForSpot(...) haalt live data op bij Open-Meteo en vult snapshots per tijdvak.
-- Helpers voor conditieclassificatie bepalen per tijdvak een eenvoudige surf-tag op basis van windrichting, windsnelheid, swell en spotoriëntatie.
-- Extra filter-state en view-state sturen zowel tijdvakknoppen als compacte lijstrendering op basis van dezelfde live snapshots/helpers.
-- Helpers groeperen live slots per dag en dagdeel (`morning`/`afternoon`/`evening`) en voeden daaruit zowel day-overview als tijdvakweergave.
-- Dagstate (`currentDayKey`) bepaalt de actieve dag zonder kaart/favorieten/deeplink-flow te breken.
-- Centrale slotselectie (`currentSlotKey`) wordt gedeeld tussen tijdvakknoppen, lijstitems en detailpaneel, zodat kaartweergave en lijstweergave exact dezelfde geselecteerde slotcontext tonen.
-- Score-helpers (`getSlotQualityScore` en `getSpotDayScore`) bouwen een lichte spotscore op bestaande signalen (condition-tag, swell, windrelatie, challenging-state en actieve filters).
-- Multi-spot overzicht rendert top N spots bovenop bestaande forecast-cache/snapshot-helpers en hergebruikt bestaande selectieflow bij klik op een toplijst-item.
-- Dagrapport-helpers bouwen per dag/spot een compacte tekstsamenvatting op dezelfde slot-, conditie- en scoredata zonder extra API-calls.
-- Manifest (`manifest.json`) en service worker (`service-worker.js`) verzorgen lichte shell-caching van statische assets (geen zware offline forecast-cache).
-- translations met t(...) en setLanguage(...) verzorgen alle meertalige UI-labels.
-- localStorage bewaart taal, favorieten en last-used spot.
-- forecastCache en pendingForecastRequests beperken onnodige API-calls en dubbele requests.
-- resetView houdt de basisweergave consistent bij terugzetten van selectie, filters en kaart (met wereld-overzicht voor de map).
-
-## Kleine helper-tests
-
-- Run: `node tests/helpers.test.js`
-- Deze testset controleert windrichting-formattering, windsnelheid-formattering, swell-intensiteitsklassen op grenswaarden en de helper voor niveau-/conditie-uitdaging.
-- Via npm-script kan ook: `npm run test-helpers`.
-
-## Developer scripts (licht)
-
-- Met `npm run serve` start je snel een lokale static server op poort 4173.
-- Met `npm run test` (of `npm run test-helpers`) draai je de helper-tests.
-- Met `npm run lint` draai je een minimale ESLint-check op de belangrijkste JS-bestanden.
-- Deze setup blijft bewust licht: geen bundler, geen grote toolchain.
+- `SURF_SPOTS` is the source for global spot metadata, region grouping, and map markers.
+- `selectSpot(...)` is the central selection flow for map, search, favorites, deep-link, and restore.
+- `updateForecastForSpot(...)` controls forecast refresh and dependent UI rendering.
+- `fetchLiveForecastForSpot(...)` requests live Open-Meteo forecast snapshots.
+- Condition heuristics classify slots with simple tags using wind relation, wind speed, swell, and spot orientation.
+- Day/slot state (`currentDayKey`, `currentSlotKey`) is shared across map view, list view, detail panel, and summaries.
+- Score helpers (`getSlotQualityScore`, `getSpotDayScore`) power the multi-spot ranking and day-level interpretation.
+- Daily report helpers generate compact text summaries from the same slot/day state, without extra endpoints.
+- Translation keys + `setLanguage(...)` keep UI labels and feature text consistent across supported languages.
 
 ## Quality & tests
 
-- Basis-a11y is meegenomen: duidelijke focus-states en betekenisvolle aria-labels voor kerncontrols.
-- Voor regressiechecks van kernhelpers kun je snel lokaal draaien met `node tests/helpers.test.js`.
-- Voor een basis-lintcheck kun je optioneel `npm install` en daarna `npm run lint` draaien.
+- Run helper regression tests: `node tests/helpers.test.js` or `npm run test-helpers`.
+- Run lint checks: `npm run lint`.
+- Accessibility baseline includes keyboard focus states and meaningful ARIA labels on key controls.
 
-## Technische notities
+## Technical notes
 
 - Open-Meteo endpoints:
 	- `https://marine-api.open-meteo.com/v1/marine`
 	- `https://api.open-meteo.com/v1/forecast`
-- Forecast-caching gebruikt een in-memory `Map` met TTL in `app.js` (`FORECAST_CACHE_TTL_MS`).
-- Pending request-dedupe voorkomt dubbele forecast-fetches voor dezelfde spot tijdens gelijktijdige requests.
-- Favorieten worden in de UI alfabetisch gesorteerd voor consistente leesbaarheid.
-- Zoeksuggesties worden gegroepeerd op regio (Europa, Afrika/Atlantisch, Amerika's, Azië/Oceanië).
-- Bij een eerste bezoek zonder opgeslagen taalvoorkeur probeert de app te starten in je browsertaal (indien ondersteund); daarna blijft je eigen taalkeuze leidend.
-- Theming gebruikt `data-theme` op de body en CSS-variabelen voor light/dark-styling.
+- Forecast caching uses an in-memory `Map` with TTL (`FORECAST_CACHE_TTL_MS`).
+- Pending request dedupe prevents duplicate fetches for the same spot.
+- Theme system uses `data-theme` on `body` with CSS variables for light/dark styling.
 
 ## Contributing
 
-- Richtlijnen voor bijdragen staan in CONTRIBUTING.md.
-- Voor grotere wijzigingen of nieuwe features: open eerst een issue.
-- Kijk ook naar de Backlog-sectie hieronder voor mogelijke ideeën.
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+- For larger changes or new features, open an issue first.
 
-## Ideeën / Backlog (niet gepland)
+## Roadmap & ideas
 
-Deze lijst is een ideeënverzameling en geen harde roadmap.
+These are future-work ideas, not currently implemented promises.
 
-- Meer wereldwijde surfspots (bijv. VS, Australië, Zuid-Amerika).
-- Uitgebreidere swell-analyse (richting, meerdere swell-bronnen).
-- Geavanceerdere filters (bijv. getij-info of uitgebreidere niveaufilters).
-- Kleine PWA-verbeteringen (installable prompt, eenvoudige offline fallback).
-- Eenvoudige end-to-end testflow (bijv. later met Playwright of Cypress).
-- Extra accessibility-tuning (screenreader-flow, skip-links, focusroutines).
-- Compacte spot-detailkaart met samenvatting per favoriet.
+- Tide integration per spot, including tide curves and impact hints in surf advice.
+- Advanced multi-swell analysis (primary/secondary swell breakdown + direction quality).
+- Surf alerts (email/push/in-app) when your preferred conditions become “good”.
+- Extra view modes, such as regional heatmaps or score-over-time trend charts.
+- User profiles with personal skill level and preferred condition presets.
+- Light offline mode: cache latest forecast snapshots for favorite spots.
+- Smarter explainability layer for score changes between morning/afternoon/evening.
+- Optional mobile app wrapper path (e.g. Capacitor) after web-first maturity.
 
 ## Release notes
 
-- Zie `CHANGELOG.md` voor de samenvatting van `v1.0.0`.
+- See [CHANGELOG.md](CHANGELOG.md) for `v1.0.0`.
