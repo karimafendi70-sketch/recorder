@@ -63,6 +63,7 @@ const LAND_MATCH_WEIGHT = 1;
 const TIME_SLOT_OFFSETS = [0, 3, 6, 9];
 const CACHE_TTL_MS = 10 * 60 * 1000;
 const FAVORITES_STORAGE_KEY = 'freeSurfCastFavorites';
+const LAST_SPOT_STORAGE_KEY = 'freesurfcastLastSpotId';
 const OPEN_METEO_MARINE_BASE_URL = 'https://marine-api.open-meteo.com/v1/marine';
 const OPEN_METEO_WEATHER_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 const LANGUAGE_STORAGE_KEY = 'freesurfcastLanguage';
@@ -670,6 +671,26 @@ function getSpotById(spotId) {
   return SURF_SPOTS.find((spot) => getSpotKey(spot) === spotId) ?? null;
 }
 
+function saveLastSpotToStorage(spot) {
+  if (!spot) return;
+
+  try {
+    localStorage.setItem(LAST_SPOT_STORAGE_KEY, getSpotKey(spot));
+  } catch {
+    // storage kan geblokkeerd zijn; dan stil overslaan
+  }
+}
+
+function getLastSpotFromStorage() {
+  try {
+    const savedSpotId = localStorage.getItem(LAST_SPOT_STORAGE_KEY);
+    if (!savedSpotId) return null;
+    return getSpotById(savedSpotId);
+  } catch {
+    return null;
+  }
+}
+
 function loadFavoritesFromStorage() {
   try {
     const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
@@ -1164,13 +1185,24 @@ function buildSuccessMessage(spot, method, matchBy) {
   return t('searchLoadedVia', { via, spot: spot.naam, country: spot.land });
 }
 
-function selectSpot(spot, method, query) {
-  const matchBy = method === 'substring' ? detectSubstringMatchField(spot, query) : 'name';
-  updateForecastForSpot(spot);
-  highlightMapMarkerForSpot(spot);
-  setSearchMessage(buildSuccessMessage(spot, method, matchBy), 'success');
-  searchInputEl.value = spot.naam;
+function selectSpot(spot, method, query, options = {}) {
+  if (!spot) return false;
+
+  const stableSpot = getSpotById(getSpotKey(spot));
+  if (!stableSpot) return false;
+
+  const matchBy = method === 'substring' ? detectSubstringMatchField(stableSpot, query) : 'name';
+  updateForecastForSpot(stableSpot);
+  highlightMapMarkerForSpot(stableSpot);
+
+  if (!options.silent) {
+    setSearchMessage(buildSuccessMessage(stableSpot, method, matchBy), 'success');
+  }
+
+  searchInputEl.value = stableSpot.naam;
   hideSuggestions();
+  saveLastSpotToStorage(stableSpot);
+  return true;
 }
 
 function handleSearch() {
@@ -1185,12 +1217,7 @@ function handleSearch() {
   const fuzzyMatch = findBestMatchingSpot(query, SURF_SPOTS);
 
   if (fuzzyMatch?.spot) {
-    updateForecastForSpot(fuzzyMatch.spot);
-    setSearchMessage(
-      buildSuccessMessage(fuzzyMatch.spot, 'fuzzy', fuzzyMatch.matchBy),
-      'success'
-    );
-    hideSuggestions();
+    selectSpot(fuzzyMatch.spot, 'fuzzy', query);
     return;
   }
 
@@ -1341,8 +1368,11 @@ loadFavoritesFromStorage();
 renderFavoritesList();
 updateFavoriteToggleForSpot(null);
 
-renderSpot(SURF_SPOTS[0], SURF_SPOTS[0]);
-highlightMapMarkerForSpot(SURF_SPOTS[0]);
+const restoredSpot = getLastSpotFromStorage();
+const initialSpot = restoredSpot ?? SURF_SPOTS[0];
+
 setForecastMeta(t('forecastMetaMock'));
 setSearchMessage(t('searchHintDefault'), '');
-updateForecastForSpot(SURF_SPOTS[0]);
+if (initialSpot) {
+  selectSpot(initialSpot, 'restore', initialSpot.naam, { silent: true });
+}
