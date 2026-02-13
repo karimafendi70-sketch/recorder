@@ -42,9 +42,25 @@
                 Light
               </button>
             </div>
+            <div id="helpSwitch" class="help-switch control-group" aria-label="Help">
+              <button
+                id="helpToggleBtn"
+                class="help-toggle-btn"
+                type="button"
+                aria-expanded="false"
+                aria-controls="helpPanel"
+              >
+                Help
+              </button>
+            </div>
           </div>
         </div>
         <p id="appSubtitle" class="subtitle">Gratis surf-forecast met snelle, heldere uitleg.</p>
+        <div id="helpPanel" class="help-panel" hidden>
+          <p id="helpIntroLine1"></p>
+          <p id="helpIntroLine2"></p>
+          <p id="helpIntroLine3"></p>
+        </div>
       </header>
 
       <section id="searchSection" class="search-section" aria-label="Zoek surfspot">
@@ -61,6 +77,7 @@
         </div>
         <ul id="suggestionsList" class="suggestions" hidden></ul>
         <p id="searchMessage" class="search-message" aria-live="polite"></p>
+        <p id="firstRunHint" class="first-run-hint" hidden></p>
       </section>
 
       <section id="spotMapSection" class="spot-map-section" aria-label="Kaartweergave placeholder">
@@ -77,7 +94,6 @@
             <button id="shareLinkBtn" class="share-link-btn" type="button" disabled>Kopieer link</button>
           </div>
         </div>
-        <p id="shareStatus" class="share-status" aria-live="polite"></p>
         <p id="forecastMeta" class="forecast-meta">Bron: mock-data</p>
         <p id="surfRating" class="surf-rating rating-neutral">Surf rating: n.v.t.</p>
         <div id="levelFilterContainer" class="level-filter control-group" aria-label="Niveau voor uitleg">
@@ -162,6 +178,8 @@
           <li id="infoLine4"></li>
         </ul>
       </section>
+
+      <div id="statusBar" class="status-bar" role="status" aria-live="polite" hidden></div>
     </div>
 
     <script src="spots.js"></script>

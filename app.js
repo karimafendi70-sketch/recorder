@@ -20,6 +20,12 @@ const languageCurrentBadgeEl = document.getElementById('languageCurrentBadge');
 const themeSwitchEl = document.getElementById('themeSwitch');
 const themeLabelEl = document.getElementById('themeLabel');
 const themeToggleBtnEl = document.getElementById('themeToggleBtn');
+const helpSwitchEl = document.getElementById('helpSwitch');
+const helpToggleBtnEl = document.getElementById('helpToggleBtn');
+const helpPanelEl = document.getElementById('helpPanel');
+const helpIntroLine1El = document.getElementById('helpIntroLine1');
+const helpIntroLine2El = document.getElementById('helpIntroLine2');
+const helpIntroLine3El = document.getElementById('helpIntroLine3');
 const searchSectionEl = document.getElementById('searchSection');
 const searchLabelEl = document.getElementById('searchLabel');
 const searchButtonTextEl = document.getElementById('searchButton');
@@ -62,7 +68,6 @@ const ratingLegendBodyEl = document.getElementById('ratingLegendBody');
 const spotMapEl = document.getElementById('spotMap');
 const favoriteToggleBtnEl = document.getElementById('favoriteToggleBtn');
 const shareLinkBtnEl = document.getElementById('shareLinkBtn');
-const shareStatusEl = document.getElementById('shareStatus');
 const favoritesListEl = document.getElementById('favoritesList');
 const timeSelectorEl = document.getElementById('timeSelector');
 const timeSlotNowEl = document.getElementById('timeSlotNow');
@@ -74,6 +79,8 @@ const searchInputEl = document.getElementById('spotSearch');
 const searchButtonEl = document.querySelector('.search-button');
 const suggestionsListEl = document.getElementById('suggestionsList');
 const searchMessageEl = document.getElementById('searchMessage');
+const firstRunHintEl = document.getElementById('firstRunHint');
+const statusBarEl = document.getElementById('statusBar');
 const MAX_DISTANCE_RATIO = 0.35;
 const MIN_ALLOWED_DISTANCE = 1;
 const NAME_MATCH_WEIGHT = 1;
@@ -450,6 +457,84 @@ const themeTranslations = {
   }
 };
 
+const helpTranslations = {
+  nl: {
+    helpToggleLabel: 'Help',
+    helpToggleHide: 'Sluit help',
+    helpIntroLine1: '1. Kies een spot via kaart, zoeken of favorieten.',
+    helpIntroLine2: '2. Bekijk forecast, wind en swell per tijdvak.',
+    helpIntroLine3: '3. Gebruik niveau, taal, thema, reset en deel-link voor je flow.',
+    firstRunHint: 'Tip: kies een spot op de kaart of via zoeken om snel te starten.'
+  },
+  en: {
+    helpToggleLabel: 'Help',
+    helpToggleHide: 'Close help',
+    helpIntroLine1: '1. Pick a spot via map, search, or favorites.',
+    helpIntroLine2: '2. Check forecast, wind, and swell per time slot.',
+    helpIntroLine3: '3. Use level, language, theme, reset, and share-link for your flow.',
+    firstRunHint: 'Tip: pick a spot via the map or search to get started quickly.'
+  },
+  fr: {
+    helpToggleLabel: 'Aide',
+    helpToggleHide: 'Fermer l\'aide',
+    helpIntroLine1: '1. Choisissez un spot via la carte, la recherche ou les favoris.',
+    helpIntroLine2: '2. Consultez prévision, vent et houle par créneau.',
+    helpIntroLine3: '3. Utilisez niveau, langue, thème, reset et lien de partage.',
+    firstRunHint: 'Astuce : choisissez un spot via la carte ou la recherche pour commencer vite.'
+  },
+  es: {
+    helpToggleLabel: 'Ayuda',
+    helpToggleHide: 'Cerrar ayuda',
+    helpIntroLine1: '1. Elige un spot por mapa, búsqueda o favoritos.',
+    helpIntroLine2: '2. Revisa pronóstico, viento y oleaje por franja.',
+    helpIntroLine3: '3. Usa nivel, idioma, tema, reset y enlace compartible.',
+    firstRunHint: 'Consejo: elige un spot en el mapa o con búsqueda para empezar rápido.'
+  },
+  pt: {
+    helpToggleLabel: 'Ajuda',
+    helpToggleHide: 'Fechar ajuda',
+    helpIntroLine1: '1. Escolha um pico pelo mapa, busca ou favoritos.',
+    helpIntroLine2: '2. Veja previsão, vento e ondulação por horário.',
+    helpIntroLine3: '3. Use nível, idioma, tema, reset e link de partilha.',
+    firstRunHint: 'Dica: escolha um pico no mapa ou na busca para começar rápido.'
+  },
+  de: {
+    helpToggleLabel: 'Hilfe',
+    helpToggleHide: 'Hilfe schließen',
+    helpIntroLine1: '1. Wähle einen Spot über Karte, Suche oder Favoriten.',
+    helpIntroLine2: '2. Sieh Vorhersage, Wind und Swell pro Zeitfenster.',
+    helpIntroLine3: '3. Nutze Niveau, Sprache, Thema, Reset und Share-Link.',
+    firstRunHint: 'Tipp: Wähle einen Spot über Karte oder Suche für einen schnellen Start.'
+  }
+};
+
+const statusTranslations = {
+  nl: {
+    statusLinkCopied: 'Link gekopieerd',
+    statusViewReset: 'Weergave teruggezet naar basisstand.'
+  },
+  en: {
+    statusLinkCopied: 'Link copied',
+    statusViewReset: 'View reset to default state.'
+  },
+  fr: {
+    statusLinkCopied: 'Lien copié',
+    statusViewReset: 'Vue réinitialisée à l\'état par défaut.'
+  },
+  es: {
+    statusLinkCopied: 'Enlace copiado',
+    statusViewReset: 'Vista restablecida al estado base.'
+  },
+  pt: {
+    statusLinkCopied: 'Link copiado',
+    statusViewReset: 'Vista reposta ao estado base.'
+  },
+  de: {
+    statusLinkCopied: 'Link kopiert',
+    statusViewReset: 'Ansicht auf Standard zurückgesetzt.'
+  }
+};
+
 Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -498,6 +583,18 @@ Object.entries(themeTranslations).forEach(([lang, extraKeys]) => {
   }
 });
 
+Object.entries(helpTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(statusTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
 let currentSuggestions = [];
 let activeSuggestionIndex = -1;
 let liveRequestId = 0;
@@ -514,7 +611,8 @@ let currentLevel = 'all';
 let latestRatingConditions = null;
 let currentLanguage = 'nl';
 let currentTheme = 'light';
-let shareStatusTimeoutId = null;
+let statusMessageTimeoutId = null;
+let shouldShowFirstRunHint = false;
 
 function t(key, vars = {}) {
   const languagePack = translations[currentLanguage] ?? translations.nl;
@@ -934,6 +1032,7 @@ function setLanguage(lang, persist = true) {
     languageSelectEl.setAttribute('aria-label', t('languageLabel'));
   }
   if (themeSwitchEl) themeSwitchEl.setAttribute('aria-label', t('themeToggleLabel'));
+  if (helpSwitchEl) helpSwitchEl.setAttribute('aria-label', t('helpToggleLabel'));
   if (searchSectionEl) searchSectionEl.setAttribute('aria-label', t('searchSectionAria'));
   if (searchLabelEl) searchLabelEl.textContent = t('searchLabel');
   if (searchInputEl) searchInputEl.placeholder = t('searchPlaceholder');
@@ -977,6 +1076,15 @@ function setLanguage(lang, persist = true) {
     shareLinkBtnEl.textContent = t('shareLinkLabel');
     shareLinkBtnEl.setAttribute('aria-label', t('shareLinkLabel'));
   }
+  if (helpToggleBtnEl) {
+    const isExpanded = helpToggleBtnEl.getAttribute('aria-expanded') === 'true';
+    helpToggleBtnEl.setAttribute('aria-label', isExpanded ? t('helpToggleHide') : t('helpToggleLabel'));
+    helpToggleBtnEl.textContent = t('helpToggleLabel');
+  }
+  if (helpIntroLine1El) helpIntroLine1El.textContent = t('helpIntroLine1');
+  if (helpIntroLine2El) helpIntroLine2El.textContent = t('helpIntroLine2');
+  if (helpIntroLine3El) helpIntroLine3El.textContent = t('helpIntroLine3');
+  if (firstRunHintEl) firstRunHintEl.textContent = t('firstRunHint');
   if (infoSectionEl) infoSectionEl.setAttribute('aria-label', t('infoSectionAria'));
   if (infoHeadingEl) infoHeadingEl.textContent = t('infoHeading');
   if (infoLine1El) infoLine1El.textContent = t('infoLine1');
@@ -998,12 +1106,52 @@ function setLanguage(lang, persist = true) {
 
   updateThemeToggleUI();
   updateShareButtonForSpot(activeSpot);
+  updateFirstRunHintVisibility();
   updateControlBadges();
 }
 
-function setShareStatus(message = '') {
-  if (!shareStatusEl) return;
-  shareStatusEl.textContent = message;
+function addTemporaryClass(element, className, durationMs = 220) {
+  if (!element) return;
+  element.classList.remove(className);
+  void element.offsetWidth;
+  element.classList.add(className);
+  window.setTimeout(() => {
+    element.classList.remove(className);
+  }, durationMs);
+}
+
+function setHelpExpanded(isExpanded) {
+  if (!helpToggleBtnEl || !helpPanelEl) return;
+  helpToggleBtnEl.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+  helpToggleBtnEl.setAttribute('aria-label', isExpanded ? t('helpToggleHide') : t('helpToggleLabel'));
+  helpToggleBtnEl.textContent = t('helpToggleLabel');
+  helpPanelEl.hidden = !isExpanded;
+  if (helpSwitchEl) {
+    helpSwitchEl.classList.toggle('is-active', isExpanded);
+  }
+}
+
+function showStatusMessage(messageKey, vars = {}, timeoutMs = 2600) {
+  if (!statusBarEl) return;
+
+  const message = t(messageKey, vars);
+  statusBarEl.textContent = message;
+  statusBarEl.hidden = false;
+  addTemporaryClass(statusBarEl, 'is-visible', 220);
+
+  if (statusMessageTimeoutId) {
+    clearTimeout(statusMessageTimeoutId);
+  }
+
+  statusMessageTimeoutId = window.setTimeout(() => {
+    statusBarEl.hidden = true;
+    statusBarEl.textContent = '';
+  }, timeoutMs);
+}
+
+function updateFirstRunHintVisibility() {
+  if (!firstRunHintEl) return;
+  firstRunHintEl.hidden = !shouldShowFirstRunHint;
 }
 
 function updateShareButtonForSpot(spot) {
@@ -1015,7 +1163,7 @@ function updateShareButtonForSpot(spot) {
   shareLinkBtnEl.setAttribute('aria-label', t('shareLinkLabel'));
 
   if (!hasActiveSpot) {
-    setShareStatus('');
+    return;
   }
 }
 
@@ -1823,6 +1971,12 @@ function selectSpot(spot, method, query, options = {}) {
   if (!stableSpot) return false;
 
   const matchBy = method === 'substring' ? detectSubstringMatchField(stableSpot, query) : 'name';
+
+  if (method !== 'restore' && shouldShowFirstRunHint) {
+    shouldShowFirstRunHint = false;
+    updateFirstRunHintVisibility();
+  }
+
   updateForecastForSpot(stableSpot);
   highlightMapMarkerForSpot(stableSpot);
 
@@ -1882,6 +2036,7 @@ function resetView() {
   }
 
   setSearchMessage(t('resetViewDone'), '');
+  showStatusMessage('statusViewReset');
 }
 
 function handleSearch() {
@@ -2001,6 +2156,7 @@ favoriteToggleBtnEl.addEventListener('click', () => {
   saveFavoritesToStorage();
   updateFavoriteToggleForSpot(activeSpot);
   renderFavoritesList();
+  addTemporaryClass(favoriteToggleBtnEl, 'is-soft-pulse');
 });
 
 if (shareLinkBtnEl) {
@@ -2013,15 +2169,10 @@ if (shareLinkBtnEl) {
       const copied = await copyTextToClipboard(deepLink);
       if (!copied) return;
 
-      setShareStatus(t('shareLinkCopied'));
-      if (shareStatusTimeoutId) {
-        clearTimeout(shareStatusTimeoutId);
-      }
-      shareStatusTimeoutId = window.setTimeout(() => {
-        setShareStatus('');
-      }, 2200);
+      addTemporaryClass(shareLinkBtnEl, 'is-soft-pulse');
+      showStatusMessage('statusLinkCopied');
     } catch {
-      setShareStatus('');
+      // Geen status tonen bij copy-fout om ruis te beperken.
     }
   });
 }
@@ -2064,16 +2215,26 @@ if (languageSelectEl) {
   });
 }
 
+if (helpToggleBtnEl && helpPanelEl) {
+  setHelpExpanded(false);
+  helpToggleBtnEl.addEventListener('click', () => {
+    const isExpanded = helpToggleBtnEl.getAttribute('aria-expanded') === 'true';
+    setHelpExpanded(!isExpanded);
+  });
+}
+
 if (themeToggleBtnEl) {
   themeToggleBtnEl.addEventListener('click', () => {
     const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme, true);
+    addTemporaryClass(themeToggleBtnEl, 'is-soft-pulse');
   });
 }
 
 if (resetViewButtonEl) {
   resetViewButtonEl.addEventListener('click', () => {
     resetView();
+    addTemporaryClass(resetViewButtonEl, 'is-soft-pulse');
   });
 }
 
@@ -2118,6 +2279,8 @@ updateShareButtonForSpot(null);
 const deepLinkedSpot = getDeepLinkedSpotFromUrl();
 const restoredSpot = getLastSpotFromStorage();
 const initialSpot = deepLinkedSpot ?? restoredSpot ?? SURF_SPOTS[0];
+shouldShowFirstRunHint = !deepLinkedSpot && !restoredSpot;
+updateFirstRunHintVisibility();
 
 setForecastMeta(t('forecastMetaMock'));
 setSearchMessage(t('searchHintDefault'), '');
