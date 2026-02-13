@@ -6,6 +6,8 @@ const temperatureEl = document.getElementById('temperature');
 const forecastMetaEl = document.getElementById('forecastMeta');
 const surfRatingEl = document.getElementById('surfRating');
 const ratingExplanationEl = document.getElementById('ratingExplanation');
+const legendToggleBtnEl = document.getElementById('legendToggleBtn');
+const ratingLegendBodyEl = document.getElementById('ratingLegendBody');
 const favoriteToggleBtnEl = document.getElementById('favoriteToggleBtn');
 const favoritesListEl = document.getElementById('favoritesList');
 const timeSelectorEl = document.getElementById('timeSelector');
@@ -186,6 +188,13 @@ function renderSpot(spot, ratingConditions = spot) {
   windEl.textContent = `${spot.windSnelheidKnopen} kn ${spot.windRichting}`;
   temperatureEl.textContent = `${spot.watertemperatuurC} °C`;
   renderSurfRating(ratingConditions);
+}
+
+function setLegendExpanded(isExpanded) {
+  if (!legendToggleBtnEl || !ratingLegendBodyEl) return;
+  legendToggleBtnEl.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+  legendToggleBtnEl.textContent = isExpanded ? 'Verberg uitleg' : 'Toon uitleg';
+  ratingLegendBodyEl.hidden = !isExpanded;
 }
 
 function setForecastMeta(message, type = 'default') {
@@ -879,6 +888,14 @@ favoritesListEl.addEventListener('click', (event) => {
 
   selectSpot(spot, 'favorite', spot.naam);
 });
+
+if (legendToggleBtnEl && ratingLegendBodyEl) {
+  setLegendExpanded(false);
+  legendToggleBtnEl.addEventListener('click', () => {
+    const isExpanded = legendToggleBtnEl.getAttribute('aria-expanded') === 'true';
+    setLegendExpanded(!isExpanded);
+  });
+}
 
 loadFavoritesFromStorage();
 renderFavoritesList();

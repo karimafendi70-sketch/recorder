@@ -63,6 +63,10 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 
 ## Changelog
 
+- **v0.1.1 – Patch**
+	- Inklapbare legend toegevoegd onder de surf-rating met toggle **Toon uitleg / Verberg uitleg**.
+	- Forecastkaart blijft compacter op kleinere schermen, terwijl alle uitleg beschikbaar blijft.
+
 - **v0.1 – MVP**
 	- Eerste werkende versie met:
 		- multi-spot live forecast via Open-Meteo (marine + weer);

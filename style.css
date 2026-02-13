@@ -252,10 +252,36 @@ body {
 
 .rating-legend {
   margin: -0.3rem 0 0.9rem;
-  padding: 0.55rem 0.7rem;
+  padding: 0.45rem 0.6rem;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
+}
+
+.legend-toggle {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.legend-toggle:hover {
+  background: #f8fafc;
+}
+
+.legend-toggle:focus-visible {
+  outline: 2px solid #94a3b8;
+  outline-offset: 2px;
+}
+
+.rating-legend-body {
+  margin-top: 0.5rem;
 }
 
 .rating-legend-title {

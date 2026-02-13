@@ -38,14 +38,25 @@
         <p id="surfRating" class="surf-rating rating-neutral">Surf rating: n.v.t.</p>
         <p id="ratingExplanation" class="rating-explanation">Waarom deze rating? Geen nadere uitleg beschikbaar.</p>
         <div class="rating-legend" aria-label="Uitleg surf rating en windtermen">
-          <p class="rating-legend-title">Legenda</p>
-          <ul class="rating-legend-list">
-            <li><span class="legend-dot legend-dot-good" aria-hidden="true"></span>Groen (4–5/5): goede surf, vaak prima golfhoogte en periode, wind relatief gunstig.</li>
-            <li><span class="legend-dot legend-dot-ok" aria-hidden="true"></span>Oranje (3/5): oké surf, surfbaar maar niet top (bijv. matige golfhoogte of wat meer wind).</li>
-            <li><span class="legend-dot legend-dot-bad" aria-hidden="true"></span>Rood (1–2/5): minder goede surf (te klein, te groot of te veel/onhandige wind).</li>
-            <li><strong>Onshore wind:</strong> wind blaast richting het strand, maakt golven vaak rommelig.</li>
-            <li><strong>Offshore wind:</strong> wind blaast van land naar zee, kan golven vaak cleaner maken.</li>
-          </ul>
+          <button
+            id="legendToggleBtn"
+            class="legend-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="ratingLegendBody"
+          >
+            Toon uitleg
+          </button>
+          <div id="ratingLegendBody" class="rating-legend-body" hidden>
+            <p class="rating-legend-title">Legenda</p>
+            <ul class="rating-legend-list">
+              <li><span class="legend-dot legend-dot-good" aria-hidden="true"></span>Groen (4–5/5): goede surf, vaak prima golfhoogte en periode, wind relatief gunstig.</li>
+              <li><span class="legend-dot legend-dot-ok" aria-hidden="true"></span>Oranje (3/5): oké surf, surfbaar maar niet top (bijv. matige golfhoogte of wat meer wind).</li>
+              <li><span class="legend-dot legend-dot-bad" aria-hidden="true"></span>Rood (1–2/5): minder goede surf (te klein, te groot of te veel/onhandige wind).</li>
+              <li><strong>Onshore wind:</strong> wind blaast richting het strand, maakt golven vaak rommelig.</li>
+              <li><strong>Offshore wind:</strong> wind blaast van land naar zee, kan golven vaak cleaner maken.</li>
+            </ul>
+          </div>
         </div>
         <div id="timeSelector" class="time-selector" hidden aria-label="Selecteer tijdvak">
           <button class="time-slot-btn" type="button" data-offset="0">Nu</button>
