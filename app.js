@@ -34,6 +34,12 @@ const forecastLabelWindEl = document.getElementById('forecastLabelWind');
 const forecastLabelTemperatureEl = document.getElementById('forecastLabelTemperature');
 const favoritesHeadingEl = document.getElementById('favoritesHeading');
 const favoritesSectionEl = document.getElementById('favoritesSection');
+const infoSectionEl = document.getElementById('infoSection');
+const infoHeadingEl = document.getElementById('infoHeading');
+const infoLine1El = document.getElementById('infoLine1');
+const infoLine2El = document.getElementById('infoLine2');
+const infoLine3El = document.getElementById('infoLine3');
+const infoLine4El = document.getElementById('infoLine4');
 const levelSelectEl = document.getElementById('levelSelect');
 const legendToggleBtnEl = document.getElementById('legendToggleBtn');
 const ratingLegendBodyEl = document.getElementById('ratingLegendBody');
@@ -175,6 +181,64 @@ const translations = {
     appTitle: 'FreeSurfCast', appSubtitle: 'Kostenlose Surf-Vorhersage mit klaren Erklärungen.', languageLabel: 'Sprache', searchSectionAria: 'Surfspot suchen', searchLabel: 'Einen Surfspot suchen', searchPlaceholder: 'Z. B. Scheveningen oder Portugal', searchButton: 'Suchen', searchHintDefault: 'Spot eingeben und Enter drücken oder Suchen klicken.', searchHintNoDirect: 'Keine direkte Übereinstimmung. Enter für smarte Suche drücken.', searchHintNotFound: 'Kein Surfspot gefunden', searchSuggestionsCount: '{count} Vorschlag/Vorschläge gefunden.', mapSectionAria: 'Surfspot-Karte', mapTitle: 'Kartenansicht', mapNote: 'Marker anklicken, um den Spot zu laden.', mapAria: 'Karte mit Surfspots', mapLoadError: 'Karte konnte nicht geladen werden.', ratingPrefix: 'Surf-Bewertung', ratingNotAvailable: 'k. A.', ratingWhyPrefix: 'Warum diese Bewertung?', ratingNoDetails: 'Noch keine zusätzliche Erklärung verfügbar.', ratingLabel1: 'Schlecht', ratingLabel2: 'Mäßig', ratingLabel3: 'OK', ratingLabel4: 'Gut', ratingLabel5: 'Top', expGoodHeight: '+ gute Wellenhöhe', expDecentHeight: '+ ordentliche Wellenhöhe', expTooSmallHeight: '- Wellen zu klein', expTooHighHeight: '- Wellen zu hoch', expLongPeriod: '+ lange Periode', expDecentPeriod: '+ ordentliche Periode', expShortPeriod: '- kurze Periode', expLightWind: '+ nicht zu starker Wind', expHardWind: '- starker Wind', expStrongWind: '- recht kräftiger Wind', expGoodWindDir: '+ günstige Windrichtung', expOnshoreWind: '- onshore Windrichtung', levelLabel: 'Niveau', levelAll: 'Alle Niveaus', levelBeginner: 'Anfänger', levelAdvanced: 'Fortgeschritten', levelBeginnerChallenging: 'Hinweis: Für Anfänger kann das anspruchsvoll sein.', levelBeginnerCalm: 'Für Anfänger wirken die Bedingungen meist machbar.', levelAdvancedChallenging: 'Für Fortgeschrittene kann das eine gute Herausforderung sein.', levelAdvancedCalm: 'Für Fortgeschrittene sind das eher ruhige Bedingungen.', legendAria: 'Legende für Surfscore und Wind', legendToggleShow: 'Erklärung anzeigen', legendToggleHide: 'Erklärung ausblenden', legendTitle: 'Kurze Legende', legendItemGood: 'Grün (4–5/5): oft gute Bedingungen.', legendItemMedium: 'Orange (3/5): surfbar, aber nicht optimal.', legendItemBad: 'Rot (1–2/5): oft schwierig oder schwach.', legendItemOnshore: 'Onshore: Wind Richtung Strand, Wellen oft unruhiger.', legendItemOffshore: 'Offshore: Wind von Land aufs Meer, Wellen oft sauberer.', timeSelectorAria: 'Zeitfenster wählen', timeNow: 'Jetzt', timePlus3h: '+3h', timePlus6h: '+6h', timePlus9h: '+9h', timeSlotUnavailable: 'Für dieses Zeitfenster nicht verfügbar', forecastWaveHeight: 'Wellenhöhe', forecastWavePeriod: 'Periode', forecastWind: 'Wind', forecastTemperature: 'Temperatur', favoritesHeading: 'Deine Favoriten', favoritesEmpty: 'Noch keine Favoriten', favoriteButtonOff: '☆ Favorit', favoriteButtonOn: '★ Favorit', favoriteOpened: 'Favorit geöffnet: {spot} ({country})', favoriteAdded: 'Favorit hinzugefügt: {spot}', favoriteRemoved: 'Favorit entfernt: {spot}', mapSelected: 'Spot über Karte gewählt: {spot} ({country})', searchLoadedVia: 'Vorhersage geladen über {via}: {spot} ({country})', searchBestVia: 'Keine exakte Übereinstimmung, bestes Ergebnis über {via}: {spot} ({country})', viaName: 'Name', viaCountry: 'Land', liveNoTimeslot: 'Für dieses Zeitfenster sind keine Live-Daten verfügbar.', forecastMetaMock: 'Quelle: Mock-Daten', forecastMetaMissingCoords: 'Quelle: Mock-Daten (Spot ohne Koordinaten).', forecastMetaLoading: 'Live-Daten von Open-Meteo für {spot} werden geladen ...', forecastMetaLive: 'Live über Open-Meteo · {timeLabel}', forecastMetaError: 'Live-API-Fehler für {spot}, Fallback auf Mock-Daten.', searchApiError: 'Live-API-Fehler für {spot}. Mock-Daten werden verwendet.', fallbackUnknownTime: 'unbekannte Zeit'
   }
 };
+
+const infoTranslations = {
+  nl: {
+    infoSectionAria: 'Over FreeSurfCast en disclaimer',
+    infoHeading: 'Over FreeSurfCast',
+    infoLine1: 'FreeSurfCast helpt surfers snel een gevoel te krijgen bij de verwachte condities.',
+    infoLine2: 'Forecasts en ratings zijn indicatief en geen officiële waarschuwing.',
+    infoLine3: 'Controleer altijd lokale omstandigheden, weerberichten en veiligheidsinformatie.',
+    infoLine4: 'Gebruik van deze app en surfen gebeurt op eigen risico; dit is een hobbyproject.'
+  },
+  en: {
+    infoSectionAria: 'About FreeSurfCast and disclaimer',
+    infoHeading: 'About FreeSurfCast',
+    infoLine1: 'FreeSurfCast helps surfers quickly get a feel for expected conditions.',
+    infoLine2: 'Forecasts and ratings are indicative and not an official warning.',
+    infoLine3: 'Always check local conditions, weather updates, and safety information.',
+    infoLine4: 'Using this app and surfing are at your own risk; this is a hobby project.'
+  },
+  fr: {
+    infoSectionAria: 'À propos de FreeSurfCast et avertissement',
+    infoHeading: 'À propos de FreeSurfCast',
+    infoLine1: 'FreeSurfCast aide les surfeurs à évaluer rapidement les conditions attendues.',
+    infoLine2: 'Les prévisions et notes sont indicatives et ne sont pas une alerte officielle.',
+    infoLine3: 'Vérifiez toujours les conditions locales, la météo et les infos de sécurité.',
+    infoLine4: 'L\'usage de cette app et le surf se font à vos risques; c\'est un projet hobby.'
+  },
+  es: {
+    infoSectionAria: 'Acerca de FreeSurfCast y descargo de responsabilidad',
+    infoHeading: 'Acerca de FreeSurfCast',
+    infoLine1: 'FreeSurfCast ayuda a los surfistas a hacerse una idea rápida de las condiciones.',
+    infoLine2: 'Las previsiones y valoraciones son orientativas y no son una alerta oficial.',
+    infoLine3: 'Consulta siempre condiciones locales, partes meteorológicos y seguridad.',
+    infoLine4: 'Usar esta app y surfear es bajo tu propio riesgo; es un proyecto hobby.'
+  },
+  pt: {
+    infoSectionAria: 'Sobre o FreeSurfCast e aviso',
+    infoHeading: 'Sobre o FreeSurfCast',
+    infoLine1: 'O FreeSurfCast ajuda surfistas a ter uma leitura rápida das condições esperadas.',
+    infoLine2: 'Previsões e classificações são indicativas e não são aviso oficial.',
+    infoLine3: 'Verifique sempre condições locais, meteorologia e informação de segurança.',
+    infoLine4: 'O uso desta app e o surf são por sua conta e risco; é um projeto hobby.'
+  },
+  de: {
+    infoSectionAria: 'Über FreeSurfCast und Haftungsausschluss',
+    infoHeading: 'Über FreeSurfCast',
+    infoLine1: 'FreeSurfCast hilft Surfern, die erwarteten Bedingungen schnell einzuschätzen.',
+    infoLine2: 'Vorhersagen und Bewertungen sind Richtwerte und keine offizielle Warnung.',
+    infoLine3: 'Prüfe immer lokale Bedingungen, Wetterinfos und Sicherheitsmeldungen.',
+    infoLine4: 'Nutzung dieser App und Surfen erfolgen auf eigenes Risiko; dies ist ein Hobbyprojekt.'
+  }
+};
+
+Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
 let currentSuggestions = [];
 let activeSuggestionIndex = -1;
 let liveRequestId = 0;
@@ -443,6 +507,12 @@ function setLanguage(lang, persist = true) {
   if (forecastLabelTemperatureEl) forecastLabelTemperatureEl.textContent = t('forecastTemperature');
   if (favoritesHeadingEl) favoritesHeadingEl.textContent = t('favoritesHeading');
   if (favoritesSectionEl) favoritesSectionEl.setAttribute('aria-label', t('favoritesHeading'));
+  if (infoSectionEl) infoSectionEl.setAttribute('aria-label', t('infoSectionAria'));
+  if (infoHeadingEl) infoHeadingEl.textContent = t('infoHeading');
+  if (infoLine1El) infoLine1El.textContent = t('infoLine1');
+  if (infoLine2El) infoLine2El.textContent = t('infoLine2');
+  if (infoLine3El) infoLine3El.textContent = t('infoLine3');
+  if (infoLine4El) infoLine4El.textContent = t('infoLine4');
 
   setLegendExpanded(legendToggleBtnEl?.getAttribute('aria-expanded') === 'true');
   updateFavoriteToggleForSpot(activeSpot);

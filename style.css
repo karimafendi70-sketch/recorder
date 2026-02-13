@@ -547,6 +547,30 @@ body {
   font-size: 0.95rem;
 }
 
+.info-section {
+  margin-top: 0.95rem;
+  background: #f8fafc;
+  border: 1px solid #dbe4ef;
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+}
+
+.info-heading {
+  margin: 0 0 0.45rem;
+  font-size: 0.98rem;
+  color: #0f172a;
+}
+
+.info-list {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.25rem;
+  color: #334155;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
 @media (max-width: 620px) {
   .app {
     padding: 0.75rem;
@@ -671,6 +695,21 @@ body {
     margin-top: 0.8rem;
     padding-top: 0.7rem;
   }
+
+  .info-section {
+    margin-top: 0.75rem;
+    padding: 0.62rem 0.7rem;
+  }
+
+  .info-heading {
+    margin-bottom: 0.38rem;
+    font-size: 0.92rem;
+  }
+
+  .info-list {
+    gap: 0.22rem;
+    font-size: 0.84rem;
+  }
 }
 
 @media (max-width: 400px) {
@@ -711,5 +750,14 @@ body {
 
   .level-filter {
     gap: 0.4rem;
+  }
+
+  .info-section {
+    padding: 0.55rem 0.62rem;
+  }
+
+  .info-list {
+    font-size: 0.8rem;
+    line-height: 1.35;
   }
 }

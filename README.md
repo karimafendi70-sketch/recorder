@@ -26,6 +26,7 @@ Probeer FreeSurfCast direct op [GitHub Pages](https://karimafendi70-sketch.githu
 	- korte uitleg: **Waarom deze rating?** met plus- en minpunten,
 	- eenvoudige niveau-filter: **Alle niveaus / Beginner / Gevorderd** voor nuance in de uitleg.
 - Meertalige UI-toggle met taalkeuze: **NL, EN, FR, ES, PT, DE** (taalvoorkeur wordt onthouden via `localStorage`).
+- Compacte **Over/Help/Disclaimer**-sectie onderaan de pagina, volledig meertalig (NL/EN/FR/ES/PT/DE).
 - Favorieten:
 	- spots markeren als favoriet,
 	- overzichtslijst met favorieten,
@@ -69,6 +70,10 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 - Deployen naar GitHub Pages of Vercel.
 
 ## Changelog
+
+- **v0.1.5 – info/disclaimer update**
+	- Compacte meertalige sectie toegevoegd: **Over FreeSurfCast / Help / Disclaimer** met korte veiligheids- en gebruikscontext.
+	- Teksten koppelen mee aan de bestaande taal-toggle (NL/EN/FR/ES/PT/DE).
 
 - **v0.1.4 – i18n update**
 	- Eenvoudige meertalige taal-toggle toegevoegd (NL/EN/FR/ES/PT/DE) voor vaste UI-teksten, legend, rating-uitleg en niveau-filter.
