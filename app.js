@@ -505,6 +505,7 @@ const powerUserTranslations = {
     detailConditionsLabel: 'Conditie',
     detailAdviceLabel: 'Advies',
     detailSelectPrompt: 'Selecteer een tijdvak voor extra detail.',
+    detailNoResults: 'Geen details beschikbaar met de huidige filters. Pas filters aan.',
     detailSummaryLine: '{windText} met {swellText}, overwegend {conditionText}.',
     detailAdviceBeginner: 'Meestal geschikt voor beginners.',
     detailAdviceIntermediate: 'Geschikter voor intermediate surfers.',
@@ -537,6 +538,7 @@ const powerUserTranslations = {
     detailConditionsLabel: 'Condition',
     detailAdviceLabel: 'Advice',
     detailSelectPrompt: 'Select a time slot to see more detail.',
+    detailNoResults: 'No details available with current filters. Adjust filters to continue.',
     detailSummaryLine: '{windText} with {swellText}, mostly {conditionText}.',
     detailAdviceBeginner: 'Usually suitable for beginners.',
     detailAdviceIntermediate: 'Better suited for intermediate surfers.',
@@ -569,6 +571,7 @@ const powerUserTranslations = {
     detailConditionsLabel: 'Condition',
     detailAdviceLabel: 'Conseil',
     detailSelectPrompt: 'Sélectionnez un créneau pour plus de détails.',
+    detailNoResults: 'Aucun détail disponible avec ces filtres. Ajustez les filtres.',
     detailSummaryLine: '{windText} avec {swellText}, plutôt {conditionText}.',
     detailAdviceBeginner: 'Souvent adapté aux débutants.',
     detailAdviceIntermediate: 'Plutôt pour niveau intermédiaire.',
@@ -601,6 +604,7 @@ const powerUserTranslations = {
     detailConditionsLabel: 'Condición',
     detailAdviceLabel: 'Consejo',
     detailSelectPrompt: 'Selecciona una franja para ver más detalle.',
+    detailNoResults: 'No hay detalles disponibles con estos filtros. Ajusta los filtros.',
     detailSummaryLine: '{windText} con {swellText}, mayormente {conditionText}.',
     detailAdviceBeginner: 'Normalmente apto para principiantes.',
     detailAdviceIntermediate: 'Más adecuado para nivel intermedio.',
@@ -633,6 +637,7 @@ const powerUserTranslations = {
     detailConditionsLabel: 'Condição',
     detailAdviceLabel: 'Conselho',
     detailSelectPrompt: 'Selecione um horário para ver mais detalhe.',
+    detailNoResults: 'Sem detalhes disponíveis com estes filtros. Ajuste os filtros.',
     detailSummaryLine: '{windText} com {swellText}, maioritariamente {conditionText}.',
     detailAdviceBeginner: 'Normalmente adequado para iniciantes.',
     detailAdviceIntermediate: 'Mais adequado para nível intermédio.',
@@ -665,6 +670,7 @@ const powerUserTranslations = {
     detailConditionsLabel: 'Bedingung',
     detailAdviceLabel: 'Hinweis',
     detailSelectPrompt: 'Wähle ein Zeitfenster für mehr Details.',
+    detailNoResults: 'Keine Details mit den aktuellen Filtern verfügbar. Filter anpassen.',
     detailSummaryLine: '{windText} mit {swellText}, überwiegend {conditionText}.',
     detailAdviceBeginner: 'Meist für Anfänger geeignet.',
     detailAdviceIntermediate: 'Eher für Fortgeschrittene geeignet.',
@@ -1413,6 +1419,24 @@ function getWindStrengthLabel(speed) {
   return t('detailWindModerate');
 }
 
+function getSwellHeightRangeText(spotValues) {
+  const heights = [
+    spotValues?.primaireGolfHoogteMeter,
+    spotValues?.golfHoogteMeter,
+    spotValues?.secundaireGolfHoogteMeter
+  ].filter((value) => Number.isFinite(value));
+
+  if (!heights.length) return '-';
+
+  const minHeight = Math.min(...heights);
+  const maxHeight = Math.max(...heights);
+  if (Math.abs(maxHeight - minHeight) < 0.05) {
+    return `${maxHeight.toFixed(1)} m`;
+  }
+
+  return `${minHeight.toFixed(1)}–${maxHeight.toFixed(1)} m`;
+}
+
 function getWindRelationLabel(slotContext) {
   const windDegrees = getWindDegreesForSpot(slotContext?.mergedSpot ?? slotContext?.values);
   const coastOrientation = getCoastOrientationDeg(slotContext?.mergedSpot);
@@ -1433,26 +1457,21 @@ function formatWindDescription(slotContext) {
   const windStrength = getWindStrengthLabel(spotValues.windSnelheidKnopen);
   const windRelation = getWindRelationLabel(slotContext);
 
-  return `${windStrength} ${windCompass} ${windRelation} (${windSpeed})`;
+  return `${windStrength} ${windCompass} ${windRelation} wind (${windSpeed})`;
 }
 
 function formatSwellDescription(slotContext) {
   const spotValues = slotContext?.mergedSpot ?? slotContext?.values ?? {};
-  const waveHeight = Number.isFinite(spotValues.golfHoogteMeter)
-    ? `${spotValues.golfHoogteMeter.toFixed(1)} m`
-    : '-';
+  const waveHeight = getSwellHeightRangeText(spotValues);
   const wavePeriod = Number.isFinite(spotValues.golfPeriodeSeconden)
     ? `${Math.round(spotValues.golfPeriodeSeconden)} s`
     : '-';
   const swellDirection = getSwellDirectionDegrees(spotValues);
   const directionSegment = Number.isFinite(swellDirection)
-    ? `${Math.round(swellDirection)}° ${formatWindDirection(swellDirection)}`
+    ? `${formatWindDirection(swellDirection)} (${Math.round(swellDirection)}°)`
     : '-';
-  const secondary = Number.isFinite(spotValues.secundaireGolfHoogteMeter)
-    ? ` · +${spotValues.secundaireGolfHoogteMeter.toFixed(1)}m`
-    : '';
 
-  return `${waveHeight} @ ${wavePeriod} · ${directionSegment}${secondary}`;
+  return `${waveHeight} ${directionSegment} swell @ ${wavePeriod}`;
 }
 
 function formatSkillAdvice(slotContext) {
@@ -1480,12 +1499,14 @@ function buildSlotDetailLines(slotContext) {
   };
 }
 
-function renderSlotDetail(selectedSlotContext) {
+function renderSlotDetail(selectedSlotContext, options = {}) {
   if (!slotDetailEl) return;
+
+  const noResults = Boolean(options.noResults);
 
   if (!selectedSlotContext) {
     slotDetailEl.innerHTML = `
-      <p class="slot-detail-empty">${t('detailSelectPrompt')}</p>
+      <p class="slot-detail-empty">${noResults ? t('detailNoResults') : t('detailSelectPrompt')}</p>
     `;
     return;
   }
@@ -1562,7 +1583,7 @@ function renderCompactForecastList() {
   if (!filteredSlots.length) {
     forecastListViewEl.innerHTML = `<p class="compact-forecast-empty">${t('noResultsWithFilters')}</p>`;
     forecastListViewEl.hidden = false;
-    renderSlotDetail(null);
+    renderSlotDetail(null, { noResults: true });
     return;
   }
 
@@ -1601,7 +1622,7 @@ function renderCompactForecastList() {
     <ul class="compact-forecast-list">${rows}</ul>
   `;
   forecastListViewEl.hidden = false;
-  renderSlotDetail(selectedSlot);
+  renderSlotDetail(selectedSlot, { noResults: false });
 }
 
 function updateViewModeUI() {
@@ -2865,7 +2886,9 @@ function updateTimeSelectorButtons() {
   }
 
   updateNoResultsWithFiltersMessage(hasFilteredResults);
-  renderSlotDetail(selectedVisibleSlot);
+  renderSlotDetail(selectedVisibleSlot, {
+    noResults: !hasFilteredResults && Object.values(activeConditionFilters).some(Boolean)
+  });
 }
 
 function mergeWithFallbackSpot(spot, liveValues) {

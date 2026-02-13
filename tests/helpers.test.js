@@ -174,6 +174,85 @@ function getSelectedSlotContext(allSlotContexts, selectedSlotKey) {
   return allSlotContexts[0] ?? null;
 }
 
+function getWindStrengthLabel(speed) {
+  if (!Number.isFinite(speed)) return 'moderate';
+  if (speed <= 11) return 'light';
+  if (speed >= 18) return 'strong';
+  return 'moderate';
+}
+
+function getSwellHeightRangeText(spotValues) {
+  const heights = [
+    spotValues?.primaireGolfHoogteMeter,
+    spotValues?.golfHoogteMeter,
+    spotValues?.secundaireGolfHoogteMeter
+  ].filter((value) => Number.isFinite(value));
+
+  if (!heights.length) return '-';
+
+  const minHeight = Math.min(...heights);
+  const maxHeight = Math.max(...heights);
+  if (Math.abs(maxHeight - minHeight) < 0.05) {
+    return `${maxHeight.toFixed(1)} m`;
+  }
+
+  return `${minHeight.toFixed(1)}–${maxHeight.toFixed(1)} m`;
+}
+
+function getSwellDirectionDegrees(spot) {
+  const swellDirection = normalizeWindDegrees(spot?.swellRichtingGraden);
+  if (Number.isFinite(swellDirection)) return swellDirection;
+
+  const waveDirection = normalizeWindDegrees(spot?.golfRichtingGraden);
+  if (Number.isFinite(waveDirection)) return waveDirection;
+
+  return null;
+}
+
+function getWindRelationLabel(slotContext) {
+  const windDegrees = getWindDegreesForSpot(slotContext?.mergedSpot ?? slotContext?.values);
+  const coastOrientation = getCoastOrientationDeg(slotContext?.mergedSpot);
+  const relation = getWindRelativeToCoast(coastOrientation, windDegrees);
+
+  if (relation === 'offshore') return 'offshore';
+  if (relation === 'onshore') return 'onshore';
+  return 'cross';
+}
+
+function formatWindDescription(slotContext) {
+  const spotValues = slotContext?.mergedSpot ?? slotContext?.values ?? {};
+  const windDegrees = getWindDegreesForSpot(spotValues);
+  const windCompass = formatWindDirection(
+    Number.isFinite(windDegrees) ? windDegrees : spotValues.windRichting
+  );
+  const windSpeed = formatWindSpeed(spotValues.windSnelheidKnopen);
+  const windStrength = getWindStrengthLabel(spotValues.windSnelheidKnopen);
+  const windRelation = getWindRelationLabel(slotContext);
+
+  return `${windStrength} ${windCompass} ${windRelation} wind (${windSpeed})`;
+}
+
+function formatSwellDescription(slotContext) {
+  const spotValues = slotContext?.mergedSpot ?? slotContext?.values ?? {};
+  const waveHeight = getSwellHeightRangeText(spotValues);
+  const wavePeriod = Number.isFinite(spotValues.golfPeriodeSeconden)
+    ? `${Math.round(spotValues.golfPeriodeSeconden)} s`
+    : '-';
+  const swellDirection = getSwellDirectionDegrees(spotValues);
+  const directionSegment = Number.isFinite(swellDirection)
+    ? `${formatWindDirection(swellDirection)} (${Math.round(swellDirection)}°)`
+    : '-';
+
+  return `${waveHeight} ${directionSegment} swell @ ${wavePeriod}`;
+}
+
+function formatSkillAdvice(slotContext) {
+  if (!slotContext) return 'intermediate';
+  if (slotContext.challenging || slotContext.conditionTag === 'choppy') return 'advanced';
+  if (slotContext.conditionTag === 'clean' && !slotContext.challenging) return 'beginner';
+  return 'intermediate';
+}
+
 function passesHardConditionFilters(slotContext, filters) {
   if (!slotContext) return false;
 
@@ -400,6 +479,63 @@ function runSlotSelectionTests() {
   assertEqual(getSelectedSlotContext([], 'x'), null, 'getSelectedSlotContext(empty)');
 }
 
+function runSlotDetailHelperTests() {
+  const offshoreSlot = {
+    mergedSpot: {
+      coastOrientationDeg: 270,
+      windRichtingGraden: 90,
+      windSnelheidKnopen: 10,
+      golfHoogteMeter: 1.2,
+      primaireGolfHoogteMeter: 1.0,
+      secundaireGolfHoogteMeter: 1.5,
+      golfPeriodeSeconden: 9,
+      swellRichtingGraden: 290
+    },
+    conditionTag: 'clean',
+    challenging: false
+  };
+
+  const onshoreSlot = {
+    mergedSpot: {
+      coastOrientationDeg: 270,
+      windRichtingGraden: 270,
+      windSnelheidKnopen: 22,
+      golfHoogteMeter: 2.5,
+      golfPeriodeSeconden: 11,
+      swellRichtingGraden: 275
+    },
+    conditionTag: 'choppy',
+    challenging: true
+  };
+
+  assertEqual(getWindStrengthLabel(9), 'light', 'getWindStrengthLabel(light)');
+  assertEqual(getWindStrengthLabel(14), 'moderate', 'getWindStrengthLabel(moderate)');
+  assertEqual(getWindStrengthLabel(20), 'strong', 'getWindStrengthLabel(strong)');
+
+  assertEqual(getSwellHeightRangeText({ golfHoogteMeter: 1.2 }), '1.2 m', 'getSwellHeightRangeText(single)');
+  assertEqual(
+    getSwellHeightRangeText({ primaireGolfHoogteMeter: 1.0, golfHoogteMeter: 1.2, secundaireGolfHoogteMeter: 1.5 }),
+    '1.0–1.5 m',
+    'getSwellHeightRangeText(range)'
+  );
+
+  assertEqual(
+    formatWindDescription(offshoreSlot),
+    'light E offshore wind (10 kn)',
+    'formatWindDescription(offshore)'
+  );
+
+  assertEqual(
+    formatSwellDescription(offshoreSlot),
+    '1.0–1.5 m W (290°) swell @ 9 s',
+    'formatSwellDescription(with range)'
+  );
+
+  assertEqual(formatSkillAdvice(offshoreSlot), 'beginner', 'formatSkillAdvice(beginner)');
+  assertEqual(formatSkillAdvice(onshoreSlot), 'advanced', 'formatSkillAdvice(advanced)');
+  assertEqual(formatSkillAdvice({ conditionTag: 'mixed', challenging: false }), 'intermediate', 'formatSkillAdvice(intermediate)');
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
@@ -412,6 +548,7 @@ function runAll() {
   runLocalDateKeyTests();
   runDayPartTests();
   runSlotSelectionTests();
+  runSlotDetailHelperTests();
   console.log('All tests passed');
 }
 
