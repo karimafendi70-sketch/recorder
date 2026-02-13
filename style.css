@@ -1976,6 +1976,19 @@ h3 {
   box-shadow: var(--panel-shadow);
 }
 
+.insights-panel {
+  overflow: hidden;
+}
+
+.insights-summary {
+  display: none;
+}
+
+.insights-content {
+  display: grid;
+  gap: 0.85rem;
+}
+
 .page-main .forecast-card,
 .page-main .day-overview,
 .page-main .spot-map-section,
@@ -2001,9 +2014,67 @@ h3 {
   .page-main {
     grid-template-columns: 1fr;
   }
+
+  .page-main-right {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 960px) {
+  .page-main {
+    gap: 0.85rem;
+  }
+
+  .page-main-left,
+  .page-main-right,
+  .page-footer {
+    gap: 0.75rem;
+  }
+
+  .time-selector,
+  .day-overview-cards,
+  .forecast-list,
+  .score-timeline-bars,
+  .daypart-heatmap-table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .time-slot-btn,
+  .day-overview-card,
+  .compact-forecast-item,
+  .multi-spot-item,
+  .favorite-item-btn {
+    min-height: 2.25rem;
+  }
+
+  .spot-map-canvas {
+    min-height: 220px;
+  }
 }
 
 @media (max-width: 620px) {
+  .app,
+  .page,
+  .page-main,
+  .page-main-left,
+  .page-main-right,
+  .page-footer {
+    min-width: 0;
+  }
+
+  .page-main {
+    gap: 0.75rem;
+  }
+
+  .page-main-left,
+  .page-main-right,
+  .page-footer {
+    gap: 0.68rem;
+  }
+
   .app {
     padding: 0.75rem;
   }
@@ -2187,6 +2258,59 @@ h3 {
     padding: 0.46rem 0.5rem;
   }
 
+  .insights-panel {
+    padding: 0;
+  }
+
+  .insights-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    padding: 0.56rem 0.62rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-color);
+    background: var(--control-bg);
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .insights-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .insights-summary::after {
+    content: '▾';
+    color: var(--muted-text);
+    font-size: 0.8rem;
+    line-height: 1;
+    transform-origin: center;
+    transition: transform 0.2s ease;
+  }
+
+  .insights-panel[open] .insights-summary::after {
+    transform: rotate(180deg);
+  }
+
+  .insights-content {
+    display: none;
+    gap: 0.62rem;
+    padding: 0.5rem;
+  }
+
+  .insights-panel[open] .insights-content {
+    display: grid;
+  }
+
+  .insights-content .multi-spot-overview,
+  .insights-content .daypart-heatmap,
+  .insights-content .user-preferences-panel {
+    margin: 0;
+  }
+
   .multi-spot-item {
     padding: 0.38rem 0.42rem;
   }
@@ -2223,6 +2347,7 @@ h3 {
 
   .score-timeline-bars {
     gap: 0.28rem;
+    padding-bottom: 0.08rem;
   }
 
   .timeline-bar {
@@ -2237,6 +2362,10 @@ h3 {
 
   .daypart-heatmap-table {
     min-width: 320px;
+  }
+
+  .daypart-heatmap-table-wrap {
+    padding-bottom: 0.08rem;
   }
 
   .daypart-cell {
@@ -2323,11 +2452,14 @@ h3 {
   }
 
   .day-overview-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
     gap: 0.34rem;
+    padding-bottom: 0.08rem;
   }
 
   .day-overview-card {
+    flex: 0 0 min(220px, 78vw);
     padding: 0.38rem 0.42rem;
   }
 

@@ -204,9 +204,17 @@
         <section class="page-main-right">
           <section id="slotDetail" class="slot-detail panel-card" aria-live="polite" aria-label="Slotdetails"></section>
           <section id="dailySurfReport" class="daily-surf-report panel-card" aria-live="polite" aria-label="Surfverslag"></section>
-          <section id="multiSpotOverview" class="multi-spot-overview panel-card" hidden aria-live="polite" aria-label="Beste spots voor deze dag"></section>
-          <section id="daypartHeatmap" class="daypart-heatmap panel-card" hidden aria-live="polite" aria-label="Spots per dagdeel"></section>
-          <section id="userPreferencesPanel" class="user-preferences-panel panel-card" aria-live="polite"></section>
+
+          <details class="insights-panel panel-card">
+            <summary class="insights-summary">
+              <span class="insights-summary-title">Meer insights</span>
+            </summary>
+            <div class="insights-content">
+              <section id="multiSpotOverview" class="multi-spot-overview panel-card" hidden aria-live="polite" aria-label="Beste spots voor deze dag"></section>
+              <section id="daypartHeatmap" class="daypart-heatmap panel-card" hidden aria-live="polite" aria-label="Spots per dagdeel"></section>
+              <section id="userPreferencesPanel" class="user-preferences-panel panel-card" aria-live="polite"></section>
+            </div>
+          </details>
 
           <section id="favoritesSection" class="favorites-block panel-card" aria-label="Favoriete surfspots">
             <h3 id="favoritesHeading">Jouw favorieten</h3>
