@@ -971,6 +971,73 @@ body {
   padding: 0.44rem 0.52rem;
 }
 
+.user-preferences-panel {
+  margin: -0.12rem 0 0.62rem;
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  padding: 0.48rem 0.56rem;
+  background: var(--control-bg);
+}
+
+.user-preferences-title {
+  margin: 0 0 0.38rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted-text);
+}
+
+.user-preferences-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.user-preferences-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.user-preferences-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted-text);
+}
+
+.user-preferences-select {
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  padding: 0.28rem 0.35rem;
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-size: 0.75rem;
+}
+
+.user-preferences-toggles {
+  margin-top: 0.42rem;
+  display: grid;
+  gap: 0.24rem;
+}
+
+.user-preferences-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.34rem;
+  font-size: 0.76rem;
+  color: var(--text-color);
+}
+
+.user-preferences-toggle input[type='checkbox'] {
+  margin: 0;
+  accent-color: var(--primary-bg);
+}
+
+.user-preferences-hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.72rem;
+  color: var(--soft-text);
+}
+
 .compact-forecast-view {
   margin: 0 0 0.62rem;
   border: 1px solid var(--control-border);
@@ -1942,6 +2009,20 @@ body[data-theme='dark'] .time-slot-btn.slot-good {
 
   .condition-filter-item {
     font-size: 0.74rem;
+  }
+
+  .user-preferences-panel {
+    padding: 0.46rem 0.5rem;
+  }
+
+  .user-preferences-grid {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .user-preferences-label,
+  .user-preferences-hint {
+    font-size: 0.7rem;
   }
 
   .compact-forecast-view {

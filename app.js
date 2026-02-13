@@ -94,6 +94,7 @@ const slotDetailEl = document.getElementById('slotDetail');
 const dailySurfReportEl = document.getElementById('dailySurfReport');
 const scoreTimelineEl = document.getElementById('scoreTimeline');
 const daypartHeatmapEl = document.getElementById('daypartHeatmap');
+const userPreferencesPanelEl = document.getElementById('userPreferencesPanel');
 const timeSlotNowEl = document.getElementById('timeSlotNow');
 const timeSlot3hEl = document.getElementById('timeSlot3h');
 const timeSlot6hEl = document.getElementById('timeSlot6h');
@@ -118,6 +119,7 @@ const MULTI_SPOT_TOP_LIMIT = 5;
 const FORECAST_CACHE_TTL_MS = 5 * 60 * 1000;
 const FAVORITES_STORAGE_KEY = 'freeSurfCastFavorites';
 const LAST_SPOT_STORAGE_KEY = 'freesurfcastLastSpotId';
+const USER_PREFERENCES_STORAGE_KEY = 'freesurfcastUserPreferences';
 const OPEN_METEO_MARINE_BASE_URL = 'https://marine-api.open-meteo.com/v1/marine';
 const OPEN_METEO_WEATHER_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 const LANGUAGE_STORAGE_KEY = 'freesurfcastLanguage';
@@ -977,6 +979,7 @@ const scoreExplanationTranslations = {
     scoreExpTideSupportive: '{value} Getij in een ondersteunende fase',
     scoreExpTideLessIdeal: '{value} Getij minder ideaal voor dit spot-profiel',
     scoreExpFiltersPreferenceBonus: '{value} Match met actieve filtervoorkeuren',
+    scoreExpPreferencesImpact: '{value} Persoonlijke profielvoorkeuren',
     scoreExpRawTotal: 'Ruwe som: {value}',
     scoreDebugTitle: 'Debug breakdown'
   },
@@ -995,6 +998,7 @@ const scoreExplanationTranslations = {
     scoreExpTideSupportive: '{value} Tide is in a supportive phase',
     scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
     scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpPreferencesImpact: '{value} Personal profile preference impact',
     scoreExpRawTotal: 'Raw total: {value}',
     scoreDebugTitle: 'Debug breakdown'
   },
@@ -1013,6 +1017,7 @@ const scoreExplanationTranslations = {
     scoreExpTideSupportive: '{value} Tide is in a supportive phase',
     scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
     scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpPreferencesImpact: '{value} Personal profile preference impact',
     scoreExpRawTotal: 'Raw total: {value}',
     scoreDebugTitle: 'Debug breakdown'
   },
@@ -1031,6 +1036,7 @@ const scoreExplanationTranslations = {
     scoreExpTideSupportive: '{value} Tide is in a supportive phase',
     scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
     scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpPreferencesImpact: '{value} Personal profile preference impact',
     scoreExpRawTotal: 'Raw total: {value}',
     scoreDebugTitle: 'Debug breakdown'
   },
@@ -1049,6 +1055,7 @@ const scoreExplanationTranslations = {
     scoreExpTideSupportive: '{value} Tide is in a supportive phase',
     scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
     scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpPreferencesImpact: '{value} Personal profile preference impact',
     scoreExpRawTotal: 'Raw total: {value}',
     scoreDebugTitle: 'Debug breakdown'
   },
@@ -1067,6 +1074,7 @@ const scoreExplanationTranslations = {
     scoreExpTideSupportive: '{value} Tide is in a supportive phase',
     scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
     scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpPreferencesImpact: '{value} Personal profile preference impact',
     scoreExpRawTotal: 'Raw total: {value}',
     scoreDebugTitle: 'Debug breakdown'
   }
@@ -1132,6 +1140,69 @@ const timelineHeatmapTranslations = {
     daypartHeatmapNoData: 'No usable spot scores for this day yet.',
     daypartHeatmapSpotCol: 'Spot',
     heatmapCellAria: '{spot} {dayPart}: score {score}'
+  }
+};
+
+const userPreferencesTranslations = {
+  nl: {
+    userPrefsTitle: 'Jouw surfprofiel',
+    userPrefsSkillLabel: 'Skill-level',
+    userPrefsSkillBeginner: 'Beginner',
+    userPrefsSkillIntermediate: 'Intermediate',
+    userPrefsSkillAdvanced: 'Advanced',
+    userPrefsRangeLabel: 'Voorkeur golfhoogte',
+    userPrefsRangeSmall: 'Kleiner (0.6–1.6 m)',
+    userPrefsRangeMedium: 'Gemiddeld (0.8–2.2 m)',
+    userPrefsRangeBigger: 'Groter (1.2–3.0 m)',
+    userPrefsLikesClean: 'Voorkeur clean condities',
+    userPrefsCanHandleChallenging: 'Ik kan uitdagende condities aan',
+    userPrefsAutoBeginnerFilter: 'Automatisch beginnerfilter toepassen',
+    userPrefsHint: 'Deze voorkeuren geven scores en advies een subtiele persoonlijke bias; filters kun je altijd handmatig aanpassen.',
+    userPrefsAdviceBeginnerCaution: 'Op basis van je beginner-profiel kan dit pittig uitpakken.',
+    userPrefsAdviceAdvancedChallenge: 'Op basis van je advanced-profiel kan dit juist een interessante uitdaging zijn.',
+    userPrefsAdviceAdvancedSmall: 'Voor je advanced-profiel kan deze sessie aan de kleine kant zijn.',
+    userPrefsReportPrefix: 'Persoonlijk profiel',
+    userPrefsReportBeginner: 'beginner',
+    userPrefsReportIntermediate: 'intermediate',
+    userPrefsReportAdvanced: 'advanced',
+    userPrefsReportCaution: 'Deze dag ligt deels boven je voorkeursrange.',
+    userPrefsReportAligned: 'Deze dag sluit redelijk aan op je ingestelde voorkeursrange.'
+  },
+  en: {
+    userPrefsTitle: 'Your surf profile',
+    userPrefsSkillLabel: 'Skill level',
+    userPrefsSkillBeginner: 'Beginner',
+    userPrefsSkillIntermediate: 'Intermediate',
+    userPrefsSkillAdvanced: 'Advanced',
+    userPrefsRangeLabel: 'Preferred wave range',
+    userPrefsRangeSmall: 'Smaller (0.6–1.6 m)',
+    userPrefsRangeMedium: 'Medium (0.8–2.2 m)',
+    userPrefsRangeBigger: 'Bigger (1.2–3.0 m)',
+    userPrefsLikesClean: 'Prefer clean conditions',
+    userPrefsCanHandleChallenging: 'I am comfortable in challenging conditions',
+    userPrefsAutoBeginnerFilter: 'Auto-apply beginner filter',
+    userPrefsHint: 'These preferences subtly tune scores and advice; you can still override filters manually.',
+    userPrefsAdviceBeginnerCaution: 'Based on your beginner profile, this may feel challenging.',
+    userPrefsAdviceAdvancedChallenge: 'Based on your advanced profile, this can be an interesting challenge.',
+    userPrefsAdviceAdvancedSmall: 'For your advanced profile, this session may be on the smaller side.',
+    userPrefsReportPrefix: 'Personal profile',
+    userPrefsReportBeginner: 'beginner',
+    userPrefsReportIntermediate: 'intermediate',
+    userPrefsReportAdvanced: 'advanced',
+    userPrefsReportCaution: 'Part of this day sits above your preferred range.',
+    userPrefsReportAligned: 'This day broadly aligns with your preferred range.'
+  },
+  fr: {
+    userPrefsTitle: 'Your surf profile', userPrefsSkillLabel: 'Skill level', userPrefsSkillBeginner: 'Beginner', userPrefsSkillIntermediate: 'Intermediate', userPrefsSkillAdvanced: 'Advanced', userPrefsRangeLabel: 'Preferred wave range', userPrefsRangeSmall: 'Smaller (0.6–1.6 m)', userPrefsRangeMedium: 'Medium (0.8–2.2 m)', userPrefsRangeBigger: 'Bigger (1.2–3.0 m)', userPrefsLikesClean: 'Prefer clean conditions', userPrefsCanHandleChallenging: 'I am comfortable in challenging conditions', userPrefsAutoBeginnerFilter: 'Auto-apply beginner filter', userPrefsHint: 'These preferences subtly tune scores and advice; you can still override filters manually.', userPrefsAdviceBeginnerCaution: 'Based on your beginner profile, this may feel challenging.', userPrefsAdviceAdvancedChallenge: 'Based on your advanced profile, this can be an interesting challenge.', userPrefsAdviceAdvancedSmall: 'For your advanced profile, this session may be on the smaller side.', userPrefsReportPrefix: 'Personal profile', userPrefsReportBeginner: 'beginner', userPrefsReportIntermediate: 'intermediate', userPrefsReportAdvanced: 'advanced', userPrefsReportCaution: 'Part of this day sits above your preferred range.', userPrefsReportAligned: 'This day broadly aligns with your preferred range.'
+  },
+  es: {
+    userPrefsTitle: 'Your surf profile', userPrefsSkillLabel: 'Skill level', userPrefsSkillBeginner: 'Beginner', userPrefsSkillIntermediate: 'Intermediate', userPrefsSkillAdvanced: 'Advanced', userPrefsRangeLabel: 'Preferred wave range', userPrefsRangeSmall: 'Smaller (0.6–1.6 m)', userPrefsRangeMedium: 'Medium (0.8–2.2 m)', userPrefsRangeBigger: 'Bigger (1.2–3.0 m)', userPrefsLikesClean: 'Prefer clean conditions', userPrefsCanHandleChallenging: 'I am comfortable in challenging conditions', userPrefsAutoBeginnerFilter: 'Auto-apply beginner filter', userPrefsHint: 'These preferences subtly tune scores and advice; you can still override filters manually.', userPrefsAdviceBeginnerCaution: 'Based on your beginner profile, this may feel challenging.', userPrefsAdviceAdvancedChallenge: 'Based on your advanced profile, this can be an interesting challenge.', userPrefsAdviceAdvancedSmall: 'For your advanced profile, this session may be on the smaller side.', userPrefsReportPrefix: 'Personal profile', userPrefsReportBeginner: 'beginner', userPrefsReportIntermediate: 'intermediate', userPrefsReportAdvanced: 'advanced', userPrefsReportCaution: 'Part of this day sits above your preferred range.', userPrefsReportAligned: 'This day broadly aligns with your preferred range.'
+  },
+  pt: {
+    userPrefsTitle: 'Your surf profile', userPrefsSkillLabel: 'Skill level', userPrefsSkillBeginner: 'Beginner', userPrefsSkillIntermediate: 'Intermediate', userPrefsSkillAdvanced: 'Advanced', userPrefsRangeLabel: 'Preferred wave range', userPrefsRangeSmall: 'Smaller (0.6–1.6 m)', userPrefsRangeMedium: 'Medium (0.8–2.2 m)', userPrefsRangeBigger: 'Bigger (1.2–3.0 m)', userPrefsLikesClean: 'Prefer clean conditions', userPrefsCanHandleChallenging: 'I am comfortable in challenging conditions', userPrefsAutoBeginnerFilter: 'Auto-apply beginner filter', userPrefsHint: 'These preferences subtly tune scores and advice; you can still override filters manually.', userPrefsAdviceBeginnerCaution: 'Based on your beginner profile, this may feel challenging.', userPrefsAdviceAdvancedChallenge: 'Based on your advanced profile, this can be an interesting challenge.', userPrefsAdviceAdvancedSmall: 'For your advanced profile, this session may be on the smaller side.', userPrefsReportPrefix: 'Personal profile', userPrefsReportBeginner: 'beginner', userPrefsReportIntermediate: 'intermediate', userPrefsReportAdvanced: 'advanced', userPrefsReportCaution: 'Part of this day sits above your preferred range.', userPrefsReportAligned: 'This day broadly aligns with your preferred range.'
+  },
+  de: {
+    userPrefsTitle: 'Your surf profile', userPrefsSkillLabel: 'Skill level', userPrefsSkillBeginner: 'Beginner', userPrefsSkillIntermediate: 'Intermediate', userPrefsSkillAdvanced: 'Advanced', userPrefsRangeLabel: 'Preferred wave range', userPrefsRangeSmall: 'Smaller (0.6–1.6 m)', userPrefsRangeMedium: 'Medium (0.8–2.2 m)', userPrefsRangeBigger: 'Bigger (1.2–3.0 m)', userPrefsLikesClean: 'Prefer clean conditions', userPrefsCanHandleChallenging: 'I am comfortable in challenging conditions', userPrefsAutoBeginnerFilter: 'Auto-apply beginner filter', userPrefsHint: 'These preferences subtly tune scores and advice; you can still override filters manually.', userPrefsAdviceBeginnerCaution: 'Based on your beginner profile, this may feel challenging.', userPrefsAdviceAdvancedChallenge: 'Based on your advanced profile, this can be an interesting challenge.', userPrefsAdviceAdvancedSmall: 'For your advanced profile, this session may be on the smaller side.', userPrefsReportPrefix: 'Personal profile', userPrefsReportBeginner: 'beginner', userPrefsReportIntermediate: 'intermediate', userPrefsReportAdvanced: 'advanced', userPrefsReportCaution: 'Part of this day sits above your preferred range.', userPrefsReportAligned: 'This day broadly aligns with your preferred range.'
   }
 };
 
@@ -1342,6 +1413,12 @@ Object.entries(timelineHeatmapTranslations).forEach(([lang, extraKeys]) => {
   }
 });
 
+Object.entries(userPreferencesTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
 Object.entries(statusTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -1367,6 +1444,7 @@ let spotMapInstance = null;
 let activeMapMarker = null;
 let activeSpot = null;
 let currentLevel = 'all';
+let currentUserPreferences = null;
 let latestRatingConditions = null;
 let currentLanguage = 'nl';
 let currentTheme = 'light';
@@ -1465,6 +1543,197 @@ function formatWindDirection(directionOrDegrees) {
 function formatWindSpeed(speedValue) {
   if (!Number.isFinite(speedValue)) return '-';
   return `${Math.round(speedValue)} kn`;
+}
+
+function getDefaultUserPreferences(skillLevel = 'intermediate') {
+  const normalizedSkill = ['beginner', 'intermediate', 'advanced'].includes(skillLevel)
+    ? skillLevel
+    : 'intermediate';
+
+  const defaultsBySkill = {
+    beginner: {
+      skillLevel: 'beginner',
+      preferredMinHeight: 0.6,
+      preferredMaxHeight: 1.6,
+      likesClean: true,
+      canHandleChallenging: false,
+      autoBeginnerFilter: true
+    },
+    intermediate: {
+      skillLevel: 'intermediate',
+      preferredMinHeight: 0.8,
+      preferredMaxHeight: 2.2,
+      likesClean: true,
+      canHandleChallenging: false,
+      autoBeginnerFilter: false
+    },
+    advanced: {
+      skillLevel: 'advanced',
+      preferredMinHeight: 1.2,
+      preferredMaxHeight: 3.0,
+      likesClean: false,
+      canHandleChallenging: true,
+      autoBeginnerFilter: false
+    }
+  };
+
+  return {
+    ...defaultsBySkill[normalizedSkill]
+  };
+}
+
+function normalizeUserPreferences(rawPreferences) {
+  const input = rawPreferences && typeof rawPreferences === 'object' ? rawPreferences : {};
+  const base = getDefaultUserPreferences(input.skillLevel);
+
+  const preferredMinHeight = Number.isFinite(input.preferredMinHeight)
+    ? Math.max(0.3, Math.min(3.5, input.preferredMinHeight))
+    : base.preferredMinHeight;
+  const preferredMaxHeight = Number.isFinite(input.preferredMaxHeight)
+    ? Math.max(0.5, Math.min(4.0, input.preferredMaxHeight))
+    : base.preferredMaxHeight;
+
+  return {
+    skillLevel: base.skillLevel,
+    preferredMinHeight: Math.min(preferredMinHeight, preferredMaxHeight - 0.1),
+    preferredMaxHeight: Math.max(preferredMaxHeight, preferredMinHeight + 0.1),
+    likesClean: typeof input.likesClean === 'boolean' ? input.likesClean : base.likesClean,
+    canHandleChallenging: typeof input.canHandleChallenging === 'boolean'
+      ? input.canHandleChallenging
+      : base.canHandleChallenging,
+    autoBeginnerFilter: typeof input.autoBeginnerFilter === 'boolean'
+      ? input.autoBeginnerFilter
+      : base.autoBeginnerFilter
+  };
+}
+
+function getWaveRangePresetForPreferences(preferences = currentUserPreferences) {
+  if (!preferences) return 'medium';
+  if (preferences.preferredMaxHeight <= 1.8) return 'small';
+  if (preferences.preferredMinHeight >= 1.1 || preferences.preferredMaxHeight >= 2.8) return 'big';
+  return 'medium';
+}
+
+function getWaveRangeBoundsFromPreset(preset) {
+  if (preset === 'small') {
+    return { preferredMinHeight: 0.6, preferredMaxHeight: 1.6 };
+  }
+  if (preset === 'big') {
+    return { preferredMinHeight: 1.2, preferredMaxHeight: 3.0 };
+  }
+  return { preferredMinHeight: 0.8, preferredMaxHeight: 2.2 };
+}
+
+function saveUserPreferences(preferences) {
+  try {
+    localStorage.setItem(USER_PREFERENCES_STORAGE_KEY, JSON.stringify(normalizeUserPreferences(preferences)));
+  } catch {
+    // storage kan geblokkeerd zijn; dan stil overslaan
+  }
+}
+
+function loadUserPreferences() {
+  try {
+    const raw = localStorage.getItem(USER_PREFERENCES_STORAGE_KEY);
+    if (!raw) {
+      currentUserPreferences = getDefaultUserPreferences('intermediate');
+      return currentUserPreferences;
+    }
+
+    const parsed = JSON.parse(raw);
+    currentUserPreferences = normalizeUserPreferences(parsed);
+    return currentUserPreferences;
+  } catch {
+    currentUserPreferences = getDefaultUserPreferences('intermediate');
+    return currentUserPreferences;
+  }
+}
+
+function isAutoBeginnerFilterEnabled(preferences = currentUserPreferences) {
+  return Boolean(
+    preferences &&
+    preferences.skillLevel === 'beginner' &&
+    preferences.autoBeginnerFilter
+  );
+}
+
+function getEffectiveConditionFilters() {
+  const autoBeginner = isAutoBeginnerFilterEnabled(currentUserPreferences);
+  return {
+    minSurfable: Boolean(activeConditionFilters.minSurfable),
+    beginnerFriendly: Boolean(activeConditionFilters.beginnerFriendly || autoBeginner),
+    preferClean: Boolean(activeConditionFilters.preferClean)
+  };
+}
+
+function renderUserPreferencesPanel() {
+  if (!userPreferencesPanelEl || !currentUserPreferences) return;
+
+  const waveRangePreset = getWaveRangePresetForPreferences(currentUserPreferences);
+  userPreferencesPanelEl.setAttribute('aria-label', t('userPrefsTitle'));
+  userPreferencesPanelEl.innerHTML = `
+    <h3 class="user-preferences-title">${t('userPrefsTitle')}</h3>
+    <div class="user-preferences-grid">
+      <label class="user-preferences-field" for="userPrefSkill">
+        <span class="user-preferences-label">${t('userPrefsSkillLabel')}</span>
+        <select id="userPrefSkill" class="user-preferences-select" data-pref-key="skillLevel">
+          <option value="beginner" ${currentUserPreferences.skillLevel === 'beginner' ? 'selected' : ''}>${t('userPrefsSkillBeginner')}</option>
+          <option value="intermediate" ${currentUserPreferences.skillLevel === 'intermediate' ? 'selected' : ''}>${t('userPrefsSkillIntermediate')}</option>
+          <option value="advanced" ${currentUserPreferences.skillLevel === 'advanced' ? 'selected' : ''}>${t('userPrefsSkillAdvanced')}</option>
+        </select>
+      </label>
+      <label class="user-preferences-field" for="userPrefWaveRange">
+        <span class="user-preferences-label">${t('userPrefsRangeLabel')}</span>
+        <select id="userPrefWaveRange" class="user-preferences-select" data-pref-key="waveRange">
+          <option value="small" ${waveRangePreset === 'small' ? 'selected' : ''}>${t('userPrefsRangeSmall')}</option>
+          <option value="medium" ${waveRangePreset === 'medium' ? 'selected' : ''}>${t('userPrefsRangeMedium')}</option>
+          <option value="big" ${waveRangePreset === 'big' ? 'selected' : ''}>${t('userPrefsRangeBigger')}</option>
+        </select>
+      </label>
+    </div>
+    <div class="user-preferences-toggles">
+      <label class="user-preferences-toggle">
+        <input type="checkbox" id="userPrefLikesClean" data-pref-key="likesClean" ${currentUserPreferences.likesClean ? 'checked' : ''}>
+        <span>${t('userPrefsLikesClean')}</span>
+      </label>
+      <label class="user-preferences-toggle">
+        <input type="checkbox" id="userPrefCanHandleChallenging" data-pref-key="canHandleChallenging" ${currentUserPreferences.canHandleChallenging ? 'checked' : ''}>
+        <span>${t('userPrefsCanHandleChallenging')}</span>
+      </label>
+      <label class="user-preferences-toggle">
+        <input type="checkbox" id="userPrefAutoBeginnerFilter" data-pref-key="autoBeginnerFilter" ${currentUserPreferences.autoBeginnerFilter ? 'checked' : ''}>
+        <span>${t('userPrefsAutoBeginnerFilter')}</span>
+      </label>
+    </div>
+    <p class="user-preferences-hint">${t('userPrefsHint')}</p>
+  `;
+}
+
+function setUserPreferences(nextPreferences, options = {}) {
+  const persist = options.persist !== false;
+  currentUserPreferences = normalizeUserPreferences(nextPreferences);
+
+  if (persist) {
+    saveUserPreferences(currentUserPreferences);
+  }
+
+  renderUserPreferencesPanel();
+
+  if (activeLiveCache) {
+    const rendered = renderLiveOffset(activeTimeOffset);
+    if (!rendered) {
+      updateTimeSelectorButtons();
+      renderSlotDetail(getSelectedSlotContext(getAllLiveSlotContexts(), currentSlotKey));
+    }
+  } else if (activeSpot) {
+    renderSpot(activeSpot, latestRatingConditions ?? activeSpot);
+  }
+
+  updateNoResultsWithFiltersMessage(Boolean(getFirstFilteredAvailableOffset() !== undefined));
+  renderCompactForecastList();
+  void renderMultiSpotOverview(currentDayKey);
+  renderDailySurfReport(activeSpot ? getSpotKey(activeSpot) : null, currentDayKey);
+  updateControlBadges();
 }
 
 function formatScoreDelta(value) {
@@ -1819,11 +2088,13 @@ function getDisplaySlotsForCurrentDay(groupedByDay) {
 function passesHardConditionFilters(slotContext) {
   if (!slotContext) return false;
 
-  if (activeConditionFilters.minSurfable && !slotContext.minSurfable) {
+  const effectiveFilters = getEffectiveConditionFilters();
+
+  if (effectiveFilters.minSurfable && !slotContext.minSurfable) {
     return false;
   }
 
-  if (activeConditionFilters.beginnerFriendly && slotContext.challenging) {
+  if (effectiveFilters.beginnerFriendly && slotContext.challenging) {
     return false;
   }
 
@@ -1845,7 +2116,7 @@ function getFirstFilteredAvailableOffset() {
 function updateNoResultsWithFiltersMessage(hasFilteredResults) {
   if (!noResultsWithFiltersEl) return;
 
-  const hasActiveFilter = Object.values(activeConditionFilters).some(Boolean);
+  const hasActiveFilter = Object.values(getEffectiveConditionFilters()).some(Boolean);
   noResultsWithFiltersEl.textContent = t('noResultsWithFilters');
   noResultsWithFiltersEl.hidden = !hasActiveFilter || hasFilteredResults;
 }
@@ -1951,6 +2222,27 @@ function formatSkillAdvice(slotContext, options = {}) {
   }
 
   if (!includeTide || !slotContext.tideSuitability) {
+    if (!currentUserPreferences) {
+      return baseAdvice;
+    }
+
+    if (currentUserPreferences.skillLevel === 'beginner' && slotContext.challenging) {
+      return `${baseAdvice} ${t('userPrefsAdviceBeginnerCaution')}`;
+    }
+
+    if (currentUserPreferences.skillLevel === 'advanced' && slotContext.challenging) {
+      return `${baseAdvice} ${t('userPrefsAdviceAdvancedChallenge')}`;
+    }
+
+    const waveHeight = slotContext?.mergedSpot?.golfHoogteMeter ?? slotContext?.values?.golfHoogteMeter;
+    if (
+      currentUserPreferences.skillLevel === 'advanced' &&
+      Number.isFinite(waveHeight) &&
+      waveHeight < currentUserPreferences.preferredMinHeight
+    ) {
+      return `${baseAdvice} ${t('userPrefsAdviceAdvancedSmall')}`;
+    }
+
     return baseAdvice;
   }
 
@@ -1997,7 +2289,8 @@ function getSlotQualityScore(slotContext, options = {}) {
         windDirection: 0,
         challengingPenalty: 0,
         tideEffect: 0,
-        filtersPreference: 0
+        filtersPreference: 0,
+        preferencesImpact: 0
       },
       rawScore: 0
     };
@@ -2005,6 +2298,7 @@ function getSlotQualityScore(slotContext, options = {}) {
 
   const includeActiveFilters = options.includeActiveFilters !== false;
   const skipCached = options.skipCached === true;
+  const effectiveFilters = getEffectiveConditionFilters();
 
   if (!skipCached) {
     const cachedQuality = includeActiveFilters ? slotContext.quality : slotContext.qualityNoFilters;
@@ -2028,7 +2322,8 @@ function getSlotQualityScore(slotContext, options = {}) {
     windDirection: 0,
     challengingPenalty: 0,
     tideEffect: 0,
-    filtersPreference: 0
+    filtersPreference: 0,
+    preferencesImpact: 0
   };
   const spotValues = slotContext.mergedSpot ?? slotContext.values ?? {};
 
@@ -2100,19 +2395,19 @@ function getSlotQualityScore(slotContext, options = {}) {
     reasons.push('tide-less-ideal');
   }
 
-  if (includeActiveFilters && activeConditionFilters.minSurfable && !slotContext.minSurfable) {
+  if (includeActiveFilters && effectiveFilters.minSurfable && !slotContext.minSurfable) {
     score -= 2;
     breakdown.filtersPreference -= 2;
     reasons.push('below-min-surfable-filter');
   }
 
-  if (includeActiveFilters && activeConditionFilters.beginnerFriendly && slotContext.challenging) {
+  if (includeActiveFilters && effectiveFilters.beginnerFriendly && slotContext.challenging) {
     score -= 3;
     breakdown.filtersPreference -= 3;
     reasons.push('beginner-filter-penalty');
   }
 
-  if (includeActiveFilters && activeConditionFilters.preferClean) {
+  if (includeActiveFilters && effectiveFilters.preferClean) {
     if (slotContext.conditionTag === 'clean') {
       score += 1;
       breakdown.filtersPreference += 1;
@@ -2121,6 +2416,43 @@ function getSlotQualityScore(slotContext, options = {}) {
       score -= 2;
       breakdown.filtersPreference -= 2;
       reasons.push('clean-preference-penalty');
+    }
+  }
+
+  if (currentUserPreferences) {
+    const waveHeight = spotValues.golfHoogteMeter;
+    if (Number.isFinite(waveHeight)) {
+      if (waveHeight >= currentUserPreferences.preferredMinHeight && waveHeight <= currentUserPreferences.preferredMaxHeight) {
+        score += 0.5;
+        breakdown.preferencesImpact += 0.5;
+        reasons.push('prefs-range-match');
+      } else if (waveHeight > currentUserPreferences.preferredMaxHeight + 0.6) {
+        score -= 0.5;
+        breakdown.preferencesImpact -= 0.5;
+        reasons.push('prefs-range-too-big');
+      } else if (waveHeight < currentUserPreferences.preferredMinHeight - 0.4) {
+        score -= 0.5;
+        breakdown.preferencesImpact -= 0.5;
+        reasons.push('prefs-range-too-small');
+      }
+    }
+
+    if (currentUserPreferences.likesClean) {
+      if (slotContext.conditionTag === 'clean') {
+        score += 0.5;
+        breakdown.preferencesImpact += 0.5;
+        reasons.push('prefs-clean-bonus');
+      } else if (slotContext.conditionTag === 'choppy') {
+        score -= 0.5;
+        breakdown.preferencesImpact -= 0.5;
+        reasons.push('prefs-clean-penalty');
+      }
+    }
+
+    if (!currentUserPreferences.canHandleChallenging && slotContext.challenging) {
+      score -= 0.5;
+      breakdown.preferencesImpact -= 0.5;
+      reasons.push('prefs-challenging-penalty');
     }
   }
 
@@ -2250,6 +2582,10 @@ function buildScoreExplanationLines(breakdown, language = currentLanguage, slotC
 
   if (breakdown.filtersPreference) {
     pushLine(breakdown.filtersPreference, 'scoreExpFiltersPreferenceBonus');
+  }
+
+  if (breakdown.preferencesImpact) {
+    pushLine(breakdown.preferencesImpact, 'scoreExpPreferencesImpact');
   }
 
   return lines
@@ -2804,7 +3140,11 @@ function buildDailySurfReportLines(dayStats, dayKey, language = currentLanguage)
     ? (dayStats.supportiveTideRatio >= 0.5 ? t('dailyReportTideSupportive') : t('dailyReportTideLessIdeal'))
     : null;
 
-  return [lineOne, lineTwo, tideLine, lineThree, tideAdvice].filter((line) => Boolean(line));
+  const preferenceLine = currentUserPreferences
+    ? `${t('userPrefsReportPrefix')}: ${t(`userPrefsReport${currentUserPreferences.skillLevel.charAt(0).toUpperCase()}${currentUserPreferences.skillLevel.slice(1)}`)} · ${Number.isFinite(dayStats.maxHeight) && dayStats.maxHeight > currentUserPreferences.preferredMaxHeight + 0.4 ? t('userPrefsReportCaution') : t('userPrefsReportAligned')}`
+    : null;
+
+  return [lineOne, lineTwo, tideLine, lineThree, preferenceLine, tideAdvice].filter((line) => Boolean(line));
 }
 
 function renderDailySurfReport(spotId = getSpotKey(activeSpot), dayKey = currentDayKey) {
@@ -3675,6 +4015,7 @@ function setLanguage(lang, persist = true) {
   if (dailySurfReportEl) dailySurfReportEl.setAttribute('aria-label', t('dailyReportHeading'));
   if (scoreTimelineEl) scoreTimelineEl.setAttribute('aria-label', t('scoreTimelineTitle'));
   if (daypartHeatmapEl) daypartHeatmapEl.setAttribute('aria-label', t('daypartHeatmapTitle'));
+  if (userPreferencesPanelEl) userPreferencesPanelEl.setAttribute('aria-label', t('userPrefsTitle'));
   if (ratingLegendEl) ratingLegendEl.setAttribute('aria-label', t('legendAria'));
   if (legendTitleEl) legendTitleEl.textContent = t('legendTitle');
   if (legendItemGoodEl) legendItemGoodEl.innerHTML = `<span class="legend-dot legend-dot-good" aria-hidden="true"></span>${t('legendItemGood')}`;
@@ -3739,6 +4080,7 @@ function setLanguage(lang, persist = true) {
     renderSlotDetail(null);
   }
   renderCompactForecastList();
+  renderUserPreferencesPanel();
   void renderMultiSpotOverview(currentDayKey);
   renderDailySurfReport(activeSpot ? getSpotKey(activeSpot) : null, currentDayKey);
   if (latestRatingConditions) {
@@ -5069,6 +5411,41 @@ if (filterMinSurfableEl && filterBeginnerFriendlyEl && filterPreferCleanEl) {
   filterPreferCleanEl.addEventListener('change', handleConditionFilterChange);
 }
 
+if (userPreferencesPanelEl) {
+  userPreferencesPanelEl.addEventListener('change', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLSelectElement)) return;
+
+    const prefKey = target.dataset.prefKey;
+    if (!prefKey || !currentUserPreferences) return;
+
+    let nextPreferences = {
+      ...currentUserPreferences
+    };
+
+    if (prefKey === 'skillLevel' && target instanceof HTMLSelectElement) {
+      const skillLevel = target.value;
+      nextPreferences = {
+        ...getDefaultUserPreferences(skillLevel),
+        skillLevel
+      };
+    } else if (prefKey === 'waveRange' && target instanceof HTMLSelectElement) {
+      nextPreferences = {
+        ...nextPreferences,
+        ...getWaveRangeBoundsFromPreset(target.value)
+      };
+    } else if (prefKey === 'likesClean' && target instanceof HTMLInputElement) {
+      nextPreferences.likesClean = target.checked;
+    } else if (prefKey === 'canHandleChallenging' && target instanceof HTMLInputElement) {
+      nextPreferences.canHandleChallenging = target.checked;
+    } else if (prefKey === 'autoBeginnerFilter' && target instanceof HTMLInputElement) {
+      nextPreferences.autoBeginnerFilter = target.checked;
+    }
+
+    setUserPreferences(nextPreferences, { persist: true });
+  });
+}
+
 if (viewMapBtnEl && viewListBtnEl) {
   viewMapBtnEl.addEventListener('click', () => {
     setCurrentView('map');
@@ -5311,6 +5688,7 @@ const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
 const initialLanguage = SUPPORTED_LANGUAGES.includes(savedLanguage)
   ? savedLanguage
   : detectPreferredLanguage();
+loadUserPreferences();
 setLanguage(initialLanguage, false);
 
 initSpotMap();

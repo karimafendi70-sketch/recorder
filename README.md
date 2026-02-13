@@ -34,6 +34,7 @@ From an engineering perspective, the interesting part is state consistency acros
 - “Why this score?” breakdown in the slot detail panel (swell, wind, conditions, tide, and active preferences).
 - Score-over-time timeline per active spot/day, based on existing slot scores.
 - Mini heatmap that compares spots across morning/afternoon/evening score windows.
+- Local user preferences panel (skill profile + condition preferences) with subtle score and advice personalization.
 - Condition filters for minimally surfable, beginner friendly, and prefer clean.
 - Shared day/slot selection model across map view, list view, detail panel, and reports.
 - Multi-spot “best spots today” overview with score and best time guidance.
@@ -81,6 +82,7 @@ From an engineering perspective, the interesting part is state consistency acros
 - Day/slot state (`currentDayKey`, `currentSlotKey`) is shared across map view, list view, detail panel, and summaries.
 - Score helpers (`getSlotQualityScore`, `getSpotDayScore`) power the multi-spot ranking and day-level interpretation.
 - Score helpers return both final score and component breakdown so UI explainability and optional debug view reuse the same data.
+- User preference helpers persist profile settings in localStorage and feed subtle scoring/advice adjustments.
 - Tide helpers map spot/region profiles to day-part tide levels and suitability hints.
 - Timeline and heatmap helpers reuse slot/day score state and forecast caches (no extra API requests).
 - Daily report helpers generate compact text summaries from the same slot/day state, without extra endpoints.
@@ -100,6 +102,7 @@ From an engineering perspective, the interesting part is state consistency acros
 - Forecast caching uses an in-memory `Map` with TTL (`FORECAST_CACHE_TTL_MS`).
 - Pending request dedupe prevents duplicate fetches for the same spot.
 - Tide context is heuristic (region/spot profile based), not real-time tide API data.
+- Personalization is local-only (browser localStorage), no backend profile sync.
 - Theme system uses `data-theme` on `body` with CSS variables for light/dark styling.
 
 ## Contributing
@@ -115,7 +118,6 @@ These are future-work ideas, not currently implemented promises.
 - Advanced multi-swell analysis (primary/secondary swell breakdown + direction quality).
 - Surf alerts (email/push/in-app) when your preferred conditions become “good”.
 - Extra view modes, such as regional heatmaps or score-over-time trend charts.
-- User profiles with personal skill level and preferred condition presets.
 - Light offline mode: cache latest forecast snapshots for favorite spots.
 - Smarter explainability layer for score changes between morning/afternoon/evening.
 - Optional mobile app wrapper path (e.g. Capacitor) after web-first maturity.

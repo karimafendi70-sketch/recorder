@@ -322,7 +322,11 @@ function getTideSuitabilityForSlot(spotOrId, slotContext) {
   return profile.preferredLevels.includes(level) ? 'good' : 'less-ideal';
 }
 
-function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginnerFriendly: false, preferClean: false }) {
+function getSlotQualityScore(
+  slotContext,
+  filters = { minSurfable: false, beginnerFriendly: false, preferClean: false },
+  userPreferences = null
+) {
   if (!slotContext) {
     return {
       score: 0,
@@ -335,7 +339,8 @@ function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginn
         windDirection: 0,
         challengingPenalty: 0,
         tideEffect: 0,
-        filtersPreference: 0
+        filtersPreference: 0,
+        preferencesImpact: 0
       },
       rawScore: 0
     };
@@ -351,7 +356,8 @@ function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginn
     windDirection: 0,
     challengingPenalty: 0,
     tideEffect: 0,
-    filtersPreference: 0
+    filtersPreference: 0,
+    preferencesImpact: 0
   };
   const spotValues = slotContext.mergedSpot ?? slotContext.values ?? {};
 
@@ -440,6 +446,37 @@ function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginn
     if (slotContext.conditionTag === 'choppy') {
       score -= 2;
       breakdown.filtersPreference -= 2;
+    }
+  }
+
+  if (userPreferences) {
+    const waveHeight = spotValues.golfHoogteMeter;
+    if (Number.isFinite(waveHeight)) {
+      if (waveHeight >= userPreferences.preferredMinHeight && waveHeight <= userPreferences.preferredMaxHeight) {
+        score += 0.5;
+        breakdown.preferencesImpact += 0.5;
+      } else if (waveHeight > userPreferences.preferredMaxHeight + 0.6) {
+        score -= 0.5;
+        breakdown.preferencesImpact -= 0.5;
+      } else if (waveHeight < userPreferences.preferredMinHeight - 0.4) {
+        score -= 0.5;
+        breakdown.preferencesImpact -= 0.5;
+      }
+    }
+
+    if (userPreferences.likesClean) {
+      if (slotContext.conditionTag === 'clean') {
+        score += 0.5;
+        breakdown.preferencesImpact += 0.5;
+      } else if (slotContext.conditionTag === 'choppy') {
+        score -= 0.5;
+        breakdown.preferencesImpact -= 0.5;
+      }
+    }
+
+    if (!userPreferences.canHandleChallenging && slotContext.challenging) {
+      score -= 0.5;
+      breakdown.preferencesImpact -= 0.5;
     }
   }
 
@@ -1114,6 +1151,83 @@ function runTideScoreImpactTests() {
   assertEqual(breakdownBadTide.tideEffect, -1, 'breakdown tide penalty');
 }
 
+function runUserPreferencesScoreImpactTests() {
+  const baseSlot = {
+    dayKey: '2026-02-13',
+    offsetHours: 6,
+    conditionTag: 'clean',
+    challenging: false,
+    minSurfable: true,
+    mergedSpot: {
+      coastOrientationDeg: 270,
+      windRichtingGraden: 90,
+      windSnelheidKnopen: 10,
+      golfHoogteMeter: 1.4,
+      golfPeriodeSeconden: 9
+    }
+  };
+
+  const beginnerPrefs = {
+    skillLevel: 'beginner',
+    preferredMinHeight: 0.6,
+    preferredMaxHeight: 1.6,
+    likesClean: true,
+    canHandleChallenging: false,
+    autoBeginnerFilter: true
+  };
+
+  const advancedPrefs = {
+    skillLevel: 'advanced',
+    preferredMinHeight: 1.8,
+    preferredMaxHeight: 3.0,
+    likesClean: false,
+    canHandleChallenging: true,
+    autoBeginnerFilter: false
+  };
+
+  const beginnerScore = getSlotQualityScore(baseSlot, {
+    minSurfable: false,
+    beginnerFriendly: false,
+    preferClean: false
+  }, beginnerPrefs);
+  const advancedScore = getSlotQualityScore(baseSlot, {
+    minSurfable: false,
+    beginnerFriendly: false,
+    preferClean: false
+  }, advancedPrefs);
+
+  if (!(beginnerScore.score > advancedScore.score)) {
+    throw new Error(`preferences skill/range impact failed: beginner=${beginnerScore.score}, advanced=${advancedScore.score}`);
+  }
+
+  const choppySlot = {
+    ...baseSlot,
+    conditionTag: 'choppy'
+  };
+
+  const cleanLovingScore = getSlotQualityScore(choppySlot, {
+    minSurfable: false,
+    beginnerFriendly: false,
+    preferClean: false
+  }, {
+    ...beginnerPrefs,
+    likesClean: true
+  });
+
+  const neutralScore = getSlotQualityScore(choppySlot, {
+    minSurfable: false,
+    beginnerFriendly: false,
+    preferClean: false
+  }, {
+    ...beginnerPrefs,
+    likesClean: false
+  });
+
+  if (!(cleanLovingScore.score < neutralScore.score)) {
+    throw new Error(`preferences clean impact failed: cleanPref=${cleanLovingScore.score}, neutral=${neutralScore.score}`);
+  }
+}
+
 function runDailyReportTests() {
   const groupedSlotsForDay = {
     morning: [
@@ -1273,6 +1387,7 @@ function runAll() {
   runTideHelpersTests();
   runMultiSpotScoreTests();
   runTideScoreImpactTests();
+  runUserPreferencesScoreImpactTests();
   runDailyReportTests();
   runTimelineDataTests();
   runDaypartHeatmapTests();
