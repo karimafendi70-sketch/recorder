@@ -105,7 +105,27 @@
           </select>
           <span id="levelCurrentBadge" class="control-current" aria-hidden="true">Alle niveaus</span>
         </div>
+        <div id="conditionFilters" class="condition-filters" aria-label="Conditiefilters">
+          <span id="filterConditionsTitle" class="condition-filters-title">Condities</span>
+          <label class="condition-filter-item" for="filterMinSurfable">
+            <input id="filterMinSurfable" class="condition-filter-checkbox" type="checkbox" />
+            <span id="filterMinSurfableLabel">Minimaal surfbaar</span>
+          </label>
+          <label class="condition-filter-item" for="filterBeginnerFriendly">
+            <input id="filterBeginnerFriendly" class="condition-filter-checkbox" type="checkbox" />
+            <span id="filterBeginnerFriendlyLabel">Geschikt voor beginners</span>
+          </label>
+          <label class="condition-filter-item" for="filterPreferClean">
+            <input id="filterPreferClean" class="condition-filter-checkbox" type="checkbox" />
+            <span id="filterPreferCleanLabel">Voorkeur clean</span>
+          </label>
+        </div>
         <div class="view-actions">
+          <div id="viewModeContainer" class="view-mode-toggle control-group" aria-label="Weergave">
+            <span id="viewModeLabel" class="view-mode-label">Weergave</span>
+            <button id="viewMapBtn" class="view-mode-btn is-active" type="button" aria-pressed="true">Kaartweergave</button>
+            <button id="viewListBtn" class="view-mode-btn" type="button" aria-pressed="false">Lijstweergave</button>
+          </div>
           <button id="resetViewButton" class="reset-view-btn" type="button" aria-label="Reset weergave">
             Reset weergave
           </button>
@@ -141,7 +161,9 @@
           <button id="timeSlot6h" class="time-slot-btn" type="button" data-offset="6">+6u</button>
           <button id="timeSlot9h" class="time-slot-btn" type="button" data-offset="9">+9u</button>
         </div>
-        <ul class="forecast-list">
+        <p id="noResultsWithFilters" class="filters-empty-message" hidden>Geen tijdvakken voldoen aan deze filters.</p>
+        <div id="forecastListView" class="compact-forecast-view" hidden></div>
+        <ul id="forecastSummaryList" class="forecast-list">
           <li><span id="forecastLabelWaveHeight">Golfhoogte</span><strong id="waveHeight">1.2 m</strong></li>
           <li><span id="forecastLabelWavePeriod">Periode</span><strong id="wavePeriod">8 s</strong></li>
           <li>

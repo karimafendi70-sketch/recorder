@@ -38,6 +38,21 @@ const levelCurrentBadgeEl = document.getElementById('levelCurrentBadge');
 const levelOptionAllEl = document.getElementById('levelOptionAll');
 const levelOptionBeginnerEl = document.getElementById('levelOptionBeginner');
 const levelOptionAdvancedEl = document.getElementById('levelOptionAdvanced');
+const conditionFiltersEl = document.getElementById('conditionFilters');
+const filterConditionsTitleEl = document.getElementById('filterConditionsTitle');
+const filterMinSurfableEl = document.getElementById('filterMinSurfable');
+const filterMinSurfableLabelEl = document.getElementById('filterMinSurfableLabel');
+const filterBeginnerFriendlyEl = document.getElementById('filterBeginnerFriendly');
+const filterBeginnerFriendlyLabelEl = document.getElementById('filterBeginnerFriendlyLabel');
+const filterPreferCleanEl = document.getElementById('filterPreferClean');
+const filterPreferCleanLabelEl = document.getElementById('filterPreferCleanLabel');
+const noResultsWithFiltersEl = document.getElementById('noResultsWithFilters');
+const viewModeContainerEl = document.getElementById('viewModeContainer');
+const viewModeLabelEl = document.getElementById('viewModeLabel');
+const viewMapBtnEl = document.getElementById('viewMapBtn');
+const viewListBtnEl = document.getElementById('viewListBtn');
+const forecastListViewEl = document.getElementById('forecastListView');
+const forecastSummaryListEl = document.getElementById('forecastSummaryList');
 const ratingLegendEl = document.getElementById('ratingLegend');
 const legendTitleEl = document.getElementById('legendTitle');
 const legendItemGoodEl = document.getElementById('legendItemGood');
@@ -101,6 +116,7 @@ const REGION_ORDER = ['eu', 'af', 'am', 'ap'];
 const DEFAULT_REGION = 'eu';
 const RATING_CLASS_NAMES = ['rating-bad', 'rating-ok', 'rating-good', 'rating-neutral'];
 const SLOT_CLASS_NAMES = ['slot-bad', 'slot-ok', 'slot-good', 'slot-neutral'];
+const VIEW_MODES = ['map', 'list'];
 const translations = {
   nl: {
     appTitle: 'FreeSurfCast',
@@ -460,6 +476,69 @@ const conditionTranslations = {
   }
 };
 
+const powerUserTranslations = {
+  nl: {
+    filterConditionsTitle: 'Condities',
+    filterMinSurfable: 'Minimaal surfbaar',
+    filterBeginnerFriendly: 'Geschikt voor beginners',
+    filterPreferClean: 'Voorkeur clean',
+    noResultsWithFilters: 'Geen tijdvakken voldoen aan deze filters.',
+    viewModeLabel: 'Weergave',
+    viewMap: 'Kaartweergave',
+    viewList: 'Lijstweergave'
+  },
+  en: {
+    filterConditionsTitle: 'Conditions',
+    filterMinSurfable: 'Minimally surfable',
+    filterBeginnerFriendly: 'Beginner friendly',
+    filterPreferClean: 'Prefer clean',
+    noResultsWithFilters: 'No time slots match these filters.',
+    viewModeLabel: 'View',
+    viewMap: 'Map view',
+    viewList: 'List view'
+  },
+  fr: {
+    filterConditionsTitle: 'Conditions',
+    filterMinSurfable: 'Minimum surfable',
+    filterBeginnerFriendly: 'Adapté débutant',
+    filterPreferClean: 'Préférence clean',
+    noResultsWithFilters: 'Aucun créneau ne correspond à ces filtres.',
+    viewModeLabel: 'Affichage',
+    viewMap: 'Vue carte',
+    viewList: 'Vue liste'
+  },
+  es: {
+    filterConditionsTitle: 'Condiciones',
+    filterMinSurfable: 'Mínimo surfeable',
+    filterBeginnerFriendly: 'Apto para principiantes',
+    filterPreferClean: 'Preferir clean',
+    noResultsWithFilters: 'Ninguna franja coincide con estos filtros.',
+    viewModeLabel: 'Vista',
+    viewMap: 'Vista de mapa',
+    viewList: 'Vista de lista'
+  },
+  pt: {
+    filterConditionsTitle: 'Condições',
+    filterMinSurfable: 'Minimamente surfável',
+    filterBeginnerFriendly: 'Adequado a iniciantes',
+    filterPreferClean: 'Preferir clean',
+    noResultsWithFilters: 'Nenhum horário corresponde a estes filtros.',
+    viewModeLabel: 'Visualização',
+    viewMap: 'Vista de mapa',
+    viewList: 'Vista de lista'
+  },
+  de: {
+    filterConditionsTitle: 'Bedingungen',
+    filterMinSurfable: 'Mindestens surfbar',
+    filterBeginnerFriendly: 'Anfängerfreundlich',
+    filterPreferClean: 'Clean bevorzugen',
+    noResultsWithFilters: 'Keine Zeitfenster passen zu diesen Filtern.',
+    viewModeLabel: 'Ansicht',
+    viewMap: 'Kartenansicht',
+    viewList: 'Listenansicht'
+  }
+};
+
 const themeTranslations = {
   nl: {
     themeToggleLabel: 'Thema',
@@ -664,6 +743,12 @@ Object.entries(conditionTranslations).forEach(([lang, extraKeys]) => {
   }
 });
 
+Object.entries(powerUserTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
 Object.entries(themeTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -706,6 +791,12 @@ let currentLanguage = 'nl';
 let currentTheme = 'light';
 let statusMessageTimeoutId = null;
 let shouldShowFirstRunHint = false;
+let currentView = 'map';
+let activeConditionFilters = {
+  minSurfable: false,
+  beginnerFriendly: false,
+  preferClean: false
+};
 
 function t(key, vars = {}) {
   const languagePack = translations[currentLanguage] ?? translations.nl;
@@ -859,6 +950,218 @@ function getConditionLabelKey(tag) {
   if (tag === 'clean') return 'conditionClean';
   if (tag === 'choppy') return 'conditionChoppy';
   return 'conditionMixed';
+}
+
+function isMinSurfableConditions(conditions) {
+  const waveHeight = conditions?.golfHoogteMeter;
+  const wavePeriod = conditions?.golfPeriodeSeconden;
+
+  return Number.isFinite(waveHeight) && Number.isFinite(wavePeriod) && waveHeight >= 0.9 && wavePeriod >= 7;
+}
+
+function getLiveSlotContext(offsetHours) {
+  if (!activeLiveCache) return null;
+
+  const snapshot = getLiveSnapshotForOffset(offsetHours);
+  if (!snapshot) return null;
+
+  const mergedSpot = mergeWithFallbackSpot(activeLiveCache.spot, snapshot.values);
+  const conditionTag = getSurfConditionTag(mergedSpot);
+
+  return {
+    offsetHours,
+    time: snapshot.time,
+    values: snapshot.values,
+    mergedSpot,
+    conditionTag,
+    minSurfable: isMinSurfableConditions(snapshot.values),
+    challenging: isChallengingConditions(snapshot.values)
+  };
+}
+
+function passesHardConditionFilters(slotContext) {
+  if (!slotContext) return false;
+
+  if (activeConditionFilters.minSurfable && !slotContext.minSurfable) {
+    return false;
+  }
+
+  if (activeConditionFilters.beginnerFriendly && slotContext.challenging) {
+    return false;
+  }
+
+  return true;
+}
+
+function isPreferredCleanSlot(slotContext) {
+  if (!activeConditionFilters.preferClean || !slotContext) return false;
+  return slotContext.conditionTag !== 'choppy';
+}
+
+function getFirstFilteredAvailableOffset() {
+  return TIME_SLOT_OFFSETS.find((offset) => {
+    const slotContext = getLiveSlotContext(offset);
+    return Boolean(slotContext) && passesHardConditionFilters(slotContext);
+  });
+}
+
+function updateNoResultsWithFiltersMessage(hasFilteredResults) {
+  if (!noResultsWithFiltersEl) return;
+
+  const hasActiveFilter = Object.values(activeConditionFilters).some(Boolean);
+  noResultsWithFiltersEl.textContent = t('noResultsWithFilters');
+  noResultsWithFiltersEl.hidden = !hasActiveFilter || hasFilteredResults;
+}
+
+function getTimeSlotLabel(offsetHours) {
+  const labels = {
+    0: t('timeNow'),
+    3: t('timePlus3h'),
+    6: t('timePlus6h'),
+    9: t('timePlus9h')
+  };
+
+  return labels[offsetHours] ?? `+${offsetHours}h`;
+}
+
+function formatCompactSlotTimeLabel(time) {
+  if (!time) return t('fallbackUnknownTime');
+
+  return new Date(time).toLocaleString(getLocaleForLanguage(), {
+    hour: '2-digit',
+    minute: '2-digit',
+    day: '2-digit',
+    month: '2-digit'
+  });
+}
+
+function renderCompactForecastList() {
+  if (!forecastListViewEl) return;
+
+  if (currentView !== 'list') {
+    forecastListViewEl.hidden = true;
+    return;
+  }
+
+  if (!activeSpot || !activeLiveCache) {
+    forecastListViewEl.innerHTML = '';
+    forecastListViewEl.hidden = true;
+    return;
+  }
+
+  const filteredSlots = TIME_SLOT_OFFSETS
+    .map((offset) => getLiveSlotContext(offset))
+    .filter((slotContext) => Boolean(slotContext) && passesHardConditionFilters(slotContext));
+
+  updateNoResultsWithFiltersMessage(filteredSlots.length > 0);
+
+  if (!filteredSlots.length) {
+    forecastListViewEl.innerHTML = `<p class="compact-forecast-empty">${t('noResultsWithFilters')}</p>`;
+    forecastListViewEl.hidden = false;
+    return;
+  }
+
+  const rows = filteredSlots
+    .map((slotContext) => {
+      const slot = slotContext.mergedSpot;
+      const conditionText = t(getConditionLabelKey(slotContext.conditionTag));
+      const waveHeight = Number.isFinite(slot.golfHoogteMeter) ? `${slot.golfHoogteMeter.toFixed(1)} m` : '-';
+      const wavePeriod = Number.isFinite(slot.golfPeriodeSeconden) ? `${Math.round(slot.golfPeriodeSeconden)} s` : '-';
+      const windSpeed = formatWindSpeed(slot.windSnelheidKnopen);
+      const windDirection = formatWindDirection(
+        Number.isFinite(slot.windRichtingGraden) ? slot.windRichtingGraden : slot.windRichting
+      );
+      const preferredClass = isPreferredCleanSlot(slotContext) ? ' is-preferred' : '';
+
+      return `
+        <li class="compact-forecast-item${preferredClass}">
+          <div class="compact-forecast-top">
+            <span class="compact-forecast-time">${getTimeSlotLabel(slotContext.offsetHours)}</span>
+            <span class="compact-forecast-time-meta">${formatCompactSlotTimeLabel(slotContext.time)}</span>
+          </div>
+          <div class="compact-forecast-meta">
+            <span>${waveHeight} · ${wavePeriod}</span>
+            <span>${windSpeed} ${windDirection}</span>
+            <span class="condition-tag condition-tag-${slotContext.conditionTag}">${conditionText}</span>
+          </div>
+        </li>
+      `;
+    })
+    .join('');
+
+  forecastListViewEl.innerHTML = `
+    <p class="compact-forecast-header">${activeSpot.naam} (${activeSpot.land})</p>
+    <ul class="compact-forecast-list">${rows}</ul>
+  `;
+  forecastListViewEl.hidden = false;
+}
+
+function updateViewModeUI() {
+  const isListView = currentView === 'list';
+
+  if (spotMapSectionEl) {
+    spotMapSectionEl.hidden = isListView;
+  }
+
+  if (forecastSummaryListEl) {
+    forecastSummaryListEl.hidden = isListView;
+  }
+
+  if (viewMapBtnEl) {
+    const mapActive = !isListView;
+    viewMapBtnEl.classList.toggle('is-active', mapActive);
+    viewMapBtnEl.setAttribute('aria-pressed', mapActive ? 'true' : 'false');
+  }
+
+  if (viewListBtnEl) {
+    viewListBtnEl.classList.toggle('is-active', isListView);
+    viewListBtnEl.setAttribute('aria-pressed', isListView ? 'true' : 'false');
+  }
+
+  renderCompactForecastList();
+
+  if (!isListView && spotMapInstance) {
+    requestAnimationFrame(() => spotMapInstance.invalidateSize());
+  }
+}
+
+function setCurrentView(viewMode) {
+  currentView = VIEW_MODES.includes(viewMode) ? viewMode : 'map';
+  updateViewModeUI();
+}
+
+function setActiveConditionFilters(nextFilters) {
+  activeConditionFilters = {
+    minSurfable: Boolean(nextFilters?.minSurfable),
+    beginnerFriendly: Boolean(nextFilters?.beginnerFriendly),
+    preferClean: Boolean(nextFilters?.preferClean)
+  };
+
+  if (filterMinSurfableEl) filterMinSurfableEl.checked = activeConditionFilters.minSurfable;
+  if (filterBeginnerFriendlyEl) filterBeginnerFriendlyEl.checked = activeConditionFilters.beginnerFriendly;
+  if (filterPreferCleanEl) filterPreferCleanEl.checked = activeConditionFilters.preferClean;
+
+  if (!activeLiveCache) {
+    updateNoResultsWithFiltersMessage(true);
+    renderCompactForecastList();
+    return;
+  }
+
+  const currentContext = getLiveSlotContext(activeTimeOffset);
+  if (currentContext && passesHardConditionFilters(currentContext)) {
+    updateTimeSelectorButtons();
+    renderCompactForecastList();
+    return;
+  }
+
+  const fallbackOffset = getFirstFilteredAvailableOffset();
+  if (fallbackOffset !== undefined) {
+    renderLiveOffset(fallbackOffset);
+    return;
+  }
+
+  updateTimeSelectorButtons();
+  renderCompactForecastList();
 }
 
 function renderConditionTag(baseSpot, conditions) {
@@ -1246,6 +1549,19 @@ function setLanguage(lang, persist = true) {
   if (levelOptionAllEl) levelOptionAllEl.textContent = t('levelAll');
   if (levelOptionBeginnerEl) levelOptionBeginnerEl.textContent = t('levelBeginner');
   if (levelOptionAdvancedEl) levelOptionAdvancedEl.textContent = t('levelAdvanced');
+  if (conditionFiltersEl) conditionFiltersEl.setAttribute('aria-label', t('filterConditionsTitle'));
+  if (filterConditionsTitleEl) filterConditionsTitleEl.textContent = t('filterConditionsTitle');
+  if (filterMinSurfableLabelEl) filterMinSurfableLabelEl.textContent = t('filterMinSurfable');
+  if (filterBeginnerFriendlyLabelEl) filterBeginnerFriendlyLabelEl.textContent = t('filterBeginnerFriendly');
+  if (filterPreferCleanLabelEl) filterPreferCleanLabelEl.textContent = t('filterPreferClean');
+  if (filterMinSurfableEl) filterMinSurfableEl.setAttribute('aria-label', t('filterMinSurfable'));
+  if (filterBeginnerFriendlyEl) filterBeginnerFriendlyEl.setAttribute('aria-label', t('filterBeginnerFriendly'));
+  if (filterPreferCleanEl) filterPreferCleanEl.setAttribute('aria-label', t('filterPreferClean'));
+  if (viewModeContainerEl) viewModeContainerEl.setAttribute('aria-label', t('viewModeLabel'));
+  if (viewModeLabelEl) viewModeLabelEl.textContent = t('viewModeLabel');
+  if (viewMapBtnEl) viewMapBtnEl.textContent = t('viewMap');
+  if (viewListBtnEl) viewListBtnEl.textContent = t('viewList');
+  if (noResultsWithFiltersEl) noResultsWithFiltersEl.textContent = t('noResultsWithFilters');
   if (ratingLegendEl) ratingLegendEl.setAttribute('aria-label', t('legendAria'));
   if (legendTitleEl) legendTitleEl.textContent = t('legendTitle');
   if (legendItemGoodEl) legendItemGoodEl.innerHTML = `<span class="legend-dot legend-dot-good" aria-hidden="true"></span>${t('legendItemGood')}`;
@@ -1303,6 +1619,7 @@ function setLanguage(lang, persist = true) {
   } else {
     setForecastMeta(t('forecastMetaMock'));
   }
+  renderCompactForecastList();
   if (latestRatingConditions) {
     renderSurfRating(latestRatingConditions);
   }
@@ -1537,6 +1854,8 @@ function clearActiveLiveCache() {
     button.disabled = true;
     button.classList.remove('is-active');
   });
+  updateNoResultsWithFiltersMessage(true);
+  renderCompactForecastList();
 }
 
 function hideSuggestions() {
@@ -1906,18 +2225,21 @@ function updateTimeSelectorButtons() {
   }
 
   timeSelectorEl.hidden = false;
+  let hasFilteredResults = false;
 
   timeSlotButtons.forEach((button) => {
     const offset = Number(button.dataset.offset);
-    const snapshot = getLiveSnapshotForOffset(offset);
-    const isAvailable = Boolean(snapshot);
+    const slotContext = getLiveSlotContext(offset);
+    const isAvailable = Boolean(slotContext);
+    const isVisibleByFilters = isAvailable && passesHardConditionFilters(slotContext);
 
-    button.classList.remove(...SLOT_CLASS_NAMES);
+    button.classList.remove(...SLOT_CLASS_NAMES, 'slot-preferred');
 
-    if (!isAvailable) {
+    if (!isVisibleByFilters) {
       button.classList.add('slot-neutral');
     } else {
-      const slotRating = calculateSurfRating(snapshot.values);
+      hasFilteredResults = true;
+      const slotRating = calculateSurfRating(slotContext.values);
       if (!slotRating?.score) {
         button.classList.add('slot-neutral');
       } else if (slotRating.ratingClass === 'rating-good') {
@@ -1927,12 +2249,18 @@ function updateTimeSelectorButtons() {
       } else {
         button.classList.add('slot-bad');
       }
+
+      if (isPreferredCleanSlot(slotContext)) {
+        button.classList.add('slot-preferred');
+      }
     }
 
-    button.disabled = !isAvailable;
-    button.classList.toggle('is-active', offset === activeTimeOffset && isAvailable);
+    button.disabled = !isVisibleByFilters;
+    button.classList.toggle('is-active', offset === activeTimeOffset && isVisibleByFilters);
     button.title = isAvailable ? '' : t('timeSlotUnavailable');
   });
+
+  updateNoResultsWithFiltersMessage(hasFilteredResults);
 }
 
 function mergeWithFallbackSpot(spot, liveValues) {
@@ -1971,39 +2299,30 @@ function mergeWithFallbackSpot(spot, liveValues) {
   };
 }
 
-function findFirstAvailableOffset() {
-  return TIME_SLOT_OFFSETS.find((offset) => Boolean(getLiveSnapshotForOffset(offset)));
-}
-
 function getPreferredTimeOffset() {
-  if (getLiveSnapshotForOffset(DEFAULT_TIME_OFFSET)) {
+  const defaultSlot = getLiveSlotContext(DEFAULT_TIME_OFFSET);
+  if (defaultSlot && passesHardConditionFilters(defaultSlot)) {
     return DEFAULT_TIME_OFFSET;
   }
 
-  return findFirstAvailableOffset();
+  return getFirstFilteredAvailableOffset();
 }
 
 function renderLiveOffset(offsetHours) {
-  const snapshot = getLiveSnapshotForOffset(offsetHours);
-  if (!snapshot || !activeLiveCache) return false;
+  const slotContext = getLiveSlotContext(offsetHours);
+  if (!slotContext || !activeLiveCache) return false;
+  if (!passesHardConditionFilters(slotContext)) return false;
 
   activeTimeOffset = offsetHours;
   updateTimeSelectorButtons();
 
-  const mergedSpot = mergeWithFallbackSpot(activeLiveCache.spot, snapshot.values);
-  renderSpot(mergedSpot, snapshot.values);
+  renderSpot(slotContext.mergedSpot, slotContext.values);
 
-  const tijdLabel = snapshot.time
-    ? new Date(snapshot.time).toLocaleString(getLocaleForLanguage(), {
-        hour: '2-digit',
-        minute: '2-digit',
-        day: '2-digit',
-        month: '2-digit'
-      })
-    : t('fallbackUnknownTime');
+  const tijdLabel = formatCompactSlotTimeLabel(slotContext.time);
 
   setForecastMeta(t('forecastMetaLive', { timeLabel: tijdLabel }), 'live');
   setActiveTimeSlotButton(offsetHours);
+  renderCompactForecastList();
   return true;
 }
 
@@ -2310,6 +2629,13 @@ function resetView() {
   activeTimeOffset = DEFAULT_TIME_OFFSET;
   setActiveTimeSlotButton(DEFAULT_TIME_OFFSET);
 
+  setCurrentView('map');
+  setActiveConditionFilters({
+    minSurfable: false,
+    beginnerFriendly: false,
+    preferClean: false
+  });
+
   if (levelSelectEl) {
     levelSelectEl.value = 'all';
   }
@@ -2441,9 +2767,33 @@ timeSelectorEl.addEventListener('click', (event) => {
   const offset = Number(button.dataset.offset);
   const rendered = renderLiveOffset(offset);
   if (!rendered) {
-    setSearchMessage(t('liveNoTimeslot'), 'error');
+    setSearchMessage(t('noResultsWithFilters'), 'error');
   }
 });
+
+if (filterMinSurfableEl && filterBeginnerFriendlyEl && filterPreferCleanEl) {
+  const handleConditionFilterChange = () => {
+    setActiveConditionFilters({
+      minSurfable: filterMinSurfableEl.checked,
+      beginnerFriendly: filterBeginnerFriendlyEl.checked,
+      preferClean: filterPreferCleanEl.checked
+    });
+  };
+
+  filterMinSurfableEl.addEventListener('change', handleConditionFilterChange);
+  filterBeginnerFriendlyEl.addEventListener('change', handleConditionFilterChange);
+  filterPreferCleanEl.addEventListener('change', handleConditionFilterChange);
+}
+
+if (viewMapBtnEl && viewListBtnEl) {
+  viewMapBtnEl.addEventListener('click', () => {
+    setCurrentView('map');
+  });
+
+  viewListBtnEl.addEventListener('click', () => {
+    setCurrentView('list');
+  });
+}
 
 favoriteToggleBtnEl.addEventListener('click', () => {
   if (!activeSpot) return;
@@ -2544,6 +2894,12 @@ if (resetViewButtonEl) {
 
 const storedTheme = getStoredTheme();
 setTheme(storedTheme ?? detectPreferredTheme(), false);
+setCurrentView('map');
+setActiveConditionFilters({
+  minSurfable: false,
+  beginnerFriendly: false,
+  preferClean: false
+});
 
 function detectPreferredLanguage() {
   const browserLanguages = Array.isArray(navigator.languages) && navigator.languages.length

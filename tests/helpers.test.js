@@ -129,6 +129,27 @@ function getSurfConditionTag(snapshot) {
   return 'mixed';
 }
 
+function isMinSurfableConditions(conditions) {
+  const waveHeight = conditions?.golfHoogteMeter;
+  const wavePeriod = conditions?.golfPeriodeSeconden;
+
+  return Number.isFinite(waveHeight) && Number.isFinite(wavePeriod) && waveHeight >= 0.9 && wavePeriod >= 7;
+}
+
+function passesHardConditionFilters(slotContext, filters) {
+  if (!slotContext) return false;
+
+  if (filters?.minSurfable && !slotContext.minSurfable) {
+    return false;
+  }
+
+  if (filters?.beginnerFriendly && slotContext.challenging) {
+    return false;
+  }
+
+  return true;
+}
+
 function assertEqual(actual, expected, label) {
   if (actual !== expected) {
     throw new Error(`${label} failed: expected "${expected}", got "${actual}"`);
@@ -252,6 +273,57 @@ function runSurfConditionTagTests() {
   assertEqual(getSurfConditionTag(mixedCase), 'mixed', 'getSurfConditionTag(mixed)');
 }
 
+function runMinSurfableTests() {
+  const cases = [
+    [{ golfHoogteMeter: 0.8, golfPeriodeSeconden: 7 }, false],
+    [{ golfHoogteMeter: 0.9, golfPeriodeSeconden: 6.9 }, false],
+    [{ golfHoogteMeter: 0.9, golfPeriodeSeconden: 7 }, true],
+    [{ golfHoogteMeter: 1.4, golfPeriodeSeconden: 9 }, true],
+    [{ golfHoogteMeter: Number.NaN, golfPeriodeSeconden: 8 }, false]
+  ];
+
+  cases.forEach(([input, expected], index) => {
+    assertEqual(
+      isMinSurfableConditions(input),
+      expected,
+      `isMinSurfableConditions(case ${index + 1})`
+    );
+  });
+}
+
+function runHardFilterCombinationTests() {
+  const surfableCalm = {
+    minSurfable: true,
+    challenging: false
+  };
+
+  const unsurfableCalm = {
+    minSurfable: false,
+    challenging: false
+  };
+
+  const surfableChallenging = {
+    minSurfable: true,
+    challenging: true
+  };
+
+  assertEqual(
+    passesHardConditionFilters(surfableCalm, { minSurfable: true, beginnerFriendly: true }),
+    true,
+    'passesHardConditionFilters(surfableCalm)'
+  );
+  assertEqual(
+    passesHardConditionFilters(unsurfableCalm, { minSurfable: true, beginnerFriendly: false }),
+    false,
+    'passesHardConditionFilters(unsurfableCalm)'
+  );
+  assertEqual(
+    passesHardConditionFilters(surfableChallenging, { minSurfable: false, beginnerFriendly: true }),
+    false,
+    'passesHardConditionFilters(surfableChallenging)'
+  );
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
@@ -259,6 +331,8 @@ function runAll() {
   runChallengingConditionsTests();
   runWindRelativeToCoastTests();
   runSurfConditionTagTests();
+  runMinSurfableTests();
+  runHardFilterCombinationTests();
   console.log('All tests passed');
 }
 
