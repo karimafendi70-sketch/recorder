@@ -95,6 +95,8 @@ const dailySurfReportEl = document.getElementById('dailySurfReport');
 const scoreTimelineEl = document.getElementById('scoreTimeline');
 const daypartHeatmapEl = document.getElementById('daypartHeatmap');
 const userPreferencesPanelEl = document.getElementById('userPreferencesPanel');
+const appNavTabs = Array.from(document.querySelectorAll('.app-nav-tab'));
+const appViewSections = Array.from(document.querySelectorAll('.app-view'));
 const timeSlotNowEl = document.getElementById('timeSlotNow');
 const timeSlot3hEl = document.getElementById('timeSlot3h');
 const timeSlot6hEl = document.getElementById('timeSlot6h');
@@ -3528,6 +3530,27 @@ function setCurrentView(viewMode) {
   updateViewModeUI();
 }
 
+function setAppShellView(nextView) {
+  const normalizedView = ['forecast', 'insights', 'profile'].includes(nextView)
+    ? nextView
+    : 'forecast';
+
+  appNavTabs.forEach((tab) => {
+    const isActive = tab.dataset.view === normalizedView;
+    tab.classList.toggle('is-active', isActive);
+    tab.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+
+  appViewSections.forEach((section) => {
+    const isActive = section.id === `view-${normalizedView}`;
+    section.classList.toggle('is-hidden', !isActive);
+  });
+
+  if (normalizedView === 'forecast' && currentView !== 'list' && spotMapInstance) {
+    requestAnimationFrame(() => spotMapInstance.invalidateSize());
+  }
+}
+
 function setCurrentDayKey(nextDayKey) {
   if (!activeLiveCache || !nextDayKey) return;
 
@@ -5456,6 +5479,14 @@ if (viewMapBtnEl && viewListBtnEl) {
   });
 }
 
+if (appNavTabs.length && appViewSections.length) {
+  appNavTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      setAppShellView(tab.dataset.view);
+    });
+  });
+}
+
 if (forecastListViewEl) {
   forecastListViewEl.addEventListener('click', (event) => {
     const item = event.target.closest('.compact-forecast-item');
@@ -5641,6 +5672,7 @@ if (resetViewButtonEl) {
 const storedTheme = getStoredTheme();
 setTheme(storedTheme ?? detectPreferredTheme(), false);
 setCurrentView('map');
+setAppShellView('forecast');
 setActiveConditionFilters({
   minSurfable: false,
   beginnerFriendly: false,
