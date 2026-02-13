@@ -8,6 +8,7 @@ const surfRatingEl = document.getElementById('surfRating');
 const ratingExplanationEl = document.getElementById('ratingExplanation');
 const legendToggleBtnEl = document.getElementById('legendToggleBtn');
 const ratingLegendBodyEl = document.getElementById('ratingLegendBody');
+const spotMapEl = document.getElementById('spotMap');
 const favoriteToggleBtnEl = document.getElementById('favoriteToggleBtn');
 const favoritesListEl = document.getElementById('favoritesList');
 const timeSelectorEl = document.getElementById('timeSelector');
@@ -195,6 +196,53 @@ function setLegendExpanded(isExpanded) {
   legendToggleBtnEl.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
   legendToggleBtnEl.textContent = isExpanded ? 'Verberg uitleg' : 'Toon uitleg';
   ratingLegendBodyEl.hidden = !isExpanded;
+}
+
+function initSpotMap() {
+  if (!spotMapEl) return;
+
+  if (typeof window.L === 'undefined') {
+    spotMapEl.textContent = 'Kaart kon niet geladen worden.';
+    return;
+  }
+
+  // Leaflet wordt gebruikt als lichte kaartlibrary voor de eerste mapstap.
+  const map = window.L.map(spotMapEl, {
+    scrollWheelZoom: false
+  }).setView([44, 2], 2);
+
+  window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap-bijdragers'
+  }).addTo(map);
+
+  const spotsWithCoordinates = SURF_SPOTS.filter(
+    (spot) => Number.isFinite(spot.latitude) && Number.isFinite(spot.longitude)
+  );
+
+  const markerBounds = [];
+  spotsWithCoordinates.forEach((spot) => {
+    const markerPosition = [spot.latitude, spot.longitude];
+    markerBounds.push(markerPosition);
+
+    const marker = window.L.marker(markerPosition).addTo(map);
+    marker.bindPopup(`<strong>${spot.naam}</strong><br>${spot.land}`);
+    marker.bindTooltip(`${spot.naam} (${spot.land})`, {
+      direction: 'top',
+      offset: [0, -10]
+    });
+  });
+
+  if (markerBounds.length === 1) {
+    map.setView(markerBounds[0], 6);
+  } else if (markerBounds.length > 1) {
+    map.fitBounds(markerBounds, {
+      padding: [24, 24],
+      maxZoom: 4
+    });
+  }
+
+  requestAnimationFrame(() => map.invalidateSize());
 }
 
 function setForecastMeta(message, type = 'default') {
@@ -896,6 +944,8 @@ if (legendToggleBtnEl && ratingLegendBodyEl) {
     setLegendExpanded(!isExpanded);
   });
 }
+
+initSpotMap();
 
 loadFavoritesFromStorage();
 renderFavoritesList();

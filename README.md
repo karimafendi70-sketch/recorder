@@ -60,7 +60,7 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 ## Toekomst-ideeën
 
 - Meer surfspots toevoegen.
-- Kaartplaats-holder staat al klaar in de UI als basis voor de toekomstige kaartweergave.
+- Issue #1: eerste werkende kaartweergave met spot-markers staat live; volgende stap is koppeling van markerklik naar de forecast-flow.
 - Kaartweergave toevoegen (bijv. Leaflet of eenvoudige embed).
 - Geavanceerdere surf-rating (extra parameters, per type surfer).
 - Responsieve layout verder finetunen.

@@ -161,19 +161,21 @@ body {
   color: #0f172a;
 }
 
-.spot-map-placeholder {
-  min-height: 190px;
-  border: 1px dashed #94a3b8;
+.spot-map-canvas {
+  min-height: 240px;
+  border: 1px solid #cbd5e1;
   border-radius: 10px;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
-  color: #475569;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 0.94rem;
-  font-weight: 600;
-  padding: 0.75rem;
+  overflow: hidden;
+}
+
+.spot-map-note {
+  margin: 0.45rem 0 0;
+  font-size: 0.84rem;
+  color: #64748b;
+}
+
+.spot-map-canvas .leaflet-control-attribution {
+  font-size: 0.66rem;
 }
 
 .forecast-card {
@@ -511,9 +513,12 @@ body {
     font-size: 0.94rem;
   }
 
-  .spot-map-placeholder {
-    min-height: 145px;
-    font-size: 0.86rem;
+  .spot-map-canvas {
+    min-height: 185px;
+  }
+
+  .spot-map-note {
+    font-size: 0.8rem;
   }
 
   .search-row {
@@ -598,9 +603,8 @@ body {
     font-size: 0.95rem;
   }
 
-  .spot-map-placeholder {
-    min-height: 125px;
-    font-size: 0.82rem;
+  .spot-map-canvas {
+    min-height: 155px;
   }
 
   .forecast-meta {

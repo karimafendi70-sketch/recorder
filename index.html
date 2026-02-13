@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FreeSurfCast</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -31,9 +37,8 @@
 
       <section id="spotMapSection" class="spot-map-section" aria-label="Kaartweergave placeholder">
         <h2 class="spot-map-title">Kaartweergave (binnenkort)</h2>
-        <div id="spotMap" class="spot-map-placeholder" role="img" aria-label="Plaats voor toekomstige surfspotkaart">
-          Hier komt de kaart met surfspots.
-        </div>
+        <div id="spotMap" class="spot-map-canvas" aria-label="Kaart met surfspots"></div>
+        <p class="spot-map-note">Eerste kaartstap: markers tonen spots, klik voor naam en land.</p>
       </section>
 
       <main class="forecast-card" aria-live="polite">
@@ -86,6 +91,11 @@
     </div>
 
     <script src="spots.js"></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
     <script src="app.js"></script>
   </body>
 </html>
