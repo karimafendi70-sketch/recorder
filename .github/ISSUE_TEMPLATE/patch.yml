@@ -1,0 +1,67 @@
+name: Patch release
+description: Gebruik dit template voor een patch zoals v0.1.1 (bugfixes, kleine UX-updates, documentatie)
+title: "Patch v0.1.1: "
+labels:
+  - patch
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gebruik dit issue om een kleine patch-release voor te bereiden. Houd het kort, concreet en verifieerbaar.
+
+  - type: textarea
+    id: samenvatting
+    attributes:
+      label: Korte samenvatting van de wijziging
+      description: Beschrijf in 1-3 zinnen wat er verandert.
+      placeholder: Bijvoorbeeld: Verbeterde zoekfeedback bij typo's en kleine style-fix voor mobiele weergave.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type_wijziging
+    attributes:
+      label: Type wijziging
+      description: Kies het type patch.
+      options:
+        - Bugfix
+        - Kleine UX-update
+        - Documentatie
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact op gebruikers
+      description: Wat merkt de gebruiker hiervan? Is er risico op regressie?
+      placeholder: Bijvoorbeeld: Zoekresultaten worden consistenter getoond; geen breaking changes verwacht.
+    validations:
+      required: true
+
+  - type: textarea
+    id: teststappen
+    attributes:
+      label: Teststappen / hoe te verifiëren
+      description: Beschrijf hoe je de wijziging lokaal controleert.
+      placeholder: |
+        1. Open app in browser (of Live Server).
+        2. Voer zoekactie X uit.
+        3. Controleer gedrag Y.
+        4. Controleer dat bestaande flow Z nog werkt.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Code bijgewerkt
+          required: false
+        - label: Lokaal getest
+          required: false
+        - label: README/changelog geüpdatet (indien nodig)
+          required: false
+        - label: Nieuwe versie/tag gepland of aangemaakt
+          required: false
