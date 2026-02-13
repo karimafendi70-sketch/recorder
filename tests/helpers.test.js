@@ -326,19 +326,42 @@ function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginn
   if (!slotContext) {
     return {
       score: 0,
-      reasons: []
+      reasons: [],
+      breakdown: {
+        base: 0,
+        conditionTag: 0,
+        waveHeightRange: 0,
+        wavePeriod: 0,
+        windDirection: 0,
+        challengingPenalty: 0,
+        tideEffect: 0,
+        filtersPreference: 0
+      },
+      rawScore: 0
     };
   }
 
   let score = 0;
   const reasons = [];
+  const breakdown = {
+    base: 0,
+    conditionTag: 0,
+    waveHeightRange: 0,
+    wavePeriod: 0,
+    windDirection: 0,
+    challengingPenalty: 0,
+    tideEffect: 0,
+    filtersPreference: 0
+  };
   const spotValues = slotContext.mergedSpot ?? slotContext.values ?? {};
 
   if (slotContext.conditionTag === 'clean') {
     score += 3;
+    breakdown.conditionTag += 3;
     reasons.push('clean');
   } else if (slotContext.conditionTag === 'mixed') {
     score += 1;
+    breakdown.conditionTag += 1;
     reasons.push('mixed');
   } else {
     reasons.push('choppy');
@@ -348,18 +371,22 @@ function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginn
   if (Number.isFinite(waveHeight)) {
     if (waveHeight >= 0.9 && waveHeight <= 2.0) {
       score += 2;
+      breakdown.waveHeightRange += 2;
       reasons.push('good-wave-height');
     } else if (waveHeight >= 0.7 && waveHeight <= 2.4) {
       score += 1;
+      breakdown.waveHeightRange += 1;
       reasons.push('acceptable-wave-height');
     } else if (waveHeight > 2.8) {
       score -= 1;
+      breakdown.waveHeightRange -= 1;
       reasons.push('heavy-wave-height');
     }
   }
 
   if (Number.isFinite(spotValues.golfPeriodeSeconden) && spotValues.golfPeriodeSeconden >= 8) {
     score += 1;
+    breakdown.wavePeriod += 1;
     reasons.push('good-period');
   }
 
@@ -369,9 +396,11 @@ function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginn
 
   if (windRelative === 'offshore') {
     score += 1;
+    breakdown.windDirection += 1;
     reasons.push('offshore');
   } else if (windRelative === 'onshore') {
     score -= 1;
+    breakdown.windDirection -= 1;
     reasons.push('onshore');
   } else {
     reasons.push('cross');
@@ -379,33 +408,48 @@ function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginn
 
   if (slotContext.challenging) {
     score -= 2;
+    breakdown.challengingPenalty -= 2;
     reasons.push('challenging');
   }
 
   if (slotContext.tideSuitability === 'good') {
     score += 1;
+    breakdown.tideEffect += 1;
     reasons.push('tide-supportive');
   } else if (slotContext.tideSuitability === 'less-ideal') {
     score -= 1;
+    breakdown.tideEffect -= 1;
     reasons.push('tide-less-ideal');
   }
 
   if (filters.minSurfable && !slotContext.minSurfable) {
     score -= 2;
+    breakdown.filtersPreference -= 2;
   }
 
   if (filters.beginnerFriendly && slotContext.challenging) {
     score -= 3;
+    breakdown.filtersPreference -= 3;
   }
 
   if (filters.preferClean) {
-    if (slotContext.conditionTag === 'clean') score += 1;
-    if (slotContext.conditionTag === 'choppy') score -= 2;
+    if (slotContext.conditionTag === 'clean') {
+      score += 1;
+      breakdown.filtersPreference += 1;
+    }
+    if (slotContext.conditionTag === 'choppy') {
+      score -= 2;
+      breakdown.filtersPreference -= 2;
+    }
   }
 
+  const rawScore = score;
+
   return {
-    score: Math.max(0, Math.min(10, score)),
-    reasons
+    score: Math.max(0, Math.min(10, rawScore)),
+    reasons,
+    breakdown,
+    rawScore
   };
 }
 
@@ -926,9 +970,19 @@ function runMultiSpotScoreTests() {
 
   const cleanScore = getSlotQualityScore(cleanOffshore).score;
   const choppyScore = getSlotQualityScore(choppyOnshore).score;
+  const cleanBreakdown = getSlotQualityScore(cleanOffshore).breakdown;
+  const choppyBreakdown = getSlotQualityScore(choppyOnshore).breakdown;
 
   if (!(cleanScore > choppyScore)) {
     throw new Error(`getSlotQualityScore ranking failed: cleanScore=${cleanScore}, choppyScore=${choppyScore}`);
+  }
+
+  if (!(cleanBreakdown.conditionTag > 0 && cleanBreakdown.windDirection > 0)) {
+    throw new Error(`clean breakdown missing expected positives: ${JSON.stringify(cleanBreakdown)}`);
+  }
+
+  if (!(choppyBreakdown.challengingPenalty < 0 && choppyBreakdown.windDirection < 0)) {
+    throw new Error(`choppy breakdown missing expected negatives: ${JSON.stringify(choppyBreakdown)}`);
   }
 
   const penalizedScore = getSlotQualityScore(cleanOffshore, { preferClean: true, minSurfable: true, beginnerFriendly: true }).score;
@@ -980,10 +1034,15 @@ function runTideScoreImpactTests() {
 
   const scoreGoodTide = getSlotQualityScore({ ...baseSlot, tideSuitability: 'good' }).score;
   const scoreBadTide = getSlotQualityScore({ ...baseSlot, tideSuitability: 'less-ideal' }).score;
+  const breakdownGoodTide = getSlotQualityScore({ ...baseSlot, tideSuitability: 'good' }).breakdown;
+  const breakdownBadTide = getSlotQualityScore({ ...baseSlot, tideSuitability: 'less-ideal' }).breakdown;
 
   if (!(scoreGoodTide > scoreBadTide)) {
     throw new Error(`tide score impact failed: good=${scoreGoodTide}, lessIdeal=${scoreBadTide}`);
   }
+
+  assertEqual(breakdownGoodTide.tideEffect, 1, 'breakdown tide bonus');
+  assertEqual(breakdownBadTide.tideEffect, -1, 'breakdown tide penalty');
 }
 
 function runDailyReportTests() {

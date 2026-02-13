@@ -959,6 +959,117 @@ const tideTranslations = {
   }
 };
 
+const scoreExplanationTranslations = {
+  nl: {
+    scoreExplanationTitle: 'Waarom deze score?',
+    scoreExplanationNotAvailable: 'Geen gedetailleerde score-uitleg beschikbaar.',
+    scoreExpConditionClean: '{value} Clean condities',
+    scoreExpConditionMixed: '{value} Mixed condities',
+    scoreExpConditionChoppy: '{value} Choppy condities',
+    scoreExpGoodSwellRange: '{value} Gunstige golfhoogte-range',
+    scoreExpPoorSwellRange: '{value} Minder gunstige golfhoogte-range',
+    scoreExpGoodSwellPeriod: '{value} Bruikbare swell-periode',
+    scoreExpOffshoreWind: '{value} Offshore windcomponent',
+    scoreExpOnshoreWind: '{value} Onshore windcomponent',
+    scoreExpChallengingPenalty: '{value} Challenging condities',
+    scoreExpTideSupportive: '{value} Getij in een ondersteunende fase',
+    scoreExpTideLessIdeal: '{value} Getij minder ideaal voor dit spot-profiel',
+    scoreExpFiltersPreferenceBonus: '{value} Match met actieve filtervoorkeuren',
+    scoreExpRawTotal: 'Ruwe som: {value}',
+    scoreDebugTitle: 'Debug breakdown'
+  },
+  en: {
+    scoreExplanationTitle: 'Why this score?',
+    scoreExplanationNotAvailable: 'No detailed score breakdown available.',
+    scoreExpConditionClean: '{value} Clean conditions',
+    scoreExpConditionMixed: '{value} Mixed conditions',
+    scoreExpConditionChoppy: '{value} Choppy conditions',
+    scoreExpGoodSwellRange: '{value} Good swell range',
+    scoreExpPoorSwellRange: '{value} Less favorable swell range',
+    scoreExpGoodSwellPeriod: '{value} Useful swell period',
+    scoreExpOffshoreWind: '{value} Offshore wind component',
+    scoreExpOnshoreWind: '{value} Onshore wind component',
+    scoreExpChallengingPenalty: '{value} Challenging conditions penalty',
+    scoreExpTideSupportive: '{value} Tide is in a supportive phase',
+    scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
+    scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpRawTotal: 'Raw total: {value}',
+    scoreDebugTitle: 'Debug breakdown'
+  },
+  fr: {
+    scoreExplanationTitle: 'Why this score?',
+    scoreExplanationNotAvailable: 'No detailed score breakdown available.',
+    scoreExpConditionClean: '{value} Clean conditions',
+    scoreExpConditionMixed: '{value} Mixed conditions',
+    scoreExpConditionChoppy: '{value} Choppy conditions',
+    scoreExpGoodSwellRange: '{value} Good swell range',
+    scoreExpPoorSwellRange: '{value} Less favorable swell range',
+    scoreExpGoodSwellPeriod: '{value} Useful swell period',
+    scoreExpOffshoreWind: '{value} Offshore wind component',
+    scoreExpOnshoreWind: '{value} Onshore wind component',
+    scoreExpChallengingPenalty: '{value} Challenging conditions penalty',
+    scoreExpTideSupportive: '{value} Tide is in a supportive phase',
+    scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
+    scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpRawTotal: 'Raw total: {value}',
+    scoreDebugTitle: 'Debug breakdown'
+  },
+  es: {
+    scoreExplanationTitle: 'Why this score?',
+    scoreExplanationNotAvailable: 'No detailed score breakdown available.',
+    scoreExpConditionClean: '{value} Clean conditions',
+    scoreExpConditionMixed: '{value} Mixed conditions',
+    scoreExpConditionChoppy: '{value} Choppy conditions',
+    scoreExpGoodSwellRange: '{value} Good swell range',
+    scoreExpPoorSwellRange: '{value} Less favorable swell range',
+    scoreExpGoodSwellPeriod: '{value} Useful swell period',
+    scoreExpOffshoreWind: '{value} Offshore wind component',
+    scoreExpOnshoreWind: '{value} Onshore wind component',
+    scoreExpChallengingPenalty: '{value} Challenging conditions penalty',
+    scoreExpTideSupportive: '{value} Tide is in a supportive phase',
+    scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
+    scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpRawTotal: 'Raw total: {value}',
+    scoreDebugTitle: 'Debug breakdown'
+  },
+  pt: {
+    scoreExplanationTitle: 'Why this score?',
+    scoreExplanationNotAvailable: 'No detailed score breakdown available.',
+    scoreExpConditionClean: '{value} Clean conditions',
+    scoreExpConditionMixed: '{value} Mixed conditions',
+    scoreExpConditionChoppy: '{value} Choppy conditions',
+    scoreExpGoodSwellRange: '{value} Good swell range',
+    scoreExpPoorSwellRange: '{value} Less favorable swell range',
+    scoreExpGoodSwellPeriod: '{value} Useful swell period',
+    scoreExpOffshoreWind: '{value} Offshore wind component',
+    scoreExpOnshoreWind: '{value} Onshore wind component',
+    scoreExpChallengingPenalty: '{value} Challenging conditions penalty',
+    scoreExpTideSupportive: '{value} Tide is in a supportive phase',
+    scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
+    scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpRawTotal: 'Raw total: {value}',
+    scoreDebugTitle: 'Debug breakdown'
+  },
+  de: {
+    scoreExplanationTitle: 'Why this score?',
+    scoreExplanationNotAvailable: 'No detailed score breakdown available.',
+    scoreExpConditionClean: '{value} Clean conditions',
+    scoreExpConditionMixed: '{value} Mixed conditions',
+    scoreExpConditionChoppy: '{value} Choppy conditions',
+    scoreExpGoodSwellRange: '{value} Good swell range',
+    scoreExpPoorSwellRange: '{value} Less favorable swell range',
+    scoreExpGoodSwellPeriod: '{value} Useful swell period',
+    scoreExpOffshoreWind: '{value} Offshore wind component',
+    scoreExpOnshoreWind: '{value} Onshore wind component',
+    scoreExpChallengingPenalty: '{value} Challenging conditions penalty',
+    scoreExpTideSupportive: '{value} Tide is in a supportive phase',
+    scoreExpTideLessIdeal: '{value} Tide is less ideal for this spot profile',
+    scoreExpFiltersPreferenceBonus: '{value} Active filter preference impact',
+    scoreExpRawTotal: 'Raw total: {value}',
+    scoreDebugTitle: 'Debug breakdown'
+  }
+};
+
 const helpTranslations = {
   nl: {
     helpToggleLabel: 'Help',
@@ -1154,6 +1265,12 @@ Object.entries(tideTranslations).forEach(([lang, extraKeys]) => {
   }
 });
 
+Object.entries(scoreExplanationTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
 Object.entries(statusTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -1195,6 +1312,13 @@ let preferredInitialOffset = null;
 let currentSlotKey = null;
 let preferredSlotOffset = null;
 let multiSpotRenderRequestId = 0;
+const DEBUG_SCORE = (() => {
+  try {
+    return localStorage.getItem('debugScore') === '1';
+  } catch {
+    return false;
+  }
+})();
 
 function t(key, vars = {}) {
   const languagePack = translations[currentLanguage] ?? translations.nl;
@@ -1270,6 +1394,11 @@ function formatWindDirection(directionOrDegrees) {
 function formatWindSpeed(speedValue) {
   if (!Number.isFinite(speedValue)) return '-';
   return `${Math.round(speedValue)} kn`;
+}
+
+function formatScoreDelta(value) {
+  const rounded = Math.round((value + Number.EPSILON) * 10) / 10;
+  return rounded > 0 ? `+${rounded}` : `${rounded}`;
 }
 
 function getSwellClassName(waveHeight) {
@@ -1374,7 +1503,7 @@ function getLiveSlotContext(offsetHours) {
     dayPart: getDayPart(snapshot.time)
   });
 
-  return {
+  const slotContext = {
     offsetHours,
     time: snapshot.time,
     dayKey: getLocalDateKey(snapshot.time),
@@ -1387,6 +1516,10 @@ function getLiveSlotContext(offsetHours) {
     minSurfable: isMinSurfableConditions(snapshot.values),
     challenging: isChallengingConditions(snapshot.values)
   };
+
+  slotContext.quality = getSlotQualityScore(slotContext, { includeActiveFilters: true, skipCached: true });
+  slotContext.qualityNoFilters = getSlotQualityScore(slotContext, { includeActiveFilters: false, skipCached: true });
+  return slotContext;
 }
 
 function getLocalDateKey(timestamp) {
@@ -1784,21 +1917,57 @@ function getSlotQualityScore(slotContext, options = {}) {
   if (!slotContext) {
     return {
       score: 0,
-      reasons: []
+      reasons: [],
+      breakdown: {
+        base: 0,
+        conditionTag: 0,
+        waveHeightRange: 0,
+        wavePeriod: 0,
+        windDirection: 0,
+        challengingPenalty: 0,
+        tideEffect: 0,
+        filtersPreference: 0
+      },
+      rawScore: 0
     };
   }
 
   const includeActiveFilters = options.includeActiveFilters !== false;
+  const skipCached = options.skipCached === true;
+
+  if (!skipCached) {
+    const cachedQuality = includeActiveFilters ? slotContext.quality : slotContext.qualityNoFilters;
+    if (
+      cachedQuality &&
+      Number.isFinite(cachedQuality.score) &&
+      Number.isFinite(cachedQuality.rawScore) &&
+      cachedQuality.breakdown
+    ) {
+      return cachedQuality;
+    }
+  }
 
   let score = 0;
   const reasons = [];
+  const breakdown = {
+    base: 0,
+    conditionTag: 0,
+    waveHeightRange: 0,
+    wavePeriod: 0,
+    windDirection: 0,
+    challengingPenalty: 0,
+    tideEffect: 0,
+    filtersPreference: 0
+  };
   const spotValues = slotContext.mergedSpot ?? slotContext.values ?? {};
 
   if (slotContext.conditionTag === 'clean') {
     score += 3;
+    breakdown.conditionTag += 3;
     reasons.push('clean');
   } else if (slotContext.conditionTag === 'mixed') {
     score += 1;
+    breakdown.conditionTag += 1;
     reasons.push('mixed');
   } else {
     reasons.push('choppy');
@@ -1808,12 +1977,15 @@ function getSlotQualityScore(slotContext, options = {}) {
   if (Number.isFinite(waveHeight)) {
     if (waveHeight >= 0.9 && waveHeight <= 2.0) {
       score += 2;
+      breakdown.waveHeightRange += 2;
       reasons.push('good-wave-height');
     } else if (waveHeight >= 0.7 && waveHeight <= 2.4) {
       score += 1;
+      breakdown.waveHeightRange += 1;
       reasons.push('acceptable-wave-height');
     } else if (waveHeight > 2.8) {
       score -= 1;
+      breakdown.waveHeightRange -= 1;
       reasons.push('heavy-wave-height');
     }
   }
@@ -1821,6 +1993,7 @@ function getSlotQualityScore(slotContext, options = {}) {
   const wavePeriod = spotValues.golfPeriodeSeconden;
   if (Number.isFinite(wavePeriod) && wavePeriod >= 8) {
     score += 1;
+    breakdown.wavePeriod += 1;
     reasons.push('good-period');
   }
 
@@ -1830,9 +2003,11 @@ function getSlotQualityScore(slotContext, options = {}) {
 
   if (windRelative === 'offshore') {
     score += 1;
+    breakdown.windDirection += 1;
     reasons.push('offshore');
   } else if (windRelative === 'onshore') {
     score -= 1;
+    breakdown.windDirection -= 1;
     reasons.push('onshore');
   } else {
     reasons.push('cross');
@@ -1840,42 +2015,62 @@ function getSlotQualityScore(slotContext, options = {}) {
 
   if (slotContext.challenging) {
     score -= 2;
+    breakdown.challengingPenalty -= 2;
     reasons.push('challenging');
   }
 
   if (slotContext.tideSuitability === 'good') {
     score += 1;
+    breakdown.tideEffect += 1;
     reasons.push('tide-supportive');
   } else if (slotContext.tideSuitability === 'less-ideal') {
     score -= 1;
+    breakdown.tideEffect -= 1;
     reasons.push('tide-less-ideal');
   }
 
   if (includeActiveFilters && activeConditionFilters.minSurfable && !slotContext.minSurfable) {
     score -= 2;
+    breakdown.filtersPreference -= 2;
     reasons.push('below-min-surfable-filter');
   }
 
   if (includeActiveFilters && activeConditionFilters.beginnerFriendly && slotContext.challenging) {
     score -= 3;
+    breakdown.filtersPreference -= 3;
     reasons.push('beginner-filter-penalty');
   }
 
   if (includeActiveFilters && activeConditionFilters.preferClean) {
     if (slotContext.conditionTag === 'clean') {
       score += 1;
+      breakdown.filtersPreference += 1;
       reasons.push('clean-preference-bonus');
     } else if (slotContext.conditionTag === 'choppy') {
       score -= 2;
+      breakdown.filtersPreference -= 2;
       reasons.push('clean-preference-penalty');
     }
   }
 
-  const clamped = Math.max(0, Math.min(10, score));
-  return {
+  const rawScore = score;
+  const clamped = Math.max(0, Math.min(10, rawScore));
+  const result = {
     score: clamped,
-    reasons
+    reasons,
+    breakdown,
+    rawScore
   };
+
+  if (!skipCached) {
+    if (includeActiveFilters) {
+      slotContext.quality = result;
+    } else {
+      slotContext.qualityNoFilters = result;
+    }
+  }
+
+  return result;
 }
 
 function getSpotDayScore(spot, dayKey, allSlotContextsForSpotAndDay, options = {}) {
@@ -1920,6 +2115,76 @@ function getSpotDayScore(spot, dayKey, allSlotContextsForSpotAndDay, options = {
     bestSlotContext: bestSlot,
     reasons: best.reasons
   };
+}
+
+function buildScoreExplanationLines(breakdown, language = currentLanguage, slotContext = null) {
+  if (!breakdown || typeof breakdown !== 'object') return [];
+
+  const languagePack = translations[language] ?? translations[currentLanguage] ?? translations.nl;
+  const fallbackPack = translations.nl;
+  const localT = (key, vars = {}) => {
+    let template = languagePack[key] ?? fallbackPack[key] ?? key;
+    Object.entries(vars).forEach(([variable, value]) => {
+      template = template.replaceAll(`{${variable}}`, String(value));
+    });
+    return template;
+  };
+
+  const lines = [];
+  const pushLine = (value, key) => {
+    if (!value) return;
+    lines.push({
+      value,
+      text: localT(key, { value: formatScoreDelta(value) })
+    });
+  };
+
+  if (breakdown.conditionTag) {
+    const conditionKey = slotContext?.conditionTag === 'clean'
+      ? 'scoreExpConditionClean'
+      : slotContext?.conditionTag === 'choppy'
+        ? 'scoreExpConditionChoppy'
+        : 'scoreExpConditionMixed';
+    pushLine(breakdown.conditionTag, conditionKey);
+  }
+
+  if (breakdown.waveHeightRange) {
+    pushLine(
+      breakdown.waveHeightRange,
+      breakdown.waveHeightRange > 0 ? 'scoreExpGoodSwellRange' : 'scoreExpPoorSwellRange'
+    );
+  }
+
+  if (breakdown.wavePeriod) {
+    pushLine(breakdown.wavePeriod, 'scoreExpGoodSwellPeriod');
+  }
+
+  if (breakdown.windDirection) {
+    pushLine(
+      breakdown.windDirection,
+      breakdown.windDirection > 0 ? 'scoreExpOffshoreWind' : 'scoreExpOnshoreWind'
+    );
+  }
+
+  if (breakdown.challengingPenalty) {
+    pushLine(breakdown.challengingPenalty, 'scoreExpChallengingPenalty');
+  }
+
+  if (breakdown.tideEffect) {
+    pushLine(
+      breakdown.tideEffect,
+      breakdown.tideEffect > 0 ? 'scoreExpTideSupportive' : 'scoreExpTideLessIdeal'
+    );
+  }
+
+  if (breakdown.filtersPreference) {
+    pushLine(breakdown.filtersPreference, 'scoreExpFiltersPreferenceBonus');
+  }
+
+  return lines
+    .sort((left, right) => Math.abs(right.value) - Math.abs(left.value))
+    .slice(0, 5)
+    .map((line) => line.text);
 }
 
 function getMaxAvailableOffsetHoursForCache(liveCache) {
@@ -1990,7 +2255,7 @@ function getSlotContextsForLiveCache(liveCache) {
       dayPart
     });
 
-    slotContexts.push({
+    const slotContext = {
       offsetHours,
       time: snapshot.time,
       dayKey: getLocalDateKey(snapshot.time),
@@ -2002,7 +2267,11 @@ function getSlotContextsForLiveCache(liveCache) {
       tideSuitability,
       minSurfable: isMinSurfableConditions(snapshot.values),
       challenging: isChallengingConditions(snapshot.values)
-    });
+    };
+
+    slotContext.quality = getSlotQualityScore(slotContext, { includeActiveFilters: true, skipCached: true });
+    slotContext.qualityNoFilters = getSlotQualityScore(slotContext, { includeActiveFilters: false, skipCached: true });
+    slotContexts.push(slotContext);
   }
 
   return slotContexts;
@@ -2428,6 +2697,17 @@ function renderSlotDetail(selectedSlotContext, options = {}) {
   }
 
   const detailLines = buildSlotDetailLines(selectedSlotContext);
+  const selectedQuality = selectedSlotContext?.quality ?? getSlotQualityScore(selectedSlotContext);
+  const explanationLines = buildScoreExplanationLines(
+    selectedQuality?.breakdown,
+    currentLanguage,
+    selectedSlotContext
+  );
+  const rawBreakdown = selectedQuality?.breakdown
+    ? Object.entries(selectedQuality.breakdown)
+      .map(([key, value]) => `${key}: ${formatScoreDelta(value)}`)
+      .join('\n')
+    : null;
   const dateLabel = formatCompactSlotTimeLabel(selectedSlotContext.time);
   const slotLabel = getTimeSlotLabel(selectedSlotContext);
 
@@ -2463,6 +2743,16 @@ function renderSlotDetail(selectedSlotContext, options = {}) {
       </div>
     </div>
     <p class="slot-detail-summary">${detailLines.summaryText}</p>
+    <div class="score-explanation">
+      <p class="score-explanation-title">${t('scoreExplanationTitle')}</p>
+      ${explanationLines.length
+    ? `<ul class="score-explanation-list">${explanationLines.map((line) => `<li class="score-explanation-item">${line}</li>`).join('')}</ul>`
+    : `<p class="score-explanation-empty">${t('scoreExplanationNotAvailable')}</p>`}
+      <p class="score-explanation-total">${t('scoreExpRawTotal', { value: formatScoreDelta(selectedQuality?.rawScore ?? 0) })} → ${selectedQuality?.score ?? 0}/10</p>
+      ${DEBUG_SCORE && rawBreakdown
+    ? `<details class="score-debug"><summary>${t('scoreDebugTitle')}</summary><pre>${rawBreakdown}</pre></details>`
+    : ''}
+    </div>
   `;
 }
 

@@ -1218,6 +1218,60 @@ body {
   color: var(--muted-text);
 }
 
+.score-explanation {
+  margin-top: 0.52rem;
+  border-top: 1px dashed var(--panel-border);
+  padding-top: 0.46rem;
+}
+
+.score-explanation-title {
+  margin: 0;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--muted-text);
+}
+
+.score-explanation-list {
+  margin: 0.34rem 0 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.score-explanation-item,
+.score-explanation-empty,
+.score-explanation-total {
+  font-size: 0.75rem;
+  color: var(--soft-text);
+}
+
+.score-explanation-empty,
+.score-explanation-total {
+  margin: 0.34rem 0 0;
+}
+
+.score-debug {
+  margin-top: 0.36rem;
+}
+
+.score-debug summary {
+  cursor: pointer;
+  font-size: 0.72rem;
+  color: var(--muted-text);
+}
+
+.score-debug pre {
+  margin: 0.3rem 0 0;
+  padding: 0.34rem 0.42rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-size: 0.7rem;
+  line-height: 1.35;
+  overflow-x: auto;
+}
+
 .slot-detail-empty {
   margin: 0;
   font-size: 0.8rem;
