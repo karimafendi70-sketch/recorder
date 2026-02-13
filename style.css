@@ -46,21 +46,62 @@ body {
   font-size: 0.76rem;
   font-weight: 700;
   color: #334155;
+  white-space: nowrap;
 }
 
 .language-select {
+  appearance: none;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 999px;
   background: #ffffff;
   color: #0f172a;
   font-size: 0.8rem;
   font-weight: 700;
-  padding: 0.3rem 0.45rem;
+  padding: 0.34rem 0.8rem;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
 .language-select:focus-visible {
-  outline: 2px solid #94a3b8;
+  outline: 2px solid #0284c7;
   outline-offset: 2px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.42rem;
+  padding: 0.32rem 0.45rem;
+  border: 1px solid #dbe4ef;
+  border-radius: 999px;
+  background: #f8fafc;
+  min-height: 2rem;
+  overflow: hidden;
+}
+
+.control-group:focus-within {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.16);
+}
+
+.control-current {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0.24rem 0.46rem;
+  white-space: nowrap;
+}
+
+.control-group.is-active .control-current {
+  background: #0369a1;
+  border-color: #0369a1;
+  color: #ffffff;
 }
 
 .subtitle {
@@ -316,19 +357,22 @@ body {
   font-size: 0.86rem;
   font-weight: 700;
   color: #334155;
+  white-space: nowrap;
 }
 
 .level-filter-select {
+  appearance: none;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  padding: 0.34rem 0.8rem;
   font-size: 0.85rem;
   color: #0f172a;
   background: #ffffff;
+  font-weight: 700;
 }
 
 .level-filter-select:focus-visible {
-  outline: 2px solid #94a3b8;
+  outline: 2px solid #0284c7;
   outline-offset: 2px;
 }
 
@@ -588,6 +632,8 @@ body {
 
   .language-switch {
     align-self: flex-start;
+    width: 100%;
+    justify-content: space-between;
   }
 
   .subtitle {
@@ -636,6 +682,8 @@ body {
 
   .level-filter {
     margin-bottom: 0.55rem;
+    justify-content: space-between;
+    width: 100%;
   }
 
   .level-filter-label {
@@ -644,7 +692,20 @@ body {
 
   .level-filter-select {
     font-size: 0.8rem;
-    padding: 0.28rem 0.45rem;
+    padding: 0.28rem 0.58rem;
+    max-width: 50%;
+    text-overflow: ellipsis;
+  }
+
+  .control-group {
+    gap: 0.34rem;
+    padding: 0.28rem 0.36rem;
+    min-height: 1.86rem;
+  }
+
+  .control-current {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.4rem;
   }
 
   .rating-explanation {
@@ -723,11 +784,21 @@ body {
 
   .language-switch label {
     font-size: 0.72rem;
+    max-width: 38%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .language-select {
     font-size: 0.76rem;
-    padding: 0.26rem 0.38rem;
+    padding: 0.26rem 0.5rem;
+    max-width: 30%;
+  }
+
+  .control-current {
+    max-width: 24%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .search-input {
@@ -750,6 +821,10 @@ body {
 
   .level-filter {
     gap: 0.4rem;
+  }
+
+  .level-filter-select {
+    max-width: 44%;
   }
 
   .info-section {

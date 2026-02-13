@@ -10,6 +10,8 @@ const appTitleHeadingEl = document.getElementById('appTitleHeading');
 const appSubtitleEl = document.getElementById('appSubtitle');
 const languageLabelEl = document.getElementById('languageLabel');
 const languageSelectEl = document.getElementById('languageSelect');
+const languageSwitchEl = document.getElementById('languageSwitch');
+const languageCurrentBadgeEl = document.getElementById('languageCurrentBadge');
 const searchSectionEl = document.getElementById('searchSection');
 const searchLabelEl = document.getElementById('searchLabel');
 const searchButtonTextEl = document.getElementById('searchButton');
@@ -18,6 +20,7 @@ const spotMapTitleEl = document.getElementById('spotMapTitle');
 const spotMapNoteEl = document.getElementById('spotMapNote');
 const levelFilterLabelEl = document.getElementById('levelFilterLabel');
 const levelFilterContainerEl = document.getElementById('levelFilterContainer');
+const levelCurrentBadgeEl = document.getElementById('levelCurrentBadge');
 const levelOptionAllEl = document.getElementById('levelOptionAll');
 const levelOptionBeginnerEl = document.getElementById('levelOptionBeginner');
 const levelOptionAdvancedEl = document.getElementById('levelOptionAdvanced');
@@ -249,6 +252,7 @@ const forecastCache = new Map();
 const pendingForecastRequests = new Map();
 const favoriteSpotIds = new Set();
 const mapMarkersBySpotKey = new Map();
+let spotMapInstance = null;
 let activeMapMarker = null;
 let activeSpot = null;
 let currentLevel = 'all';
@@ -278,6 +282,26 @@ function getLocaleForLanguage() {
   };
 
   return localeByLanguage[currentLanguage] ?? 'nl-NL';
+}
+
+function updateControlBadges() {
+  if (languageSelectEl && languageCurrentBadgeEl) {
+    const activeLanguageOption = languageSelectEl.options[languageSelectEl.selectedIndex];
+    languageCurrentBadgeEl.textContent = activeLanguageOption?.textContent?.trim() || currentLanguage.toUpperCase();
+  }
+
+  if (levelSelectEl && levelCurrentBadgeEl) {
+    const activeLevelOption = levelSelectEl.options[levelSelectEl.selectedIndex];
+    levelCurrentBadgeEl.textContent = activeLevelOption?.textContent?.trim() || t('levelAll');
+  }
+
+  if (languageSwitchEl) {
+    languageSwitchEl.classList.toggle('is-active', Boolean(languageSelectEl?.value));
+  }
+
+  if (levelFilterContainerEl) {
+    levelFilterContainerEl.classList.toggle('is-active', Boolean(levelSelectEl?.value));
+  }
 }
 
 function buildRatingExplanation(conditions, level = 'all') {
@@ -527,6 +551,8 @@ function setLanguage(lang, persist = true) {
   if (latestRatingConditions) {
     renderSurfRating(latestRatingConditions);
   }
+
+  updateControlBadges();
 }
 
 function setCurrentLevel(level) {
@@ -557,6 +583,30 @@ function highlightMapMarkerForSpot(spot) {
   setActiveMapMarker(marker);
 }
 
+function centerMapOnSpot(spot, options = {}) {
+  if (!spotMapInstance) return;
+
+  if (!Number.isFinite(spot?.latitude) || !Number.isFinite(spot?.longitude)) {
+    return;
+  }
+
+  const zoomLevel = Number.isFinite(options.zoom) ? options.zoom : 8;
+  const shouldAnimate = options.animate !== false;
+  const targetPosition = [spot.latitude, spot.longitude];
+
+  if (shouldAnimate) {
+    spotMapInstance.flyTo(targetPosition, zoomLevel, {
+      animate: true,
+      duration: 0.75
+    });
+    return;
+  }
+
+  spotMapInstance.setView(targetPosition, zoomLevel, {
+    animate: false
+  });
+}
+
 function initSpotMap() {
   if (!spotMapEl) return;
 
@@ -569,6 +619,7 @@ function initSpotMap() {
   const map = window.L.map(spotMapEl, {
     scrollWheelZoom: false
   }).setView([44, 2], 2);
+  spotMapInstance = map;
 
   window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -592,12 +643,11 @@ function initSpotMap() {
       offset: [0, -10]
     });
     marker.on('click', () => {
-      map.flyTo(markerPosition, 8, {
-        animate: true,
-        duration: 0.9
+      selectSpot(spot, 'map', spot.naam, {
+        centerMap: true,
+        animateMap: true,
+        mapZoom: 8
       });
-      setActiveMapMarker(marker);
-      selectSpot(spot, 'map', spot.naam);
     });
   });
 
@@ -1205,6 +1255,15 @@ function selectSpot(spot, method, query, options = {}) {
   updateForecastForSpot(stableSpot);
   highlightMapMarkerForSpot(stableSpot);
 
+  const shouldCenterMap = options.centerMap !== false;
+  if (shouldCenterMap) {
+    const shouldAnimateMap = options.animateMap ?? method !== 'restore';
+    centerMapOnSpot(stableSpot, {
+      animate: shouldAnimateMap,
+      zoom: options.mapZoom
+    });
+  }
+
   if (!options.silent) {
     setSearchMessage(buildSuccessMessage(stableSpot, method, matchBy), 'success');
   }
@@ -1355,14 +1414,17 @@ if (legendToggleBtnEl && ratingLegendBodyEl) {
 
 if (levelSelectEl) {
   levelSelectEl.value = 'all';
+  updateControlBadges();
   levelSelectEl.addEventListener('change', () => {
     setCurrentLevel(levelSelectEl.value);
+    updateControlBadges();
   });
 }
 
 if (languageSelectEl) {
   languageSelectEl.addEventListener('change', () => {
     setLanguage(languageSelectEl.value);
+    updateControlBadges();
     if (!searchInputEl.value.trim()) {
       setSearchMessage(t('searchHintDefault'), '');
     }
@@ -1384,5 +1446,10 @@ const initialSpot = restoredSpot ?? SURF_SPOTS[0];
 setForecastMeta(t('forecastMetaMock'));
 setSearchMessage(t('searchHintDefault'), '');
 if (initialSpot) {
-  selectSpot(initialSpot, 'restore', initialSpot.naam, { silent: true });
+  selectSpot(initialSpot, 'restore', initialSpot.naam, {
+    silent: true,
+    centerMap: true,
+    animateMap: false,
+    mapZoom: 7
+  });
 }

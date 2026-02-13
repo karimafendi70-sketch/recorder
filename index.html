@@ -17,7 +17,7 @@
       <header class="header">
         <div class="header-top">
           <h1 id="appTitleHeading">FreeSurfCast</h1>
-          <div class="language-switch">
+          <div id="languageSwitch" class="language-switch control-group">
             <label id="languageLabel" for="languageSelect">Taal / Language</label>
             <select id="languageSelect" class="language-select" aria-label="Kies taal">
               <option value="nl">NL</option>
@@ -27,6 +27,7 @@
               <option value="pt">PT</option>
               <option value="de">DE</option>
             </select>
+            <span id="languageCurrentBadge" class="control-current" aria-hidden="true">NL</span>
           </div>
         </div>
         <p id="appSubtitle" class="subtitle">Gratis surf-forecast met snelle, heldere uitleg.</p>
@@ -61,13 +62,14 @@
         </div>
         <p id="forecastMeta" class="forecast-meta">Bron: mock-data</p>
         <p id="surfRating" class="surf-rating rating-neutral">Surf rating: n.v.t.</p>
-        <div id="levelFilterContainer" class="level-filter" aria-label="Niveau voor uitleg">
+        <div id="levelFilterContainer" class="level-filter control-group" aria-label="Niveau voor uitleg">
           <label id="levelFilterLabel" for="levelSelect" class="level-filter-label">Niveau</label>
           <select id="levelSelect" class="level-filter-select">
             <option id="levelOptionAll" value="all">Alle niveaus</option>
             <option id="levelOptionBeginner" value="beginner">Beginner</option>
             <option id="levelOptionAdvanced" value="advanced">Gevorderd</option>
           </select>
+          <span id="levelCurrentBadge" class="control-current" aria-hidden="true">Alle niveaus</span>
         </div>
         <p id="ratingExplanation" class="rating-explanation">Waarom deze score? Nog geen extra uitleg beschikbaar.</p>
         <div id="ratingLegend" class="rating-legend" aria-label="Uitleg surf rating en windtermen">
