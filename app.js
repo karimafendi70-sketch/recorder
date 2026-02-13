@@ -97,6 +97,11 @@ const daypartHeatmapEl = document.getElementById('daypartHeatmap');
 const userPreferencesPanelEl = document.getElementById('userPreferencesPanel');
 const appNavTabs = Array.from(document.querySelectorAll('.app-nav-tab'));
 const appViewSections = Array.from(document.querySelectorAll('.app-view'));
+const preferencesLib = globalThis.FreeSurfLibPreferences ?? {};
+const scoresLib = globalThis.FreeSurfLibScores ?? {};
+const spotsLib = globalThis.FreeSurfLibSpots ?? {};
+const timelineLib = globalThis.FreeSurfLibTimeline ?? {};
+const heatmapLib = globalThis.FreeSurfLibHeatmap ?? {};
 const timeSlotNowEl = document.getElementById('timeSlotNow');
 const timeSlot3hEl = document.getElementById('timeSlot3h');
 const timeSlot6hEl = document.getElementById('timeSlot6h');
@@ -1548,107 +1553,60 @@ function formatWindSpeed(speedValue) {
 }
 
 function getDefaultUserPreferences(skillLevel = 'intermediate') {
-  const normalizedSkill = ['beginner', 'intermediate', 'advanced'].includes(skillLevel)
-    ? skillLevel
-    : 'intermediate';
-
-  const defaultsBySkill = {
-    beginner: {
-      skillLevel: 'beginner',
-      preferredMinHeight: 0.6,
-      preferredMaxHeight: 1.6,
-      likesClean: true,
-      canHandleChallenging: false,
-      autoBeginnerFilter: true
-    },
-    intermediate: {
-      skillLevel: 'intermediate',
-      preferredMinHeight: 0.8,
-      preferredMaxHeight: 2.2,
-      likesClean: true,
-      canHandleChallenging: false,
-      autoBeginnerFilter: false
-    },
-    advanced: {
-      skillLevel: 'advanced',
-      preferredMinHeight: 1.2,
-      preferredMaxHeight: 3.0,
-      likesClean: false,
-      canHandleChallenging: true,
-      autoBeginnerFilter: false
-    }
-  };
-
+  if (typeof preferencesLib.getDefaultUserPreferences === 'function') {
+    return preferencesLib.getDefaultUserPreferences(skillLevel);
+  }
   return {
-    ...defaultsBySkill[normalizedSkill]
+    skillLevel: 'intermediate',
+    preferredMinHeight: 0.8,
+    preferredMaxHeight: 2.2,
+    likesClean: true,
+    canHandleChallenging: false,
+    autoBeginnerFilter: false
   };
 }
 
 function normalizeUserPreferences(rawPreferences) {
-  const input = rawPreferences && typeof rawPreferences === 'object' ? rawPreferences : {};
-  const base = getDefaultUserPreferences(input.skillLevel);
-
-  const preferredMinHeight = Number.isFinite(input.preferredMinHeight)
-    ? Math.max(0.3, Math.min(3.5, input.preferredMinHeight))
-    : base.preferredMinHeight;
-  const preferredMaxHeight = Number.isFinite(input.preferredMaxHeight)
-    ? Math.max(0.5, Math.min(4.0, input.preferredMaxHeight))
-    : base.preferredMaxHeight;
-
-  return {
-    skillLevel: base.skillLevel,
-    preferredMinHeight: Math.min(preferredMinHeight, preferredMaxHeight - 0.1),
-    preferredMaxHeight: Math.max(preferredMaxHeight, preferredMinHeight + 0.1),
-    likesClean: typeof input.likesClean === 'boolean' ? input.likesClean : base.likesClean,
-    canHandleChallenging: typeof input.canHandleChallenging === 'boolean'
-      ? input.canHandleChallenging
-      : base.canHandleChallenging,
-    autoBeginnerFilter: typeof input.autoBeginnerFilter === 'boolean'
-      ? input.autoBeginnerFilter
-      : base.autoBeginnerFilter
-  };
+  if (typeof preferencesLib.normalizeUserPreferences === 'function') {
+    return preferencesLib.normalizeUserPreferences(rawPreferences);
+  }
+  return getDefaultUserPreferences('intermediate');
 }
 
 function getWaveRangePresetForPreferences(preferences = currentUserPreferences) {
-  if (!preferences) return 'medium';
-  if (preferences.preferredMaxHeight <= 1.8) return 'small';
-  if (preferences.preferredMinHeight >= 1.1 || preferences.preferredMaxHeight >= 2.8) return 'big';
+  if (typeof preferencesLib.getWaveRangePresetForPreferences === 'function') {
+    return preferencesLib.getWaveRangePresetForPreferences(preferences);
+  }
   return 'medium';
 }
 
 function getWaveRangeBoundsFromPreset(preset) {
-  if (preset === 'small') {
-    return { preferredMinHeight: 0.6, preferredMaxHeight: 1.6 };
-  }
-  if (preset === 'big') {
-    return { preferredMinHeight: 1.2, preferredMaxHeight: 3.0 };
+  if (typeof preferencesLib.getWaveRangeBoundsFromPreset === 'function') {
+    return preferencesLib.getWaveRangeBoundsFromPreset(preset);
   }
   return { preferredMinHeight: 0.8, preferredMaxHeight: 2.2 };
 }
 
 function saveUserPreferences(preferences) {
-  try {
-    localStorage.setItem(USER_PREFERENCES_STORAGE_KEY, JSON.stringify(normalizeUserPreferences(preferences)));
-  } catch {
-    // storage kan geblokkeerd zijn; dan stil overslaan
+  if (typeof preferencesLib.saveUserPreferences === 'function') {
+    preferencesLib.saveUserPreferences(preferences, {
+      storage: localStorage,
+      storageKey: USER_PREFERENCES_STORAGE_KEY
+    });
+    return;
   }
 }
 
 function loadUserPreferences() {
-  try {
-    const raw = localStorage.getItem(USER_PREFERENCES_STORAGE_KEY);
-    if (!raw) {
-      currentUserPreferences = getDefaultUserPreferences('intermediate');
-      return currentUserPreferences;
-    }
-
-    const parsed = JSON.parse(raw);
-    currentUserPreferences = normalizeUserPreferences(parsed);
-    return currentUserPreferences;
-  } catch {
-    currentUserPreferences = getDefaultUserPreferences('intermediate');
+  if (typeof preferencesLib.loadUserPreferences === 'function') {
+    currentUserPreferences = preferencesLib.loadUserPreferences({
+      storage: localStorage,
+      storageKey: USER_PREFERENCES_STORAGE_KEY
+    });
     return currentUserPreferences;
   }
+  currentUserPreferences = getDefaultUserPreferences('intermediate');
+  return currentUserPreferences;
 }
 
 function isAutoBeginnerFilterEnabled(preferences = currentUserPreferences) {
@@ -2314,158 +2272,32 @@ function getSlotQualityScore(slotContext, options = {}) {
     }
   }
 
-  let score = 0;
-  const reasons = [];
-  const breakdown = {
-    base: 0,
-    conditionTag: 0,
-    waveHeightRange: 0,
-    wavePeriod: 0,
-    windDirection: 0,
-    challengingPenalty: 0,
-    tideEffect: 0,
-    filtersPreference: 0,
-    preferencesImpact: 0
-  };
-  const spotValues = slotContext.mergedSpot ?? slotContext.values ?? {};
-
-  if (slotContext.conditionTag === 'clean') {
-    score += 3;
-    breakdown.conditionTag += 3;
-    reasons.push('clean');
-  } else if (slotContext.conditionTag === 'mixed') {
-    score += 1;
-    breakdown.conditionTag += 1;
-    reasons.push('mixed');
-  } else {
-    reasons.push('choppy');
-  }
-
-  const waveHeight = spotValues.golfHoogteMeter;
-  if (Number.isFinite(waveHeight)) {
-    if (waveHeight >= 0.9 && waveHeight <= 2.0) {
-      score += 2;
-      breakdown.waveHeightRange += 2;
-      reasons.push('good-wave-height');
-    } else if (waveHeight >= 0.7 && waveHeight <= 2.4) {
-      score += 1;
-      breakdown.waveHeightRange += 1;
-      reasons.push('acceptable-wave-height');
-    } else if (waveHeight > 2.8) {
-      score -= 1;
-      breakdown.waveHeightRange -= 1;
-      reasons.push('heavy-wave-height');
-    }
-  }
-
-  const wavePeriod = spotValues.golfPeriodeSeconden;
-  if (Number.isFinite(wavePeriod) && wavePeriod >= 8) {
-    score += 1;
-    breakdown.wavePeriod += 1;
-    reasons.push('good-period');
-  }
-
-  const windDegrees = getWindDegreesForSpot(spotValues);
-  const coastOrientation = getCoastOrientationDeg(spotValues);
-  const windRelative = getWindRelativeToCoast(coastOrientation, windDegrees);
-
-  if (windRelative === 'offshore') {
-    score += 1;
-    breakdown.windDirection += 1;
-    reasons.push('offshore');
-  } else if (windRelative === 'onshore') {
-    score -= 1;
-    breakdown.windDirection -= 1;
-    reasons.push('onshore');
-  } else {
-    reasons.push('cross');
-  }
-
-  if (slotContext.challenging) {
-    score -= 2;
-    breakdown.challengingPenalty -= 2;
-    reasons.push('challenging');
-  }
-
-  if (slotContext.tideSuitability === 'good') {
-    score += 1;
-    breakdown.tideEffect += 1;
-    reasons.push('tide-supportive');
-  } else if (slotContext.tideSuitability === 'less-ideal') {
-    score -= 1;
-    breakdown.tideEffect -= 1;
-    reasons.push('tide-less-ideal');
-  }
-
-  if (includeActiveFilters && effectiveFilters.minSurfable && !slotContext.minSurfable) {
-    score -= 2;
-    breakdown.filtersPreference -= 2;
-    reasons.push('below-min-surfable-filter');
-  }
-
-  if (includeActiveFilters && effectiveFilters.beginnerFriendly && slotContext.challenging) {
-    score -= 3;
-    breakdown.filtersPreference -= 3;
-    reasons.push('beginner-filter-penalty');
-  }
-
-  if (includeActiveFilters && effectiveFilters.preferClean) {
-    if (slotContext.conditionTag === 'clean') {
-      score += 1;
-      breakdown.filtersPreference += 1;
-      reasons.push('clean-preference-bonus');
-    } else if (slotContext.conditionTag === 'choppy') {
-      score -= 2;
-      breakdown.filtersPreference -= 2;
-      reasons.push('clean-preference-penalty');
-    }
-  }
-
-  if (currentUserPreferences) {
-    const waveHeight = spotValues.golfHoogteMeter;
-    if (Number.isFinite(waveHeight)) {
-      if (waveHeight >= currentUserPreferences.preferredMinHeight && waveHeight <= currentUserPreferences.preferredMaxHeight) {
-        score += 0.5;
-        breakdown.preferencesImpact += 0.5;
-        reasons.push('prefs-range-match');
-      } else if (waveHeight > currentUserPreferences.preferredMaxHeight + 0.6) {
-        score -= 0.5;
-        breakdown.preferencesImpact -= 0.5;
-        reasons.push('prefs-range-too-big');
-      } else if (waveHeight < currentUserPreferences.preferredMinHeight - 0.4) {
-        score -= 0.5;
-        breakdown.preferencesImpact -= 0.5;
-        reasons.push('prefs-range-too-small');
-      }
-    }
-
-    if (currentUserPreferences.likesClean) {
-      if (slotContext.conditionTag === 'clean') {
-        score += 0.5;
-        breakdown.preferencesImpact += 0.5;
-        reasons.push('prefs-clean-bonus');
-      } else if (slotContext.conditionTag === 'choppy') {
-        score -= 0.5;
-        breakdown.preferencesImpact -= 0.5;
-        reasons.push('prefs-clean-penalty');
-      }
-    }
-
-    if (!currentUserPreferences.canHandleChallenging && slotContext.challenging) {
-      score -= 0.5;
-      breakdown.preferencesImpact -= 0.5;
-      reasons.push('prefs-challenging-penalty');
-    }
-  }
-
-  const rawScore = score;
-  const clamped = Math.max(0, Math.min(10, rawScore));
-  const result = {
-    score: clamped,
-    reasons,
-    breakdown,
-    rawScore
-  };
+  const result = typeof scoresLib.getSlotQualityScore === 'function'
+    ? scoresLib.getSlotQualityScore(slotContext, {
+      filters: includeActiveFilters
+        ? effectiveFilters
+        : { minSurfable: false, beginnerFriendly: false, preferClean: false },
+      userPreferences: currentUserPreferences,
+      getWindDegreesForSpot,
+      getCoastOrientationDeg,
+      getWindRelativeToCoast
+    })
+    : {
+      score: 0,
+      reasons: [],
+      breakdown: {
+        base: 0,
+        conditionTag: 0,
+        waveHeightRange: 0,
+        wavePeriod: 0,
+        windDirection: 0,
+        challengingPenalty: 0,
+        tideEffect: 0,
+        filtersPreference: 0,
+        preferencesImpact: 0
+      },
+      rawScore: 0
+    };
 
   if (!skipCached) {
     if (includeActiveFilters) {
@@ -2479,47 +2311,18 @@ function getSlotQualityScore(slotContext, options = {}) {
 }
 
 function getSpotDayScore(spot, dayKey, allSlotContextsForSpotAndDay, options = {}) {
-  if (!spot || !dayKey || !Array.isArray(allSlotContextsForSpotAndDay) || !allSlotContextsForSpotAndDay.length) {
+  const includeActiveFilters = options.includeActiveFilters !== false;
+  if (typeof scoresLib.getSpotDayScore !== 'function') {
     return null;
   }
 
-  const useActiveFilters = options.useActiveFilters !== false;
-  const includeActiveFilters = options.includeActiveFilters !== false;
-
-  const filteredSlots = allSlotContextsForSpotAndDay
-    .filter((slotContext) => slotContext?.dayKey === dayKey)
-    .filter((slotContext) => (useActiveFilters ? passesHardConditionFilters(slotContext) : true));
-
-  if (!filteredSlots.length) return null;
-
-  // Tide influence is already applied in getSlotQualityScore via tideSuitability.
-
-  const scoredSlots = filteredSlots
-    .map((slotContext) => {
-      const quality = getSlotQualityScore(slotContext, { includeActiveFilters });
-      return {
-        slotContext,
-        score: quality.score,
-        reasons: quality.reasons
-      };
-    })
-    .sort((left, right) => right.score - left.score);
-
-  const best = scoredSlots[0];
-  const secondary = scoredSlots[1] ?? best;
-  const aggregateScore = Math.round((((best.score + secondary.score) / 2) + Number.EPSILON) * 10) / 10;
-  const bestSlot = best.slotContext;
-
-  return {
-    spotId: getSpotKey(spot),
-    spot,
-    dayKey,
-    score: aggregateScore,
-    bestSlotKey: buildSlotKey(bestSlot),
-    bestSlotOffset: bestSlot.offsetHours,
-    bestSlotContext: bestSlot,
-    reasons: best.reasons
-  };
+  return scoresLib.getSpotDayScore(spot, dayKey, allSlotContextsForSpotAndDay, {
+    useActiveFilters: options.useActiveFilters !== false,
+    passesHardConditionFilters,
+    getScore: (slotContext) => getSlotQualityScore(slotContext, { includeActiveFilters }),
+    buildSlotKey,
+    getSpotKey
+  });
 }
 
 function buildScoreExplanationLines(breakdown, language = currentLanguage, slotContext = null) {
@@ -2597,96 +2400,50 @@ function buildScoreExplanationLines(breakdown, language = currentLanguage, slotC
 }
 
 function getScoreClassSuffix(score) {
-  if (!Number.isFinite(score)) return 'neutral';
-  if (score >= 7) return 'good';
-  if (score >= 4.5) return 'ok';
-  return 'poor';
+  if (typeof scoresLib.getScoreClassSuffix === 'function') {
+    return scoresLib.getScoreClassSuffix(score);
+  }
+  return 'neutral';
 }
 
 function buildTimelineDataForDay(spotId, dayKey, allSlotsForSpotAndDay) {
-  if (!spotId || !dayKey || !Array.isArray(allSlotsForSpotAndDay)) return [];
+  if (typeof timelineLib.buildTimelineDataForDay !== 'function') {
+    return [];
+  }
 
-  return allSlotsForSpotAndDay
-    .filter((slotContext) => slotContext?.dayKey === dayKey)
-    .filter((slotContext) => passesHardConditionFilters(slotContext))
-    .sort((left, right) => left.offsetHours - right.offsetHours)
-    .map((slotContext) => {
-      const quality = slotContext.quality ?? getSlotQualityScore(slotContext, { includeActiveFilters: true });
-      const timeLabel = slotContext?.time
-        ? new Date(slotContext.time).toLocaleTimeString(getLocaleForLanguage(), {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-        : t('fallbackUnknownTime');
-
-      return {
-        time: timeLabel,
-        dayPart: slotContext.dayPart,
-        score: quality.score,
-        quality,
-        slotKey: buildSlotKey(slotContext),
-        slotOffset: slotContext.offsetHours
-      };
-    });
+  return timelineLib.buildTimelineDataForDay(spotId, dayKey, allSlotsForSpotAndDay, {
+    passesHardConditionFilters,
+    getScore: (slotContext) => slotContext.quality ?? getSlotQualityScore(slotContext, { includeActiveFilters: true }),
+    buildSlotKey,
+    formatTime: (slotContext) => {
+      if (!slotContext?.time) return t('fallbackUnknownTime');
+      return new Date(slotContext.time).toLocaleTimeString(getLocaleForLanguage(), {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+  });
 }
 
 function buildDaypartHeatmapData(dayKey, candidateSpots) {
-  if (!dayKey || !Array.isArray(candidateSpots) || !candidateSpots.length) return [];
+  if (typeof heatmapLib.buildDaypartHeatmapData !== 'function') {
+    return [];
+  }
 
-  return candidateSpots
-    .map((spot) => {
+  return heatmapLib.buildDaypartHeatmapData(dayKey, candidateSpots, {
+    getSpotId: (spot) => getSpotKey(spot),
+    getSpotName: (spot) => `${spot.naam} (${spot.land})`,
+    getSlotsForSpot: (spot) => {
       const spotKey = getSpotKey(spot);
       const liveCache = activeLiveCache && activeSpot && getSpotKey(activeSpot) === spotKey
         ? activeLiveCache
         : forecastCache.get(spotKey)?.data;
-
-      if (!liveCache) {
-        return {
-          spotId: spotKey,
-          spotName: `${spot.naam} (${spot.land})`,
-          scoresByDayPart: {
-            morning: null,
-            afternoon: null,
-            evening: null
-          },
-          hasAnyScore: false
-        };
-      }
-
-      const slotsForDay = getSlotContextsForLiveCache(liveCache)
-        .filter((slotContext) => slotContext?.dayKey === dayKey);
-
-      const scoresByDayPart = DAY_PART_ORDER.reduce((accumulator, dayPart) => {
-        const partSlots = slotsForDay
-          .filter((slotContext) => slotContext?.dayPart === dayPart)
-          .map((slotContext) => ({
-            slotContext,
-            quality: slotContext.qualityNoFilters ?? getSlotQualityScore(slotContext, { includeActiveFilters: false })
-          }))
-          .sort((left, right) => right.quality.score - left.quality.score);
-
-        const best = partSlots[0] ?? null;
-        accumulator[dayPart] = best
-          ? {
-            score: best.quality.score,
-            slotOffset: best.slotContext.offsetHours,
-            slotKey: buildSlotKey(best.slotContext)
-          }
-          : null;
-
-        return accumulator;
-      }, {});
-
-      const hasAnyScore = DAY_PART_ORDER.some((dayPart) => Number.isFinite(scoresByDayPart[dayPart]?.score));
-
-      return {
-        spotId: spotKey,
-        spotName: `${spot.naam} (${spot.land})`,
-        scoresByDayPart,
-        hasAnyScore
-      };
-    })
-    .filter((row) => row.hasAnyScore);
+      return liveCache ? getSlotContextsForLiveCache(liveCache) : [];
+    },
+    getQualityNoFilters: (slotContext) => slotContext.qualityNoFilters ?? getSlotQualityScore(slotContext, { includeActiveFilters: false }),
+    buildSlotKey,
+    dayPartOrder: DAY_PART_ORDER
+  });
 }
 
 function renderScoreTimeline(spotId = activeSpot ? getSpotKey(activeSpot) : null, dayKey = currentDayKey) {
@@ -3232,22 +2989,16 @@ async function ensureMultiSpotForecastData(spots) {
 }
 
 function buildMultiSpotOverviewForDay(dayKey) {
-  if (!dayKey) return [];
+  if (!dayKey || typeof spotsLib.buildMultiSpotOverview !== 'function') return [];
 
-  return getMultiSpotCandidateSpots()
-    .map((spot) => {
-      const spotKey = getSpotKey(spot);
-      const cacheEntry = forecastCache.get(spotKey);
-      const liveCache = cacheEntry?.data;
-      if (!liveCache) return null;
-
-      const spotSlots = getSlotContextsForLiveCache(liveCache);
-      const dayScore = getSpotDayScore(spot, dayKey, spotSlots);
-      return dayScore;
-    })
-    .filter((item) => Boolean(item))
-    .sort((left, right) => right.score - left.score)
-    .slice(0, MULTI_SPOT_TOP_LIMIT);
+  return spotsLib.buildMultiSpotOverview(dayKey, getMultiSpotCandidateSpots(), {
+    topLimit: MULTI_SPOT_TOP_LIMIT,
+    getSlotsForSpot: (spot) => {
+      const liveCache = forecastCache.get(getSpotKey(spot))?.data;
+      return liveCache ? getSlotContextsForLiveCache(liveCache) : [];
+    },
+    getSpotDayScore: (spot, requestedDayKey, spotSlots) => getSpotDayScore(spot, requestedDayKey, spotSlots)
+  });
 }
 
 function renderMultiSpotOverviewState(contentHtml) {
