@@ -42,6 +42,7 @@ const forecastLabelSwellEl = document.getElementById('forecastLabelSwell');
 const forecastLabelWindEl = document.getElementById('forecastLabelWind');
 const forecastLabelTemperatureEl = document.getElementById('forecastLabelTemperature');
 const favoritesHeadingEl = document.getElementById('favoritesHeading');
+const favoritesIntroEl = document.getElementById('favoritesIntro');
 const favoritesSectionEl = document.getElementById('favoritesSection');
 const infoSectionEl = document.getElementById('infoSection');
 const infoHeadingEl = document.getElementById('infoHeading');
@@ -254,6 +255,33 @@ const windTranslations = {
   de: { windLabel: 'Wind' }
 };
 
+const favoritesTranslations = {
+  nl: {
+    favoritesIntro: 'Markeer spots als favoriet; ze verschijnen hier automatisch.',
+    favoritesEmptyHint: 'Tik op ☆ Favoriet bij een spot om je lijst op te bouwen.'
+  },
+  en: {
+    favoritesIntro: 'Mark spots as favorites; they appear here automatically.',
+    favoritesEmptyHint: 'Use ☆ Favorite on a spot to build your list.'
+  },
+  fr: {
+    favoritesIntro: 'Ajoutez des spots en favoris; ils apparaissent ici automatiquement.',
+    favoritesEmptyHint: 'Utilisez ☆ Favori sur un spot pour créer votre liste.'
+  },
+  es: {
+    favoritesIntro: 'Marca spots como favoritos; aparecerán aquí automáticamente.',
+    favoritesEmptyHint: 'Usa ☆ Favorito en un spot para crear tu lista.'
+  },
+  pt: {
+    favoritesIntro: 'Marque picos como favoritos; eles aparecem aqui automaticamente.',
+    favoritesEmptyHint: 'Use ☆ Favorito num pico para montar sua lista.'
+  },
+  de: {
+    favoritesIntro: 'Markiere Spots als Favoriten; sie erscheinen hier automatisch.',
+    favoritesEmptyHint: 'Nutze ☆ Favorit bei einem Spot, um deine Liste aufzubauen.'
+  }
+};
+
 const swellTranslations = {
   nl: {
     swellLabel: 'Golven',
@@ -300,6 +328,12 @@ Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
 });
 
 Object.entries(windTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(favoritesTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
   }
@@ -718,6 +752,7 @@ function setLanguage(lang, persist = true) {
     resetViewButtonEl.setAttribute('aria-label', t('resetViewAria'));
   }
   if (favoritesHeadingEl) favoritesHeadingEl.textContent = t('favoritesHeading');
+  if (favoritesIntroEl) favoritesIntroEl.textContent = t('favoritesIntro');
   if (favoritesSectionEl) favoritesSectionEl.setAttribute('aria-label', t('favoritesHeading'));
   if (infoSectionEl) infoSectionEl.setAttribute('aria-label', t('infoSectionAria'));
   if (infoHeadingEl) infoHeadingEl.textContent = t('infoHeading');
@@ -982,17 +1017,52 @@ function updateFavoriteToggleForSpot(spot) {
 }
 
 function renderFavoritesList() {
-  const favorites = SURF_SPOTS.filter((spot) => favoriteSpotIds.has(getSpotKey(spot)));
+  const favorites = SURF_SPOTS
+    .map((spot, originalIndex) => ({
+      spot,
+      originalIndex
+    }))
+    .filter(({ spot }) => favoriteSpotIds.has(getSpotKey(spot)))
+    .sort((left, right) => {
+      const byName = left.spot.naam.localeCompare(right.spot.naam, 'nl', {
+        sensitivity: 'base'
+      });
+      if (byName !== 0) return byName;
+
+      const byLand = left.spot.land.localeCompare(right.spot.land, 'nl', {
+        sensitivity: 'base'
+      });
+      if (byLand !== 0) return byLand;
+
+      return left.originalIndex - right.originalIndex;
+    })
+    .map(({ spot }) => spot);
 
   if (!favorites.length) {
-    favoritesListEl.innerHTML = `<li class="favorites-empty">${t('favoritesEmpty')}</li>`;
+    favoritesListEl.innerHTML = `
+      <li class="favorites-empty">
+        <span class="favorites-empty-title">${t('favoritesEmpty')}</span>
+        <span class="favorites-empty-hint">${t('favoritesEmptyHint')}</span>
+      </li>
+    `;
     return;
   }
 
   favoritesListEl.innerHTML = favorites
     .map(
       (spot) =>
-        `<li><button type="button" class="favorite-item-btn" data-spot-id="${getSpotKey(spot)}">${spot.naam} (${spot.land})</button></li>`
+        `
+          <li>
+            <button type="button" class="favorite-item-btn" data-spot-id="${getSpotKey(spot)}">
+              <span class="favorite-item-main">
+                <span class="favorite-item-star" aria-hidden="true">★</span>
+                <span class="favorite-item-spot">${spot.naam}</span>
+                <span class="favorite-item-land">(${spot.land})</span>
+              </span>
+              <span class="favorite-item-arrow" aria-hidden="true">›</span>
+            </button>
+          </li>
+        `
     )
     .join('');
 }
@@ -1503,6 +1573,8 @@ function resetView() {
   } catch {
     // storage kan geblokkeerd zijn; reset gaat verder
   }
+
+  resetMapViewToDefault();
 
   const defaultSpot = SURF_SPOTS[0] ?? null;
   if (defaultSpot) {

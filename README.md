@@ -1,106 +1,53 @@
 # README
 
-## FreeSurfCast (MVP)
+## FreeSurfCast
 
-FreeSurfCast is een simpele, gratis surf-forecast webapp met focus op UX, geïnspireerd op surf-forecast.com.  
-De app draait volledig in de browser op plain HTML/CSS/JavaScript en gebruikt gratis Open-Meteo data.
+FreeSurfCast is een gratis, browser-only surf-forecast webapp met snelle uitleg per spot, gebaseerd op Open-Meteo data.
 
 ## Live demo
 
-Probeer FreeSurfCast direct op [GitHub Pages](https://karimafendi70-sketch.github.io/recorder/).
+Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/recorder/).
 
-## Belangrijkste features
+## Features (huidige staat)
 
-- Multi-spot surf forecast via Open-Meteo (marine + weer endpoints), zonder API-key.
-- Zoekfunctie met:
-	- fuzzy zoeken op spotnaam én land,
-	- dropdown-suggesties,
-	- toetsenbordnavigatie (↑/↓ + Enter).
-- Tijdvak-selector:
-	- `Nu`, `+3u`, `+6u`, `+9u`,
-	- hergebruikt dezelfde opgehaalde API-response (geen extra calls per klik),
-	- caching per spot met TTL (standaard 10 minuten).
-- Compacte swell-/golfvisualisatie per actief tijdvak (hoogte + periode + eenvoudige intensiteitsbalk).
-- Snelle actie **Reset weergave**: zet spot, tijdvak, niveau en kaartfocus terug naar basisstand, terwijl taalkeuze behouden blijft.
-- Surf-rating:
-	- 1–5 sterren,
-	- kleurcodes (rood/oranje/groen),
-	- korte uitleg: **Waarom deze rating?** met plus- en minpunten,
-	- eenvoudige niveau-filter: **Alle niveaus / Beginner / Gevorderd** voor nuance in de uitleg.
-- Meertalige UI-toggle met taalkeuze: **NL, EN, FR, ES, PT, DE** (taalvoorkeur wordt onthouden via `localStorage`).
-- Compacte **Over/Help/Disclaimer**-sectie onderaan de pagina, volledig meertalig (NL/EN/FR/ES/PT/DE).
-- Favorieten:
-	- spots markeren als favoriet,
-	- overzichtslijst met favorieten,
-	- opslag in `localStorage` (blijft bewaard na reload).
+- Kaart + forecast + rating + wind + swell: klik een spot op de kaart of via zoeken en bekijk tijdvakken, surf-rating, windrichting/-kracht en compacte swell-visualisatie.
+- Meertaligheid + filters + persoonlijke state: NL/EN/FR/ES/PT/DE, niveau-filter (Alle niveaus/Beginner/Gevorderd), favorieten, last-used spot en reset-weergave.
+- Performance + UX: eenvoudige forecast-caching per spot, responsive layout-polish voor mobiel en duidelijke statusfeedback.
 
-## Installatie / gebruik
+## Lokale run
 
-### Voorwaarden
+1. Open `index.html` direct in je browser, of
+2. gebruik in VS Code **Open with Live Server**.
 
-- Alleen een moderne browser (Chrome, Edge, Firefox, Safari).
-- Geen backend of server-configuratie nodig.
+## Kleine helper-tests
 
-### Lokaal draaien
+- Run: `node tests/helpers.test.js`
+- Deze testset controleert windrichting-formattering, windsnelheid-formattering en swell-intensiteitsklassen op grenswaarden.
 
-1. **Optie 1 (snel):** open `index.html` door te dubbelklikken.
-2. **Optie 2 (aanrader in VS Code):**
-	 - installeer de Live Server extensie,
-	 - rechtsklik op `index.html`,
-	 - kies **Open with Live Server**.
+## Technische notities
 
-Alles draait client-side en werkt direct zodra de pagina opent.
-
-## Technische details (kort)
-
-- Open-Meteo endpoints (globaal):
-	- Marine data via `https://marine-api.open-meteo.com/v1/marine`
-	- Weerdata via `https://api.open-meteo.com/v1/forecast`
-- Surfspots + fallbackdata staan in `spots.js`, met o.a. `id`, `naam`, `land`, `latitude`, `longitude`.
-- Caching per spot gebeurt in `app.js` met een `Map` en TTL-constante (`CACHE_TTL_MS`).
-- Surf-rating en uitleg worden centraal opgebouwd in:
-	- `calculateSurfRating(...)`
-	- `buildRatingExplanation(...)`
-
-## Toekomst-ideeën
-
-- Meer surfspots toevoegen.
-- Issue #1: kaart met spot-markers staat live en marker-click selecteert nu direct de forecast van die spot.
-- Kaartweergave toevoegen (bijv. Leaflet of eenvoudige embed).
-- Geavanceerdere surf-rating (extra parameters, per type surfer).
-- Responsieve layout verder finetunen.
-- Deployen naar GitHub Pages of Vercel.
+- Open-Meteo endpoints:
+	- `https://marine-api.open-meteo.com/v1/marine`
+	- `https://api.open-meteo.com/v1/forecast`
+- Forecast-caching gebruikt een in-memory `Map` met TTL in `app.js` (`FORECAST_CACHE_TTL_MS`).
+- Favorieten worden in de UI alfabetisch gesorteerd voor consistente leesbaarheid.
 
 ## Changelog
 
-- **v0.1.6 – swell + reset update**
-	- Simpele swell-/golfvisualisatie toegevoegd in de forecast (tekst + compacte intensiteitsbalk per actief tijdvak).
-	- Nieuwe **Reset weergave**-actie toegevoegd die spot, tijdvak, niveau-filter en kaartfocus terugzet, zonder taal te wijzigen.
+- **v0.2.0 – release cleanup & UX maturity**
+	- Kaartintegratie afgerond met meerdere Europese spots.
+	- Niveau-filter toegevoegd (Beginner/Gevorderd) met context in rating-uitleg.
+	- Volledige meertalige UI (NL/EN/FR/ES/PT/DE).
+	- Windvisualisatie toegevoegd (richting + kracht met visuele pijl).
+	- Swell-/golfvisualisatie toegevoegd (hoogte + periode + compacte intensiteitsbalk).
+	- Favorieten, last-used spot en reset-weergave samengebracht in één consistente flow.
+	- Eenvoudige forecast-caching per spot geactiveerd voor snellere herselectie.
 
-- **v0.1.5 – info/disclaimer update**
-	- Compacte meertalige sectie toegevoegd: **Over FreeSurfCast / Help / Disclaimer** met korte veiligheids- en gebruikscontext.
-	- Teksten koppelen mee aan de bestaande taal-toggle (NL/EN/FR/ES/PT/DE).
-
-- **v0.1.4 – i18n update**
-	- Eenvoudige meertalige taal-toggle toegevoegd (NL/EN/FR/ES/PT/DE) voor vaste UI-teksten, legend, rating-uitleg en niveau-filter.
-	- Gekozen taal wordt opgeslagen in `localStorage` en automatisch hersteld bij herladen.
-
-- **v0.1.3 – UX update**
-	- Basis niveau-filter toegevoegd bij de rating-uitleg (Alle niveaus, Beginner, Gevorderd) met subtiele context in de tekst.
-
-- **v0.1.2 – Data update**
-	- Extra Europese surfspots toegevoegd in `spots.js` (o.a. Portugal, Spanje, Frankrijk en Verenigd Koninkrijk) voor issue #3.
-
-- **v0.1.1 – Patch**
-	- Inklapbare legend toegevoegd onder de surf-rating met toggle **Toon uitleg / Verberg uitleg**.
-	- Forecastkaart blijft compacter op kleinere schermen, terwijl alle uitleg beschikbaar blijft.
-	- Kleine mobile polish: compactere spacing en kortere NL-teksten voor snellere scanbaarheid.
-
-- **v0.1 – MVP**
-	- Eerste werkende versie met:
-		- multi-spot live forecast via Open-Meteo (marine + weer);
-		- fuzzy zoek + dropdown-suggesties + toetsenbordnavigatie;
-		- tijdvak-selector (Nu, +3u, +6u, +9u) met caching en TTL per spot;
-		- surf-rating (1–5) met kleurcodes en uitleg “waarom deze rating”;
-		- favorieten met localStorage;
-		- legend met uitleg van kleurcodes en onshore/offshore.
+- **v0.1.x (compact historisch)**
+	- v0.1.6: swell + reset-view basis.
+	- v0.1.5: meertalige info/disclaimer-sectie.
+	- v0.1.4: i18n taal-toggle en vertaalde kern-UI.
+	- v0.1.3: niveau-filter in rating-uitleg.
+	- v0.1.2: uitbreiding Europese spots.
+	- v0.1.1: legend-toggle en mobile polish.
+	- v0.1.0: eerste MVP (zoek/suggesties/tijdvakken/rating/favorieten).
