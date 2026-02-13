@@ -36,6 +36,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 	- `https://api.open-meteo.com/v1/forecast`
 - Forecast-caching gebruikt een in-memory `Map` met TTL in `app.js` (`FORECAST_CACHE_TTL_MS`).
 - Favorieten worden in de UI alfabetisch gesorteerd voor consistente leesbaarheid.
+- Bij een eerste bezoek zonder opgeslagen taalvoorkeur probeert de app te starten in je browsertaal (indien ondersteund); daarna blijft je eigen taalkeuze leidend.
 
 ## Changelog
 

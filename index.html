@@ -58,8 +58,12 @@
       <main class="forecast-card" aria-live="polite">
         <div class="spot-header">
           <h2 id="spotName">Scheveningen</h2>
-          <button id="favoriteToggleBtn" class="favorite-toggle" type="button" aria-pressed="false">☆ Favoriet</button>
+          <div class="spot-actions">
+            <button id="favoriteToggleBtn" class="favorite-toggle" type="button" aria-pressed="false">☆ Favoriet</button>
+            <button id="shareLinkBtn" class="share-link-btn" type="button" disabled>Kopieer link</button>
+          </div>
         </div>
+        <p id="shareStatus" class="share-status" aria-live="polite"></p>
         <p id="forecastMeta" class="forecast-meta">Bron: mock-data</p>
         <p id="surfRating" class="surf-rating rating-neutral">Surf rating: n.v.t.</p>
         <div id="levelFilterContainer" class="level-filter control-group" aria-label="Niveau voor uitleg">
@@ -95,6 +99,8 @@
               <li id="legendItemBad"><span class="legend-dot legend-dot-bad" aria-hidden="true"></span>Rood (1–2/5): meestal lastige of mindere condities.</li>
               <li id="legendItemOnshore">Onshore: wind richting strand, golven worden vaak rommeliger.</li>
               <li id="legendItemOffshore">Offshore: wind van land naar zee, golven worden vaak cleaner.</li>
+              <li id="legendWindExplanation" class="legend-note legend-wind">Pijl = windrichting (wijst waar de wind naartoe waait).</li>
+              <li id="legendSwellExplanation" class="legend-note legend-swell">Swellbalk = relatieve golfhoogte (laag/medium/hoog/zeer hoog).</li>
             </ul>
           </div>
         </div>

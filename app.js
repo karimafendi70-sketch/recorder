@@ -36,6 +36,8 @@ const legendItemMediumEl = document.getElementById('legendItemMedium');
 const legendItemBadEl = document.getElementById('legendItemBad');
 const legendItemOnshoreEl = document.getElementById('legendItemOnshore');
 const legendItemOffshoreEl = document.getElementById('legendItemOffshore');
+const legendWindExplanationEl = document.getElementById('legendWindExplanation');
+const legendSwellExplanationEl = document.getElementById('legendSwellExplanation');
 const forecastLabelWaveHeightEl = document.getElementById('forecastLabelWaveHeight');
 const forecastLabelWavePeriodEl = document.getElementById('forecastLabelWavePeriod');
 const forecastLabelSwellEl = document.getElementById('forecastLabelSwell');
@@ -56,6 +58,8 @@ const legendToggleBtnEl = document.getElementById('legendToggleBtn');
 const ratingLegendBodyEl = document.getElementById('ratingLegendBody');
 const spotMapEl = document.getElementById('spotMap');
 const favoriteToggleBtnEl = document.getElementById('favoriteToggleBtn');
+const shareLinkBtnEl = document.getElementById('shareLinkBtn');
+const shareStatusEl = document.getElementById('shareStatus');
 const favoritesListEl = document.getElementById('favoritesList');
 const timeSelectorEl = document.getElementById('timeSelector');
 const timeSlotNowEl = document.getElementById('timeSlotNow');
@@ -348,6 +352,60 @@ const accessibilityTranslations = {
   }
 };
 
+const shareTranslations = {
+  nl: {
+    shareLinkLabel: 'Kopieer link',
+    shareLinkCopied: 'Link gekopieerd'
+  },
+  en: {
+    shareLinkLabel: 'Copy link',
+    shareLinkCopied: 'Link copied'
+  },
+  fr: {
+    shareLinkLabel: 'Copier le lien',
+    shareLinkCopied: 'Lien copié'
+  },
+  es: {
+    shareLinkLabel: 'Copiar enlace',
+    shareLinkCopied: 'Enlace copiado'
+  },
+  pt: {
+    shareLinkLabel: 'Copiar link',
+    shareLinkCopied: 'Link copiado'
+  },
+  de: {
+    shareLinkLabel: 'Link kopieren',
+    shareLinkCopied: 'Link kopiert'
+  }
+};
+
+const legendHelpTranslations = {
+  nl: {
+    legendWindExplanation: 'Pijl = windrichting (wijst waar de wind naartoe waait).',
+    legendSwellExplanation: 'Swellbalk = relatieve golfhoogte (laag/medium/hoog/zeer hoog).'
+  },
+  en: {
+    legendWindExplanation: 'Arrow = wind direction (shows where the wind is blowing to).',
+    legendSwellExplanation: 'Swell bar = relative wave height (low/medium/high/very high).'
+  },
+  fr: {
+    legendWindExplanation: 'Flèche = direction du vent (indique où le vent souffle).',
+    legendSwellExplanation: 'Barre de houle = hauteur relative des vagues (faible/moyenne/haute/très haute).'
+  },
+  es: {
+    legendWindExplanation: 'Flecha = dirección del viento (indica hacia dónde sopla).',
+    legendSwellExplanation: 'Barra de oleaje = altura relativa de ola (baja/media/alta/muy alta).'
+  },
+  pt: {
+    legendWindExplanation: 'Seta = direção do vento (mostra para onde o vento sopra).',
+    legendSwellExplanation: 'Barra de ondulação = altura relativa da onda (baixa/média/alta/muito alta).'
+  },
+  de: {
+    legendWindExplanation: 'Pfeil = Windrichtung (zeigt, wohin der Wind weht).',
+    legendSwellExplanation: 'Swell-Balken = relative Wellenhöhe (niedrig/mittel/hoch/sehr hoch).'
+  }
+};
+
 Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -378,6 +436,18 @@ Object.entries(accessibilityTranslations).forEach(([lang, extraKeys]) => {
   }
 });
 
+Object.entries(shareTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(legendHelpTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
 let currentSuggestions = [];
 let activeSuggestionIndex = -1;
 let liveRequestId = 0;
@@ -393,6 +463,7 @@ let activeSpot = null;
 let currentLevel = 'all';
 let latestRatingConditions = null;
 let currentLanguage = 'nl';
+let shareStatusTimeoutId = null;
 
 function t(key, vars = {}) {
   const languagePack = translations[currentLanguage] ?? translations.nl;
@@ -778,6 +849,8 @@ function setLanguage(lang, persist = true) {
   if (legendItemBadEl) legendItemBadEl.innerHTML = `<span class="legend-dot legend-dot-bad" aria-hidden="true"></span>${t('legendItemBad')}`;
   if (legendItemOnshoreEl) legendItemOnshoreEl.textContent = t('legendItemOnshore');
   if (legendItemOffshoreEl) legendItemOffshoreEl.textContent = t('legendItemOffshore');
+  if (legendWindExplanationEl) legendWindExplanationEl.textContent = t('legendWindExplanation');
+  if (legendSwellExplanationEl) legendSwellExplanationEl.textContent = t('legendSwellExplanation');
   if (timeSelectorEl) timeSelectorEl.setAttribute('aria-label', t('timeSelectorAria'));
   if (timeSlotNowEl) timeSlotNowEl.textContent = t('timeNow');
   if (timeSlot3hEl) timeSlot3hEl.textContent = t('timePlus3h');
@@ -795,6 +868,10 @@ function setLanguage(lang, persist = true) {
   if (favoritesHeadingEl) favoritesHeadingEl.textContent = t('favoritesHeading');
   if (favoritesIntroEl) favoritesIntroEl.textContent = t('favoritesIntro');
   if (favoritesSectionEl) favoritesSectionEl.setAttribute('aria-label', t('favoritesHeading'));
+  if (shareLinkBtnEl) {
+    shareLinkBtnEl.textContent = t('shareLinkLabel');
+    shareLinkBtnEl.setAttribute('aria-label', t('shareLinkLabel'));
+  }
   if (infoSectionEl) infoSectionEl.setAttribute('aria-label', t('infoSectionAria'));
   if (infoHeadingEl) infoHeadingEl.textContent = t('infoHeading');
   if (infoLine1El) infoLine1El.textContent = t('infoLine1');
@@ -814,7 +891,26 @@ function setLanguage(lang, persist = true) {
     renderSurfRating(latestRatingConditions);
   }
 
+  updateShareButtonForSpot(activeSpot);
   updateControlBadges();
+}
+
+function setShareStatus(message = '') {
+  if (!shareStatusEl) return;
+  shareStatusEl.textContent = message;
+}
+
+function updateShareButtonForSpot(spot) {
+  if (!shareLinkBtnEl) return;
+
+  const hasActiveSpot = Boolean(spot);
+  shareLinkBtnEl.disabled = !hasActiveSpot;
+  shareLinkBtnEl.setAttribute('aria-disabled', hasActiveSpot ? 'false' : 'true');
+  shareLinkBtnEl.setAttribute('aria-label', t('shareLinkLabel'));
+
+  if (!hasActiveSpot) {
+    setShareStatus('');
+  }
 }
 
 function setCurrentLevel(level) {
@@ -995,6 +1091,45 @@ function getSpotKey(spot) {
 
 function getSpotById(spotId) {
   return SURF_SPOTS.find((spot) => getSpotKey(spot) === spotId) ?? null;
+}
+
+function getDeepLinkedSpotFromUrl() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const deepLinkedSpotId = params.get('spot');
+    if (!deepLinkedSpotId) return null;
+    return getSpotById(deepLinkedSpotId);
+  } catch {
+    return null;
+  }
+}
+
+function buildDeepLinkForSpot(spot) {
+  const spotId = getSpotKey(spot);
+  const url = new URL(window.location.href);
+  url.searchParams.set('spot', spotId);
+  return url.toString();
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+
+  const fallbackInput = document.createElement('textarea');
+  fallbackInput.value = text;
+  fallbackInput.setAttribute('readonly', '');
+  fallbackInput.style.position = 'absolute';
+  fallbackInput.style.left = '-9999px';
+  document.body.appendChild(fallbackInput);
+  fallbackInput.select();
+
+  try {
+    return document.execCommand('copy');
+  } finally {
+    document.body.removeChild(fallbackInput);
+  }
 }
 
 function saveLastSpotToStorage(spot) {
@@ -1342,6 +1477,7 @@ function renderLiveOffset(offsetHours) {
 async function updateForecastForSpot(spot) {
   activeSpot = spot;
   updateFavoriteToggleForSpot(spot);
+  updateShareButtonForSpot(spot);
   renderSpot(spot, spot);
 
   const spotKey = getSpotKey(spot);
@@ -1761,6 +1897,29 @@ favoriteToggleBtnEl.addEventListener('click', () => {
   renderFavoritesList();
 });
 
+if (shareLinkBtnEl) {
+  shareLinkBtnEl.addEventListener('click', async () => {
+    if (!activeSpot) return;
+
+    const deepLink = buildDeepLinkForSpot(activeSpot);
+
+    try {
+      const copied = await copyTextToClipboard(deepLink);
+      if (!copied) return;
+
+      setShareStatus(t('shareLinkCopied'));
+      if (shareStatusTimeoutId) {
+        clearTimeout(shareStatusTimeoutId);
+      }
+      shareStatusTimeoutId = window.setTimeout(() => {
+        setShareStatus('');
+      }, 2200);
+    } catch {
+      setShareStatus('');
+    }
+  });
+}
+
 favoritesListEl.addEventListener('click', (event) => {
   const button = event.target.closest('.favorite-item-btn');
   if (!button) return;
@@ -1805,17 +1964,44 @@ if (resetViewButtonEl) {
   });
 }
 
+function detectPreferredLanguage() {
+  const browserLanguages = Array.isArray(navigator.languages) && navigator.languages.length
+    ? navigator.languages
+    : [navigator.language];
+
+  for (const language of browserLanguages) {
+    if (typeof language !== 'string' || !language.trim()) continue;
+    const normalizedLanguage = language.toLowerCase();
+    const baseLanguage = normalizedLanguage.split('-')[0];
+
+    if (SUPPORTED_LANGUAGES.includes(normalizedLanguage)) {
+      return normalizedLanguage;
+    }
+
+    if (SUPPORTED_LANGUAGES.includes(baseLanguage)) {
+      return baseLanguage;
+    }
+  }
+
+  return 'nl';
+}
+
 const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-setLanguage(savedLanguage ?? 'nl', false);
+const initialLanguage = SUPPORTED_LANGUAGES.includes(savedLanguage)
+  ? savedLanguage
+  : detectPreferredLanguage();
+setLanguage(initialLanguage, false);
 
 initSpotMap();
 
 loadFavoritesFromStorage();
 renderFavoritesList();
 updateFavoriteToggleForSpot(null);
+updateShareButtonForSpot(null);
 
+const deepLinkedSpot = getDeepLinkedSpotFromUrl();
 const restoredSpot = getLastSpotFromStorage();
-const initialSpot = restoredSpot ?? SURF_SPOTS[0];
+const initialSpot = deepLinkedSpot ?? restoredSpot ?? SURF_SPOTS[0];
 
 setForecastMeta(t('forecastMetaMock'));
 setSearchMessage(t('searchHintDefault'), '');
