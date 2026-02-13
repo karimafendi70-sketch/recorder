@@ -14,10 +14,39 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Meertaligheid + filters + persoonlijke state: NL/EN/FR/ES/PT/DE, niveau-filter (Alle niveaus/Beginner/Gevorderd), favorieten, last-used spot en reset-weergave.
 - Performance + UX: eenvoudige forecast-caching per spot, responsive layout-polish voor mobiel en duidelijke statusfeedback.
 
-## Lokale run
+## Getting started
 
-1. Open `index.html` direct in je browser, of
-2. gebruik in VS Code **Open with Live Server**.
+- Vereisten:
+	- Moderne browser (Chrome, Edge, Firefox, Safari).
+	- Optioneel Node.js als je lokale helper-tests wilt draaien.
+- Lokaal draaien:
+	- Snelste optie: open index.html in je browser.
+	- Aanbevolen tijdens ontwikkeling: gebruik een kleine lokale dev-server, bijvoorbeeld VS Code Live Server of npx serve.
+- Externe services:
+	- De app gebruikt Open-Meteo endpoints direct vanuit de client.
+	- Er is geen aparte API-key nodig voor de huidige setup.
+
+## Tech stack
+
+- Frontend:
+	- Plain HTML, CSS en JavaScript (geen framework).
+	- Leaflet voor kaartweergave en spot-markers.
+	- Fetch API voor live data-opvraging.
+- Interne structuur:
+	- app.js bevat de centrale app-flow (spots, forecast, i18n, state, opslag).
+	- style.css bevat layout, component-styling en responsive gedrag.
+	- tests/helpers.test.js bevat snelle helper-regressietests.
+
+## Architectuur (kort)
+
+- SURF_SPOTS is de bron voor spotdata en marker-opbouw.
+- selectSpot(...) is de centrale selectieflow voor kaart, zoekresultaten, favorieten, deep-link en restore.
+- updateForecastForSpot(...) stuurt de forecast-update en UI-rendering aan.
+- fetchLiveForecastForSpot(...) haalt live data op bij Open-Meteo en vult snapshots per tijdvak.
+- translations met t(...) en setLanguage(...) verzorgen alle meertalige UI-labels.
+- localStorage bewaart taal, favorieten en last-used spot.
+- forecastCache en pendingForecastRequests beperken onnodige API-calls en dubbele requests.
+- resetView houdt de basisweergave consistent bij terugzetten van selectie, filters en kaart.
 
 ## Kleine helper-tests
 
@@ -37,6 +66,25 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Forecast-caching gebruikt een in-memory `Map` met TTL in `app.js` (`FORECAST_CACHE_TTL_MS`).
 - Favorieten worden in de UI alfabetisch gesorteerd voor consistente leesbaarheid.
 - Bij een eerste bezoek zonder opgeslagen taalvoorkeur probeert de app te starten in je browsertaal (indien ondersteund); daarna blijft je eigen taalkeuze leidend.
+
+## Contributing
+
+- Richtlijnen voor bijdragen staan in CONTRIBUTING.md.
+- Voor grotere wijzigingen of nieuwe features: open eerst een issue.
+- Kijk ook naar de Backlog-sectie hieronder voor mogelijke ideeën.
+
+## Ideeën / Backlog (niet gepland)
+
+Deze lijst is een ideeënverzameling en geen harde roadmap.
+
+- Meer wereldwijde surfspots (bijv. VS, Australië, Zuid-Amerika).
+- Uitgebreidere swell-analyse (richting, meerdere swell-bronnen).
+- Geavanceerdere filters (bijv. getij-info of uitgebreidere niveaufilters).
+- Donker thema (dark mode) als optionele weergave.
+- Kleine PWA-verbeteringen (installable prompt, eenvoudige offline fallback).
+- Eenvoudige end-to-end testflow (bijv. later met Playwright of Cypress).
+- Extra accessibility-tuning (screenreader-flow, skip-links, focusroutines).
+- Compacte spot-detailkaart met samenvatting per favoriet.
 
 ## Changelog
 
