@@ -136,6 +136,28 @@ function isMinSurfableConditions(conditions) {
   return Number.isFinite(waveHeight) && Number.isFinite(wavePeriod) && waveHeight >= 0.9 && wavePeriod >= 7;
 }
 
+function getLocalDateKey(timestamp) {
+  if (!timestamp) return null;
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getDayPart(timestamp) {
+  if (!timestamp) return 'evening';
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return 'evening';
+
+  const hour = date.getHours();
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 18) return 'afternoon';
+  return 'evening';
+}
+
 function passesHardConditionFilters(slotContext, filters) {
   if (!slotContext) return false;
 
@@ -324,6 +346,25 @@ function runHardFilterCombinationTests() {
   );
 }
 
+function runLocalDateKeyTests() {
+  const iso = '2026-02-13T10:45:00Z';
+  const key = getLocalDateKey(iso);
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) {
+    throw new Error(`getLocalDateKey format failed: got "${key}"`);
+  }
+
+  assertEqual(getLocalDateKey(null), null, 'getLocalDateKey(null)');
+  assertEqual(getLocalDateKey('not-a-date'), null, 'getLocalDateKey(invalid)');
+}
+
+function runDayPartTests() {
+  assertEqual(getDayPart('2026-02-13T06:00:00'), 'morning', 'getDayPart(morning)');
+  assertEqual(getDayPart('2026-02-13T13:00:00'), 'afternoon', 'getDayPart(afternoon)');
+  assertEqual(getDayPart('2026-02-13T20:00:00'), 'evening', 'getDayPart(evening)');
+  assertEqual(getDayPart('invalid'), 'evening', 'getDayPart(invalid)');
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
@@ -333,6 +374,8 @@ function runAll() {
   runSurfConditionTagTests();
   runMinSurfableTests();
   runHardFilterCombinationTests();
+  runLocalDateKeyTests();
+  runDayPartTests();
   console.log('All tests passed');
 }
 

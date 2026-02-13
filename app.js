@@ -85,6 +85,9 @@ const spotMapEl = document.getElementById('spotMap');
 const favoriteToggleBtnEl = document.getElementById('favoriteToggleBtn');
 const shareLinkBtnEl = document.getElementById('shareLinkBtn');
 const favoritesListEl = document.getElementById('favoritesList');
+const dayOverviewEl = document.getElementById('dayOverview');
+const dayOverviewTitleEl = document.getElementById('dayOverviewTitle');
+const dayOverviewCardsEl = document.getElementById('dayOverviewCards');
 const timeSelectorEl = document.getElementById('timeSelector');
 const timeSlotNowEl = document.getElementById('timeSlotNow');
 const timeSlot3hEl = document.getElementById('timeSlot3h');
@@ -102,6 +105,9 @@ const MIN_ALLOWED_DISTANCE = 1;
 const NAME_MATCH_WEIGHT = 1;
 const LAND_MATCH_WEIGHT = 1;
 const TIME_SLOT_OFFSETS = [0, 3, 6, 9];
+const SLOT_STEP_HOURS = 3;
+const DAY_OVERVIEW_LIMIT = 4;
+const DAY_PART_ORDER = ['morning', 'afternoon', 'evening'];
 const DEFAULT_TIME_OFFSET = 0;
 const FORECAST_CACHE_TTL_MS = 5 * 60 * 1000;
 const FAVORITES_STORAGE_KEY = 'freeSurfCastFavorites';
@@ -485,7 +491,13 @@ const powerUserTranslations = {
     noResultsWithFilters: 'Geen tijdvakken voldoen aan deze filters.',
     viewModeLabel: 'Weergave',
     viewMap: 'Kaartweergave',
-    viewList: 'Lijstweergave'
+    viewList: 'Lijstweergave',
+    dayOverviewTitle: 'Overzicht komende dagen',
+    dayPartMorning: 'Ochtend',
+    dayPartAfternoon: 'Middag',
+    dayPartEvening: 'Avond',
+    dayToday: 'Vandaag',
+    dayTomorrow: 'Morgen'
   },
   en: {
     filterConditionsTitle: 'Conditions',
@@ -495,7 +507,13 @@ const powerUserTranslations = {
     noResultsWithFilters: 'No time slots match these filters.',
     viewModeLabel: 'View',
     viewMap: 'Map view',
-    viewList: 'List view'
+    viewList: 'List view',
+    dayOverviewTitle: 'Upcoming days',
+    dayPartMorning: 'Morning',
+    dayPartAfternoon: 'Afternoon',
+    dayPartEvening: 'Evening',
+    dayToday: 'Today',
+    dayTomorrow: 'Tomorrow'
   },
   fr: {
     filterConditionsTitle: 'Conditions',
@@ -505,7 +523,13 @@ const powerUserTranslations = {
     noResultsWithFilters: 'Aucun créneau ne correspond à ces filtres.',
     viewModeLabel: 'Affichage',
     viewMap: 'Vue carte',
-    viewList: 'Vue liste'
+    viewList: 'Vue liste',
+    dayOverviewTitle: 'Aperçu des prochains jours',
+    dayPartMorning: 'Matin',
+    dayPartAfternoon: 'Après-midi',
+    dayPartEvening: 'Soir',
+    dayToday: 'Aujourd\'hui',
+    dayTomorrow: 'Demain'
   },
   es: {
     filterConditionsTitle: 'Condiciones',
@@ -515,7 +539,13 @@ const powerUserTranslations = {
     noResultsWithFilters: 'Ninguna franja coincide con estos filtros.',
     viewModeLabel: 'Vista',
     viewMap: 'Vista de mapa',
-    viewList: 'Vista de lista'
+    viewList: 'Vista de lista',
+    dayOverviewTitle: 'Resumen próximos días',
+    dayPartMorning: 'Mañana',
+    dayPartAfternoon: 'Tarde',
+    dayPartEvening: 'Noche',
+    dayToday: 'Hoy',
+    dayTomorrow: 'Mañana'
   },
   pt: {
     filterConditionsTitle: 'Condições',
@@ -525,7 +555,13 @@ const powerUserTranslations = {
     noResultsWithFilters: 'Nenhum horário corresponde a estes filtros.',
     viewModeLabel: 'Visualização',
     viewMap: 'Vista de mapa',
-    viewList: 'Vista de lista'
+    viewList: 'Vista de lista',
+    dayOverviewTitle: 'Resumo dos próximos dias',
+    dayPartMorning: 'Manhã',
+    dayPartAfternoon: 'Tarde',
+    dayPartEvening: 'Noite',
+    dayToday: 'Hoje',
+    dayTomorrow: 'Amanhã'
   },
   de: {
     filterConditionsTitle: 'Bedingungen',
@@ -535,7 +571,13 @@ const powerUserTranslations = {
     noResultsWithFilters: 'Keine Zeitfenster passen zu diesen Filtern.',
     viewModeLabel: 'Ansicht',
     viewMap: 'Kartenansicht',
-    viewList: 'Listenansicht'
+    viewList: 'Listenansicht',
+    dayOverviewTitle: 'Übersicht der nächsten Tage',
+    dayPartMorning: 'Morgen',
+    dayPartAfternoon: 'Nachmittag',
+    dayPartEvening: 'Abend',
+    dayToday: 'Heute',
+    dayTomorrow: 'Morgen'
   }
 };
 
@@ -797,6 +839,8 @@ let activeConditionFilters = {
   beginnerFriendly: false,
   preferClean: false
 };
+let currentDayKey = null;
+let preferredInitialOffset = null;
 
 function t(key, vars = {}) {
   const languagePack = translations[currentLanguage] ?? translations.nl;
@@ -971,6 +1015,8 @@ function getLiveSlotContext(offsetHours) {
   return {
     offsetHours,
     time: snapshot.time,
+    dayKey: getLocalDateKey(snapshot.time),
+    dayPart: getDayPart(snapshot.time),
     values: snapshot.values,
     mergedSpot,
     conditionTag,
@@ -979,12 +1025,227 @@ function getLiveSlotContext(offsetHours) {
   };
 }
 
+function getLocalDateKey(timestamp) {
+  if (!timestamp) return null;
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getDayPart(timestamp) {
+  if (!timestamp) return 'evening';
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return 'evening';
+
+  const hour = date.getHours();
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 18) return 'afternoon';
+  return 'evening';
+}
+
+function getMaxAvailableOffsetHours() {
+  if (!activeLiveCache) return 0;
+
+  const maxMarineOffset = activeLiveCache.marineTimes.length - activeLiveCache.baseMarineIndex - 1;
+  const maxWeatherOffset = activeLiveCache.weatherTimes.length - activeLiveCache.baseWeatherIndex - 1;
+  return Math.max(0, Math.min(maxMarineOffset, maxWeatherOffset));
+}
+
 function getAllLiveSlotContexts() {
   if (!activeLiveCache) return [];
 
-  return TIME_SLOT_OFFSETS
+  const maxOffset = getMaxAvailableOffsetHours();
+  const offsets = [];
+
+  for (let offset = 0; offset <= maxOffset; offset += SLOT_STEP_HOURS) {
+    offsets.push(offset);
+  }
+
+  return offsets
     .map((offset) => getLiveSlotContext(offset))
     .filter((slotContext) => Boolean(slotContext));
+}
+
+function groupSlotsByDayAndPart(allSlots) {
+  return allSlots.reduce((accumulator, slotContext) => {
+    if (!slotContext?.dayKey) return accumulator;
+
+    if (!accumulator[slotContext.dayKey]) {
+      accumulator[slotContext.dayKey] = {
+        morning: [],
+        afternoon: [],
+        evening: []
+      };
+    }
+
+    const dayPart = DAY_PART_ORDER.includes(slotContext.dayPart) ? slotContext.dayPart : 'evening';
+    accumulator[slotContext.dayKey][dayPart].push(slotContext);
+    return accumulator;
+  }, {});
+}
+
+function getOrderedDayKeys(groupedByDay) {
+  return Object.keys(groupedByDay).sort((left, right) => new Date(left).getTime() - new Date(right).getTime());
+}
+
+function getPartLabelKey(dayPart) {
+  const keys = {
+    morning: 'dayPartMorning',
+    afternoon: 'dayPartAfternoon',
+    evening: 'dayPartEvening'
+  };
+
+  return keys[dayPart] ?? 'dayPartEvening';
+}
+
+function formatDayLabel(dateKey) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return dateKey;
+
+  const todayKey = getLocalDateKey(new Date());
+  const tomorrowDate = new Date();
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrowKey = getLocalDateKey(tomorrowDate);
+
+  if (dateKey === todayKey) return t('dayToday');
+  if (dateKey === tomorrowKey) return t('dayTomorrow');
+
+  return new Intl.DateTimeFormat(getLocaleForLanguage(), {
+    weekday: 'short',
+    day: '2-digit'
+  }).format(date);
+}
+
+function buildDaySummaries(groupedByDay) {
+  const dayKeys = getOrderedDayKeys(groupedByDay).slice(0, DAY_OVERVIEW_LIMIT);
+
+  return dayKeys.map((dayKey) => {
+    const groupedSlots = groupedByDay[dayKey];
+    const slots = DAY_PART_ORDER.flatMap((dayPart) => groupedSlots[dayPart] ?? []);
+    const heights = slots
+      .map((slotContext) => slotContext?.mergedSpot?.golfHoogteMeter)
+      .filter((height) => Number.isFinite(height));
+    const minHeight = heights.length ? Math.min(...heights) : null;
+    const maxHeight = heights.length ? Math.max(...heights) : null;
+
+    const conditionCounts = slots.reduce((accumulator, slotContext) => {
+      const tag = slotContext.conditionTag ?? 'mixed';
+      accumulator[tag] = (accumulator[tag] ?? 0) + 1;
+      return accumulator;
+    }, {});
+
+    const dominantConditionTag = ['clean', 'mixed', 'choppy'].reduce((bestTag, tag) => {
+      const currentCount = conditionCounts[tag] ?? 0;
+      const bestCount = conditionCounts[bestTag] ?? -1;
+      return currentCount > bestCount ? tag : bestTag;
+    }, 'mixed');
+
+    return {
+      dateKey: dayKey,
+      label: formatDayLabel(dayKey),
+      minHeight,
+      maxHeight,
+      dominantConditionTag
+    };
+  });
+}
+
+function renderDayOverview(groupedByDay, selectedDateKey) {
+  if (!dayOverviewEl || !dayOverviewCardsEl) return;
+
+  const summaries = buildDaySummaries(groupedByDay);
+  if (!summaries.length) {
+    dayOverviewCardsEl.innerHTML = '';
+    dayOverviewEl.hidden = true;
+    return;
+  }
+
+  dayOverviewCardsEl.innerHTML = summaries
+    .map((summary) => {
+      const isActive = summary.dateKey === selectedDateKey;
+      const rangeLabel = Number.isFinite(summary.minHeight) && Number.isFinite(summary.maxHeight)
+        ? `${summary.minHeight.toFixed(1)}–${summary.maxHeight.toFixed(1)} m`
+        : '-';
+
+      return `
+        <button
+          type="button"
+          class="day-overview-card${isActive ? ' is-active' : ''}"
+          data-day-key="${summary.dateKey}"
+          aria-pressed="${isActive ? 'true' : 'false'}"
+        >
+          <span class="day-overview-date">${summary.label}</span>
+          <span class="day-overview-range">${rangeLabel}</span>
+          <span class="condition-tag condition-tag-${summary.dominantConditionTag} day-overview-condition">
+            ${t(getConditionLabelKey(summary.dominantConditionTag))}
+          </span>
+        </button>
+      `;
+    })
+    .join('');
+
+  dayOverviewEl.hidden = false;
+}
+
+function ensureCurrentDayKey(groupedByDay) {
+  const orderedDayKeys = getOrderedDayKeys(groupedByDay);
+  if (!orderedDayKeys.length) {
+    currentDayKey = null;
+    return null;
+  }
+
+  if (Number.isFinite(preferredInitialOffset)) {
+    const preferredSlot = getLiveSlotContext(preferredInitialOffset);
+    if (preferredSlot?.dayKey && groupedByDay[preferredSlot.dayKey]) {
+      currentDayKey = preferredSlot.dayKey;
+      preferredInitialOffset = null;
+      return currentDayKey;
+    }
+    preferredInitialOffset = null;
+  }
+
+  if (currentDayKey && groupedByDay[currentDayKey]) {
+    return currentDayKey;
+  }
+
+  [currentDayKey] = orderedDayKeys;
+  return currentDayKey;
+}
+
+function getSlotsForCurrentDay(groupedByDay) {
+  if (!currentDayKey || !groupedByDay[currentDayKey]) return [];
+  const dayGroup = groupedByDay[currentDayKey];
+
+  return DAY_PART_ORDER.flatMap((dayPart) => dayGroup[dayPart] ?? []);
+}
+
+function getDisplaySlotsForCurrentDay(groupedByDay) {
+  const dayGroup = groupedByDay[currentDayKey];
+  if (!dayGroup) return [];
+
+  const selectedSlots = [];
+  const seenOffsets = new Set();
+
+  DAY_PART_ORDER.forEach((dayPart) => {
+    const firstSlot = dayGroup[dayPart]?.[0];
+    if (!firstSlot || seenOffsets.has(firstSlot.offsetHours)) return;
+    selectedSlots.push(firstSlot);
+    seenOffsets.add(firstSlot.offsetHours);
+  });
+
+  const fallbackSlots = getSlotsForCurrentDay(groupedByDay);
+  fallbackSlots.forEach((slotContext) => {
+    if (selectedSlots.length >= TIME_SLOT_OFFSETS.length) return;
+    if (seenOffsets.has(slotContext.offsetHours)) return;
+    selectedSlots.push(slotContext);
+    seenOffsets.add(slotContext.offsetHours);
+  });
+
+  return selectedSlots.slice(0, TIME_SLOT_OFFSETS.length);
 }
 
 function passesHardConditionFilters(slotContext) {
@@ -1007,7 +1268,9 @@ function isPreferredCleanSlot(slotContext) {
 }
 
 function getFirstFilteredAvailableOffset() {
-  const firstMatch = getAllLiveSlotContexts().find((slotContext) => passesHardConditionFilters(slotContext));
+  const groupedByDay = groupSlotsByDayAndPart(getAllLiveSlotContexts());
+  ensureCurrentDayKey(groupedByDay);
+  const firstMatch = getSlotsForCurrentDay(groupedByDay).find((slotContext) => passesHardConditionFilters(slotContext));
   return firstMatch?.offsetHours;
 }
 
@@ -1019,15 +1282,14 @@ function updateNoResultsWithFiltersMessage(hasFilteredResults) {
   noResultsWithFiltersEl.hidden = !hasActiveFilter || hasFilteredResults;
 }
 
-function getTimeSlotLabel(offsetHours) {
-  const labels = {
-    0: t('timeNow'),
-    3: t('timePlus3h'),
-    6: t('timePlus6h'),
-    9: t('timePlus9h')
-  };
+function getTimeSlotLabel(slotContext) {
+  if (!slotContext?.time) return t('fallbackUnknownTime');
 
-  return labels[offsetHours] ?? `+${offsetHours}h`;
+  const timeLabel = new Date(slotContext.time).toLocaleTimeString(getLocaleForLanguage(), {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  return `${t(getPartLabelKey(slotContext.dayPart))} ${timeLabel}`;
 }
 
 function formatCompactSlotTimeLabel(time) {
@@ -1055,7 +1317,12 @@ function renderCompactForecastList() {
     return;
   }
 
-  const filteredSlots = getAllLiveSlotContexts().filter((slotContext) => passesHardConditionFilters(slotContext));
+  const groupedByDay = groupSlotsByDayAndPart(getAllLiveSlotContexts());
+  ensureCurrentDayKey(groupedByDay);
+  renderDayOverview(groupedByDay, currentDayKey);
+
+  const filteredSlots = getSlotsForCurrentDay(groupedByDay)
+    .filter((slotContext) => passesHardConditionFilters(slotContext));
 
   updateNoResultsWithFiltersMessage(filteredSlots.length > 0);
 
@@ -1080,7 +1347,7 @@ function renderCompactForecastList() {
       return `
         <li class="compact-forecast-item${preferredClass}">
           <div class="compact-forecast-top">
-            <span class="compact-forecast-time">${getTimeSlotLabel(slotContext.offsetHours)}</span>
+            <span class="compact-forecast-time">${getTimeSlotLabel(slotContext)}</span>
             <span class="compact-forecast-time-meta">${formatCompactSlotTimeLabel(slotContext.time)}</span>
           </div>
           <div class="compact-forecast-meta">
@@ -1134,6 +1401,41 @@ function setCurrentView(viewMode) {
   updateViewModeUI();
 }
 
+function setCurrentDayKey(nextDayKey) {
+  if (!activeLiveCache || !nextDayKey) return;
+
+  const groupedByDay = groupSlotsByDayAndPart(getAllLiveSlotContexts());
+  if (!groupedByDay[nextDayKey]) return;
+
+  currentDayKey = nextDayKey;
+  updateTimeSelectorButtons();
+
+  const currentContext = getLiveSlotContext(activeTimeOffset);
+  if (
+    currentContext &&
+    currentContext.dayKey === currentDayKey &&
+    passesHardConditionFilters(currentContext)
+  ) {
+    renderLiveOffset(activeTimeOffset);
+    return;
+  }
+
+  const fallbackOffset = getFirstFilteredAvailableOffset();
+  if (fallbackOffset !== undefined) {
+    renderLiveOffset(fallbackOffset);
+    return;
+  }
+
+  const firstDaySlot = getSlotsForCurrentDay(groupedByDay)[0];
+  if (firstDaySlot) {
+    activeTimeOffset = firstDaySlot.offsetHours;
+    renderSpot(firstDaySlot.mergedSpot, firstDaySlot.values);
+    setForecastMeta(t('forecastMetaLive', { timeLabel: formatCompactSlotTimeLabel(firstDaySlot.time) }), 'live');
+  }
+
+  renderCompactForecastList();
+}
+
 function setActiveConditionFilters(nextFilters) {
   activeConditionFilters = {
     minSurfable: Boolean(nextFilters?.minSurfable),
@@ -1152,7 +1454,11 @@ function setActiveConditionFilters(nextFilters) {
   }
 
   const currentContext = getLiveSlotContext(activeTimeOffset);
-  if (currentContext && passesHardConditionFilters(currentContext)) {
+  if (
+    currentContext &&
+    currentContext.dayKey === currentDayKey &&
+    passesHardConditionFilters(currentContext)
+  ) {
     updateTimeSelectorButtons();
     renderCompactForecastList();
     return;
@@ -1565,6 +1871,7 @@ function setLanguage(lang, persist = true) {
   if (viewModeLabelEl) viewModeLabelEl.textContent = t('viewModeLabel');
   if (viewMapBtnEl) viewMapBtnEl.textContent = t('viewMap');
   if (viewListBtnEl) viewListBtnEl.textContent = t('viewList');
+  if (dayOverviewTitleEl) dayOverviewTitleEl.textContent = t('dayOverviewTitle');
   if (noResultsWithFiltersEl) noResultsWithFiltersEl.textContent = t('noResultsWithFilters');
   if (ratingLegendEl) ratingLegendEl.setAttribute('aria-label', t('legendAria'));
   if (legendTitleEl) legendTitleEl.textContent = t('legendTitle');
@@ -1617,7 +1924,10 @@ function setLanguage(lang, persist = true) {
   updateFavoriteToggleForSpot(activeSpot);
   renderFavoritesList();
   if (activeLiveCache) {
-    renderLiveOffset(activeTimeOffset);
+    const rendered = renderLiveOffset(activeTimeOffset);
+    if (!rendered) {
+      updateTimeSelectorButtons();
+    }
   } else if (activeSpot) {
     renderSpot(activeSpot, latestRatingConditions ?? activeSpot);
   } else {
@@ -1845,7 +2155,7 @@ function setSearchMessage(message, type) {
 
 function setActiveTimeSlotButton(offset) {
   timeSlotButtons.forEach((button) => {
-    const buttonOffset = Number(button.dataset.offset);
+    const buttonOffset = Number(button.dataset.slotOffset ?? button.dataset.offset);
     button.classList.toggle('is-active', buttonOffset === offset);
   });
 }
@@ -1853,11 +2163,18 @@ function setActiveTimeSlotButton(offset) {
 function clearActiveLiveCache() {
   activeLiveCache = null;
   activeTimeOffset = 0;
+  currentDayKey = null;
   timeSelectorEl.hidden = true;
   timeSlotButtons.forEach((button) => {
     button.disabled = true;
+    button.hidden = false;
+    button.dataset.slotOffset = '';
     button.classList.remove('is-active');
   });
+  if (dayOverviewEl && dayOverviewCardsEl) {
+    dayOverviewCardsEl.innerHTML = '';
+    dayOverviewEl.hidden = true;
+  }
   updateNoResultsWithFiltersMessage(true);
   renderCompactForecastList();
 }
@@ -1942,10 +2259,24 @@ function getDeepLinkedSpotFromUrl() {
   }
 }
 
+function getDeepLinkedOffsetFromUrl() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const offsetParam = Number(params.get('offset'));
+    if (!Number.isFinite(offsetParam) || offsetParam < 0) return null;
+    return Math.floor(offsetParam);
+  } catch {
+    return null;
+  }
+}
+
 function buildDeepLinkForSpot(spot) {
   const spotId = getSpotKey(spot);
   const url = new URL(window.location.href);
   url.searchParams.set('spot', spotId);
+  if (Number.isFinite(activeTimeOffset)) {
+    url.searchParams.set('offset', String(activeTimeOffset));
+  }
   return url.toString();
 }
 
@@ -2108,7 +2439,7 @@ function buildMarineApiUrl(latitude, longitude) {
     latitude: String(latitude),
     longitude: String(longitude),
     hourly: 'wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_direction,wind_wave_height,sea_surface_temperature',
-    forecast_days: '1',
+    forecast_days: '4',
     timezone: 'auto'
   });
 
@@ -2121,7 +2452,7 @@ function buildWeatherApiUrl(latitude, longitude) {
     longitude: String(longitude),
     hourly: 'wind_speed_10m,wind_direction_10m,temperature_2m',
     wind_speed_unit: 'kn',
-    forecast_days: '1',
+    forecast_days: '4',
     timezone: 'auto'
   });
 
@@ -2238,19 +2569,24 @@ function updateTimeSelectorButtons() {
     return;
   }
 
+  const allSlots = getAllLiveSlotContexts();
+  const groupedByDay = groupSlotsByDayAndPart(allSlots);
+  ensureCurrentDayKey(groupedByDay);
+  renderDayOverview(groupedByDay, currentDayKey);
+
   timeSelectorEl.hidden = false;
   let hasFilteredResults = false;
-  const slotContextsByOffset = new Map(
-    getAllLiveSlotContexts().map((slotContext) => [slotContext.offsetHours, slotContext])
-  );
+  const displaySlots = getDisplaySlotsForCurrentDay(groupedByDay);
 
-  timeSlotButtons.forEach((button) => {
-    const offset = Number(button.dataset.offset);
-    const slotContext = slotContextsByOffset.get(offset) ?? null;
+  timeSlotButtons.forEach((button, index) => {
+    const slotContext = displaySlots[index] ?? null;
     const isAvailable = Boolean(slotContext);
     const isVisibleByFilters = isAvailable && passesHardConditionFilters(slotContext);
 
     button.classList.remove(...SLOT_CLASS_NAMES, 'slot-preferred');
+    button.hidden = !isAvailable;
+    button.dataset.slotOffset = slotContext ? String(slotContext.offsetHours) : '';
+    button.textContent = slotContext ? getTimeSlotLabel(slotContext) : t('timeSlotUnavailable');
 
     if (!isVisibleByFilters) {
       button.classList.add('slot-neutral');
@@ -2273,7 +2609,7 @@ function updateTimeSelectorButtons() {
     }
 
     button.disabled = !isVisibleByFilters;
-    button.classList.toggle('is-active', offset === activeTimeOffset && isVisibleByFilters);
+    button.classList.toggle('is-active', slotContext?.offsetHours === activeTimeOffset && isVisibleByFilters);
     button.title = isAvailable ? '' : t('timeSlotUnavailable');
   });
 
@@ -2317,12 +2653,21 @@ function mergeWithFallbackSpot(spot, liveValues) {
 }
 
 function getPreferredTimeOffset() {
-  const defaultSlot = getLiveSlotContext(DEFAULT_TIME_OFFSET);
-  if (defaultSlot && passesHardConditionFilters(defaultSlot)) {
-    return DEFAULT_TIME_OFFSET;
-  }
-
   return getFirstFilteredAvailableOffset();
+}
+
+function renderFirstAvailableSlotForCurrentDay() {
+  const groupedByDay = groupSlotsByDayAndPart(getAllLiveSlotContexts());
+  ensureCurrentDayKey(groupedByDay);
+  const firstSlot = getSlotsForCurrentDay(groupedByDay)[0];
+  if (!firstSlot) return false;
+
+  activeTimeOffset = firstSlot.offsetHours;
+  updateTimeSelectorButtons();
+  renderSpot(firstSlot.mergedSpot, firstSlot.values);
+  setForecastMeta(t('forecastMetaLive', { timeLabel: formatCompactSlotTimeLabel(firstSlot.time) }), 'live');
+  renderCompactForecastList();
+  return true;
 }
 
 function renderLiveOffset(offsetHours) {
@@ -2330,6 +2675,7 @@ function renderLiveOffset(offsetHours) {
   if (!slotContext || !activeLiveCache) return false;
   if (!passesHardConditionFilters(slotContext)) return false;
 
+  currentDayKey = slotContext.dayKey ?? currentDayKey;
   activeTimeOffset = offsetHours;
   updateTimeSelectorButtons();
 
@@ -2344,7 +2690,11 @@ function renderLiveOffset(offsetHours) {
 }
 
 async function updateForecastForSpot(spot) {
+  const isDifferentSpot = !activeSpot || getSpotKey(activeSpot) !== getSpotKey(spot);
   activeSpot = spot;
+  if (isDifferentSpot) {
+    currentDayKey = null;
+  }
   updateFavoriteToggleForSpot(spot);
   updateShareButtonForSpot(spot);
   renderSpot(spot, spot);
@@ -2369,6 +2719,10 @@ async function updateForecastForSpot(spot) {
       renderLiveOffset(firstAvailableOffset);
       return;
     }
+
+    if (renderFirstAvailableSlotForCurrentDay()) {
+      return;
+    }
   }
 
   const requestId = ++liveRequestId;
@@ -2391,11 +2745,14 @@ async function updateForecastForSpot(spot) {
     updateTimeSelectorButtons();
 
     const firstAvailableOffset = getPreferredTimeOffset();
-    if (firstAvailableOffset === undefined) {
-      throw new Error('Geen bruikbare tijdvakken beschikbaar');
+    if (firstAvailableOffset !== undefined) {
+      renderLiveOffset(firstAvailableOffset);
+      return;
     }
 
-    renderLiveOffset(firstAvailableOffset);
+    if (!renderFirstAvailableSlotForCurrentDay()) {
+      throw new Error('Geen bruikbare tijdvakken beschikbaar');
+    }
   } catch (error) {
     pendingForecastRequests.delete(spotKey);
     if (requestId !== liveRequestId) return;
@@ -2639,6 +2996,7 @@ function selectSpot(spot, method, query, options = {}) {
 function resetView() {
   liveRequestId += 1;
   activeTimeOffset = DEFAULT_TIME_OFFSET;
+  currentDayKey = null;
   setActiveTimeSlotButton(DEFAULT_TIME_OFFSET);
 
   setCurrentView('map');
@@ -2776,12 +3134,22 @@ timeSelectorEl.addEventListener('click', (event) => {
   const button = event.target.closest('.time-slot-btn');
   if (!button || button.disabled) return;
 
-  const offset = Number(button.dataset.offset);
+  const offset = Number(button.dataset.slotOffset ?? button.dataset.offset);
   const rendered = renderLiveOffset(offset);
   if (!rendered) {
     setSearchMessage(t('noResultsWithFilters'), 'error');
   }
 });
+
+if (dayOverviewCardsEl) {
+  dayOverviewCardsEl.addEventListener('click', (event) => {
+    const card = event.target.closest('.day-overview-card');
+    if (!card) return;
+
+    const selectedDay = card.dataset.dayKey;
+    setCurrentDayKey(selectedDay);
+  });
+}
 
 if (filterMinSurfableEl && filterBeginnerFriendlyEl && filterPreferCleanEl) {
   const handleConditionFilterChange = () => {
@@ -2964,6 +3332,8 @@ updateFavoriteToggleForSpot(null);
 updateShareButtonForSpot(null);
 
 const deepLinkedSpot = getDeepLinkedSpotFromUrl();
+const deepLinkedOffset = getDeepLinkedOffsetFromUrl();
+preferredInitialOffset = Number.isFinite(deepLinkedOffset) ? deepLinkedOffset : null;
 const restoredSpot = getLastSpotFromStorage();
 const initialSpot = deepLinkedSpot ?? restoredSpot ?? SURF_SPOTS[0];
 const shouldCenterOnInitialSpot = Boolean(deepLinkedSpot || restoredSpot);

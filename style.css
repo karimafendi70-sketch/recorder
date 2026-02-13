@@ -764,6 +764,59 @@ body {
   background: #ef4444;
 }
 
+.day-overview {
+  margin: -0.18rem 0 0.7rem;
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  background: var(--control-bg);
+  padding: 0.5rem 0.56rem;
+}
+
+.day-overview-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted-text);
+}
+
+.day-overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.4rem;
+}
+
+.day-overview-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 9px;
+  background: var(--input-bg);
+  padding: 0.42rem 0.48rem;
+  color: var(--text-color);
+  text-align: left;
+  cursor: pointer;
+}
+
+.day-overview-card.is-active {
+  border-color: var(--text-color);
+  background: var(--interactive-hover);
+}
+
+.day-overview-date {
+  display: block;
+  font-size: 0.77rem;
+  font-weight: 700;
+}
+
+.day-overview-range {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.76rem;
+  color: var(--muted-text);
+}
+
+.day-overview-condition {
+  margin-top: 0.24rem;
+}
+
 .time-selector {
   display: flex;
   flex-wrap: wrap;
@@ -1464,6 +1517,24 @@ body {
   .time-selector {
     gap: 0.4rem;
     margin: 0 0 0.65rem;
+  }
+
+  .day-overview {
+    margin-bottom: 0.62rem;
+    padding: 0.45rem 0.5rem;
+  }
+
+  .day-overview-title {
+    font-size: 0.76rem;
+  }
+
+  .day-overview-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.34rem;
+  }
+
+  .day-overview-card {
+    padding: 0.38rem 0.42rem;
   }
 
   .time-slot-btn {
