@@ -1032,6 +1032,88 @@ body {
   color: var(--soft-text);
 }
 
+.multi-spot-overview {
+  margin: -0.12rem 0 0.62rem;
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  background: var(--control-bg);
+  padding: 0.52rem 0.58rem;
+}
+
+.multi-spot-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.multi-spot-hint {
+  margin: 0.22rem 0 0.46rem;
+  font-size: 0.76rem;
+  color: var(--soft-text);
+}
+
+.multi-spot-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.multi-spot-item {
+  width: 100%;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-color);
+  text-align: left;
+  padding: 0.42rem 0.48rem;
+  cursor: pointer;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.multi-spot-item:hover,
+.multi-spot-item:focus-visible {
+  background: var(--interactive-hover);
+}
+
+.multi-spot-item:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.multi-spot-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+.multi-spot-name {
+  font-size: 0.79rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.multi-spot-score {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted-text);
+}
+
+.multi-spot-meta {
+  font-size: 0.75rem;
+  color: var(--muted-text);
+}
+
+.multi-spot-empty {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--soft-text);
+}
+
 .slot-detail {
   margin: 0.2rem 0 0.78rem;
   border: 1px solid var(--control-border);
@@ -1517,6 +1599,20 @@ body {
 
   .compact-forecast-view {
     padding: 0.44rem;
+  }
+
+  .multi-spot-overview {
+    padding: 0.46rem 0.5rem;
+  }
+
+  .multi-spot-item {
+    padding: 0.38rem 0.42rem;
+  }
+
+  .multi-spot-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
   }
 
   .compact-forecast-item {

@@ -89,6 +89,7 @@ const dayOverviewEl = document.getElementById('dayOverview');
 const dayOverviewTitleEl = document.getElementById('dayOverviewTitle');
 const dayOverviewCardsEl = document.getElementById('dayOverviewCards');
 const timeSelectorEl = document.getElementById('timeSelector');
+const multiSpotOverviewEl = document.getElementById('multiSpotOverview');
 const slotDetailEl = document.getElementById('slotDetail');
 const timeSlotNowEl = document.getElementById('timeSlotNow');
 const timeSlot3hEl = document.getElementById('timeSlot3h');
@@ -110,6 +111,7 @@ const SLOT_STEP_HOURS = 3;
 const DAY_OVERVIEW_LIMIT = 4;
 const DAY_PART_ORDER = ['morning', 'afternoon', 'evening'];
 const DEFAULT_TIME_OFFSET = 0;
+const MULTI_SPOT_TOP_LIMIT = 5;
 const FORECAST_CACHE_TTL_MS = 5 * 60 * 1000;
 const FAVORITES_STORAGE_KEY = 'freeSurfCastFavorites';
 const LAST_SPOT_STORAGE_KEY = 'freesurfcastLastSpotId';
@@ -515,7 +517,13 @@ const powerUserTranslations = {
     detailWindStrong: 'sterke',
     detailWindOffshore: 'offshore',
     detailWindOnshore: 'onshore',
-    detailWindCross: 'cross'
+    detailWindCross: 'cross',
+    multiSpotOverviewTitle: 'Beste spots voor deze dag',
+    multiSpotScoreLabel: 'Score',
+    multiSpotBestTimeLabel: 'Beste tijd',
+    multiSpotHint: 'Gebaseerd op swell, wind en condities (Clean/Mixed/Choppy). Actieve filters tellen mee.',
+    multiSpotNoData: 'Nog geen vergelijkbare spots met voldoende data.',
+    multiSpotLoading: 'Spots vergelijken...'
   },
   en: {
     filterConditionsTitle: 'Conditions',
@@ -548,7 +556,13 @@ const powerUserTranslations = {
     detailWindStrong: 'strong',
     detailWindOffshore: 'offshore',
     detailWindOnshore: 'onshore',
-    detailWindCross: 'cross'
+    detailWindCross: 'cross',
+    multiSpotOverviewTitle: 'Best spots for this day',
+    multiSpotScoreLabel: 'Score',
+    multiSpotBestTimeLabel: 'Best time',
+    multiSpotHint: 'Based on swell, wind, and conditions (Clean/Mixed/Choppy). Active filters are included.',
+    multiSpotNoData: 'No comparable spots with enough data yet.',
+    multiSpotLoading: 'Comparing spots...'
   },
   fr: {
     filterConditionsTitle: 'Conditions',
@@ -581,7 +595,13 @@ const powerUserTranslations = {
     detailWindStrong: 'vent fort',
     detailWindOffshore: 'offshore',
     detailWindOnshore: 'onshore',
-    detailWindCross: 'cross'
+    detailWindCross: 'cross',
+    multiSpotOverviewTitle: 'Meilleurs spots pour ce jour',
+    multiSpotScoreLabel: 'Score',
+    multiSpotBestTimeLabel: 'Meilleure heure',
+    multiSpotHint: 'Basé sur la houle, le vent et les conditions (Clean/Mixed/Choppy). Filtres actifs inclus.',
+    multiSpotNoData: 'Pas encore de spots comparables avec assez de données.',
+    multiSpotLoading: 'Comparaison des spots...'
   },
   es: {
     filterConditionsTitle: 'Condiciones',
@@ -614,7 +634,13 @@ const powerUserTranslations = {
     detailWindStrong: 'viento fuerte',
     detailWindOffshore: 'offshore',
     detailWindOnshore: 'onshore',
-    detailWindCross: 'cross'
+    detailWindCross: 'cross',
+    multiSpotOverviewTitle: 'Mejores spots para este día',
+    multiSpotScoreLabel: 'Puntuación',
+    multiSpotBestTimeLabel: 'Mejor hora',
+    multiSpotHint: 'Basado en oleaje, viento y condiciones (Clean/Mixed/Choppy). Incluye filtros activos.',
+    multiSpotNoData: 'Aún no hay spots comparables con datos suficientes.',
+    multiSpotLoading: 'Comparando spots...'
   },
   pt: {
     filterConditionsTitle: 'Condições',
@@ -647,7 +673,13 @@ const powerUserTranslations = {
     detailWindStrong: 'vento forte',
     detailWindOffshore: 'offshore',
     detailWindOnshore: 'onshore',
-    detailWindCross: 'cross'
+    detailWindCross: 'cross',
+    multiSpotOverviewTitle: 'Melhores spots para este dia',
+    multiSpotScoreLabel: 'Pontuação',
+    multiSpotBestTimeLabel: 'Melhor horário',
+    multiSpotHint: 'Baseado em ondulação, vento e condições (Clean/Mixed/Choppy). Inclui filtros ativos.',
+    multiSpotNoData: 'Ainda sem spots comparáveis com dados suficientes.',
+    multiSpotLoading: 'Comparando spots...'
   },
   de: {
     filterConditionsTitle: 'Bedingungen',
@@ -680,7 +712,13 @@ const powerUserTranslations = {
     detailWindStrong: 'starker',
     detailWindOffshore: 'offshore',
     detailWindOnshore: 'onshore',
-    detailWindCross: 'cross'
+    detailWindCross: 'cross',
+    multiSpotOverviewTitle: 'Beste Spots für diesen Tag',
+    multiSpotScoreLabel: 'Score',
+    multiSpotBestTimeLabel: 'Beste Zeit',
+    multiSpotHint: 'Basiert auf Swell, Wind und Bedingungen (Clean/Mixed/Choppy). Aktive Filter zählen mit.',
+    multiSpotNoData: 'Noch keine vergleichbaren Spots mit ausreichenden Daten.',
+    multiSpotLoading: 'Spots werden verglichen...'
   }
 };
 
@@ -945,6 +983,8 @@ let activeConditionFilters = {
 let currentDayKey = null;
 let preferredInitialOffset = null;
 let currentSlotKey = null;
+let preferredSlotOffset = null;
+let multiSpotRenderRequestId = 0;
 
 function t(key, vars = {}) {
   const languagePack = translations[currentLanguage] ?? translations.nl;
@@ -1499,6 +1539,347 @@ function buildSlotDetailLines(slotContext) {
   };
 }
 
+function getSlotQualityScore(slotContext) {
+  if (!slotContext) {
+    return {
+      score: 0,
+      reasons: []
+    };
+  }
+
+  let score = 0;
+  const reasons = [];
+  const spotValues = slotContext.mergedSpot ?? slotContext.values ?? {};
+
+  if (slotContext.conditionTag === 'clean') {
+    score += 3;
+    reasons.push('clean');
+  } else if (slotContext.conditionTag === 'mixed') {
+    score += 1;
+    reasons.push('mixed');
+  } else {
+    reasons.push('choppy');
+  }
+
+  const waveHeight = spotValues.golfHoogteMeter;
+  if (Number.isFinite(waveHeight)) {
+    if (waveHeight >= 0.9 && waveHeight <= 2.0) {
+      score += 2;
+      reasons.push('good-wave-height');
+    } else if (waveHeight >= 0.7 && waveHeight <= 2.4) {
+      score += 1;
+      reasons.push('acceptable-wave-height');
+    } else if (waveHeight > 2.8) {
+      score -= 1;
+      reasons.push('heavy-wave-height');
+    }
+  }
+
+  const wavePeriod = spotValues.golfPeriodeSeconden;
+  if (Number.isFinite(wavePeriod) && wavePeriod >= 8) {
+    score += 1;
+    reasons.push('good-period');
+  }
+
+  const windDegrees = getWindDegreesForSpot(spotValues);
+  const coastOrientation = getCoastOrientationDeg(spotValues);
+  const windRelative = getWindRelativeToCoast(coastOrientation, windDegrees);
+
+  if (windRelative === 'offshore') {
+    score += 1;
+    reasons.push('offshore');
+  } else if (windRelative === 'onshore') {
+    score -= 1;
+    reasons.push('onshore');
+  } else {
+    reasons.push('cross');
+  }
+
+  if (slotContext.challenging) {
+    score -= 2;
+    reasons.push('challenging');
+  }
+
+  if (activeConditionFilters.minSurfable && !slotContext.minSurfable) {
+    score -= 2;
+    reasons.push('below-min-surfable-filter');
+  }
+
+  if (activeConditionFilters.beginnerFriendly && slotContext.challenging) {
+    score -= 3;
+    reasons.push('beginner-filter-penalty');
+  }
+
+  if (activeConditionFilters.preferClean) {
+    if (slotContext.conditionTag === 'clean') {
+      score += 1;
+      reasons.push('clean-preference-bonus');
+    } else if (slotContext.conditionTag === 'choppy') {
+      score -= 2;
+      reasons.push('clean-preference-penalty');
+    }
+  }
+
+  const clamped = Math.max(0, Math.min(10, score));
+  return {
+    score: clamped,
+    reasons
+  };
+}
+
+function getSpotDayScore(spot, dayKey, allSlotContextsForSpotAndDay) {
+  if (!spot || !dayKey || !Array.isArray(allSlotContextsForSpotAndDay) || !allSlotContextsForSpotAndDay.length) {
+    return null;
+  }
+
+  const filteredSlots = allSlotContextsForSpotAndDay
+    .filter((slotContext) => slotContext?.dayKey === dayKey)
+    .filter((slotContext) => passesHardConditionFilters(slotContext));
+
+  if (!filteredSlots.length) return null;
+
+  const scoredSlots = filteredSlots
+    .map((slotContext) => {
+      const quality = getSlotQualityScore(slotContext);
+      return {
+        slotContext,
+        score: quality.score,
+        reasons: quality.reasons
+      };
+    })
+    .sort((left, right) => right.score - left.score);
+
+  const best = scoredSlots[0];
+  const secondary = scoredSlots[1] ?? best;
+  const aggregateScore = Math.round((((best.score + secondary.score) / 2) + Number.EPSILON) * 10) / 10;
+  const bestSlot = best.slotContext;
+
+  return {
+    spotId: getSpotKey(spot),
+    spot,
+    dayKey,
+    score: aggregateScore,
+    bestSlotKey: buildSlotKey(bestSlot),
+    bestSlotOffset: bestSlot.offsetHours,
+    bestSlotContext: bestSlot,
+    reasons: best.reasons
+  };
+}
+
+function getMaxAvailableOffsetHoursForCache(liveCache) {
+  if (!liveCache) return 0;
+
+  const maxMarineOffset = liveCache.marineTimes.length - liveCache.baseMarineIndex - 1;
+  const maxWeatherOffset = liveCache.weatherTimes.length - liveCache.baseWeatherIndex - 1;
+  return Math.max(0, Math.min(maxMarineOffset, maxWeatherOffset));
+}
+
+function getLiveSnapshotForOffsetFromCache(liveCache, offsetHours) {
+  if (!liveCache) return null;
+
+  const marineIndex = liveCache.baseMarineIndex + offsetHours;
+  const weatherIndex = liveCache.baseWeatherIndex + offsetHours;
+
+  const marineTimes = liveCache.marineTimes;
+  const weatherTimes = liveCache.weatherTimes;
+  const marineHourly = liveCache.marineData?.hourly;
+  const weatherHourly = liveCache.weatherData?.hourly;
+
+  if (
+    marineIndex < 0 ||
+    weatherIndex < 0 ||
+    marineIndex >= marineTimes.length ||
+    weatherIndex >= weatherTimes.length
+  ) {
+    return null;
+  }
+
+  return {
+    time: marineTimes[marineIndex] ?? weatherTimes[weatherIndex] ?? null,
+    values: {
+      golfHoogteMeter: marineHourly?.wave_height?.[marineIndex],
+      golfPeriodeSeconden: marineHourly?.wave_period?.[marineIndex],
+      golfRichtingGraden: marineHourly?.wave_direction?.[marineIndex],
+      swellRichtingGraden: marineHourly?.swell_wave_direction?.[marineIndex],
+      primaireGolfHoogteMeter: marineHourly?.swell_wave_height?.[marineIndex],
+      secundaireGolfHoogteMeter: marineHourly?.wind_wave_height?.[marineIndex],
+      windSnelheidKnopen: weatherHourly?.wind_speed_10m?.[weatherIndex],
+      windRichtingGraden: weatherHourly?.wind_direction_10m?.[weatherIndex],
+      windRichting: toCompassDirection(weatherHourly?.wind_direction_10m?.[weatherIndex]),
+      watertemperatuurC:
+        marineHourly?.sea_surface_temperature?.[marineIndex] ??
+        weatherHourly?.temperature_2m?.[weatherIndex]
+    }
+  };
+}
+
+function getSlotContextsForLiveCache(liveCache) {
+  if (!liveCache) return [];
+
+  const maxOffset = getMaxAvailableOffsetHoursForCache(liveCache);
+  const slotContexts = [];
+
+  for (let offsetHours = 0; offsetHours <= maxOffset; offsetHours += SLOT_STEP_HOURS) {
+    const snapshot = getLiveSnapshotForOffsetFromCache(liveCache, offsetHours);
+    if (!snapshot) continue;
+
+    const mergedSpot = mergeWithFallbackSpot(liveCache.spot, snapshot.values);
+    slotContexts.push({
+      offsetHours,
+      time: snapshot.time,
+      dayKey: getLocalDateKey(snapshot.time),
+      dayPart: getDayPart(snapshot.time),
+      values: snapshot.values,
+      mergedSpot,
+      conditionTag: getSurfConditionTag(mergedSpot),
+      minSurfable: isMinSurfableConditions(snapshot.values),
+      challenging: isChallengingConditions(snapshot.values)
+    });
+  }
+
+  return slotContexts;
+}
+
+function getMultiSpotCandidateSpots() {
+  const candidateSpotIds = new Set();
+
+  if (activeSpot) {
+    candidateSpotIds.add(getSpotKey(activeSpot));
+  }
+
+  favoriteSpotIds.forEach((spotId) => {
+    candidateSpotIds.add(spotId);
+  });
+
+  return Array.from(candidateSpotIds)
+    .map((spotId) => getSpotById(spotId))
+    .filter((spot) => Boolean(spot));
+}
+
+async function ensureMultiSpotForecastData(spots) {
+  const fetchJobs = spots
+    .filter((spot) => Number.isFinite(spot.latitude) && Number.isFinite(spot.longitude))
+    .filter((spot) => {
+      const cacheEntry = forecastCache.get(getSpotKey(spot));
+      return !cacheEntry?.data;
+    })
+    .map(async (spot) => {
+      const spotKey = getSpotKey(spot);
+      try {
+        const liveForecast = await getOrCreatePendingForecastRequest(spotKey, spot);
+        pendingForecastRequests.delete(spotKey);
+        forecastCache.set(spotKey, {
+          fetchedAt: Date.now(),
+          data: liveForecast
+        });
+      } catch {
+        pendingForecastRequests.delete(spotKey);
+      }
+    });
+
+  await Promise.all(fetchJobs);
+}
+
+function buildMultiSpotOverviewForDay(dayKey) {
+  if (!dayKey) return [];
+
+  return getMultiSpotCandidateSpots()
+    .map((spot) => {
+      const spotKey = getSpotKey(spot);
+      const cacheEntry = forecastCache.get(spotKey);
+      const liveCache = cacheEntry?.data;
+      if (!liveCache) return null;
+
+      const spotSlots = getSlotContextsForLiveCache(liveCache);
+      const dayScore = getSpotDayScore(spot, dayKey, spotSlots);
+      return dayScore;
+    })
+    .filter((item) => Boolean(item))
+    .sort((left, right) => right.score - left.score)
+    .slice(0, MULTI_SPOT_TOP_LIMIT);
+}
+
+function renderMultiSpotOverviewState(contentHtml) {
+  if (!multiSpotOverviewEl) return;
+  multiSpotOverviewEl.innerHTML = contentHtml;
+  multiSpotOverviewEl.hidden = false;
+}
+
+async function renderMultiSpotOverview(dayKey = currentDayKey) {
+  if (!multiSpotOverviewEl) return;
+
+  const candidateSpots = getMultiSpotCandidateSpots();
+  if (!candidateSpots.length || !dayKey) {
+    multiSpotOverviewEl.innerHTML = '';
+    multiSpotOverviewEl.hidden = true;
+    return;
+  }
+
+  const requestId = ++multiSpotRenderRequestId;
+  renderMultiSpotOverviewState(`
+    <p class="multi-spot-title">${t('multiSpotOverviewTitle')}</p>
+    <p class="multi-spot-hint">${t('multiSpotHint')}</p>
+    <p class="multi-spot-empty">${t('multiSpotLoading')}</p>
+  `);
+
+  await ensureMultiSpotForecastData(candidateSpots);
+  if (requestId !== multiSpotRenderRequestId) return;
+
+  const topSpots = buildMultiSpotOverviewForDay(dayKey);
+
+  if (!topSpots.length) {
+    renderMultiSpotOverviewState(`
+      <p class="multi-spot-title">${t('multiSpotOverviewTitle')}</p>
+      <p class="multi-spot-hint">${t('multiSpotHint')}</p>
+      <p class="multi-spot-empty">${t('multiSpotNoData')}</p>
+    `);
+    return;
+  }
+
+  const rowsHtml = topSpots
+    .map((item) => {
+      const spot = item.spot;
+      const bestSlot = item.bestSlotContext;
+      const slotLabel = getTimeSlotLabel(bestSlot);
+      const mergedSpot = bestSlot?.mergedSpot ?? {};
+      const waveHeight = Number.isFinite(mergedSpot.golfHoogteMeter)
+        ? `${mergedSpot.golfHoogteMeter.toFixed(1)} m`
+        : '-';
+      const wavePeriod = Number.isFinite(mergedSpot.golfPeriodeSeconden)
+        ? `${Math.round(mergedSpot.golfPeriodeSeconden)} s`
+        : '-';
+      const conditionText = t(getConditionLabelKey(bestSlot?.conditionTag ?? 'mixed'));
+      const adviceText = formatSkillAdvice(bestSlot);
+
+      return `
+        <li>
+          <button
+            type="button"
+            class="multi-spot-item"
+            data-spot-id="${item.spotId}"
+            data-best-offset="${item.bestSlotOffset}"
+            data-day-key="${item.dayKey}"
+          >
+            <span class="multi-spot-top">
+              <span class="multi-spot-name">${spot.naam} (${spot.land})</span>
+              <span class="multi-spot-score">${t('multiSpotScoreLabel')}: ${item.score.toFixed(1)}/10</span>
+            </span>
+            <span class="multi-spot-meta">${t('multiSpotBestTimeLabel')}: ${slotLabel}</span>
+            <span class="multi-spot-meta">${waveHeight} · ${wavePeriod} · ${conditionText}</span>
+            <span class="multi-spot-meta">${adviceText}</span>
+          </button>
+        </li>
+      `;
+    })
+    .join('');
+
+  renderMultiSpotOverviewState(`
+    <p class="multi-spot-title">${t('multiSpotOverviewTitle')}</p>
+    <p class="multi-spot-hint">${t('multiSpotHint')}</p>
+    <ul class="multi-spot-list">${rowsHtml}</ul>
+  `);
+}
+
 function renderSlotDetail(selectedSlotContext, options = {}) {
   if (!slotDetailEl) return;
 
@@ -1693,6 +2074,7 @@ function setCurrentDayKey(nextDayKey) {
   }
 
   renderCompactForecastList();
+  void renderMultiSpotOverview(currentDayKey);
 }
 
 function setActiveConditionFilters(nextFilters) {
@@ -1709,6 +2091,7 @@ function setActiveConditionFilters(nextFilters) {
   if (!activeLiveCache) {
     updateNoResultsWithFiltersMessage(true);
     renderCompactForecastList();
+    void renderMultiSpotOverview(currentDayKey);
     return;
   }
 
@@ -1720,6 +2103,7 @@ function setActiveConditionFilters(nextFilters) {
   ) {
     updateTimeSelectorButtons();
     renderCompactForecastList();
+    void renderMultiSpotOverview(currentDayKey);
     return;
   }
 
@@ -1731,6 +2115,7 @@ function setActiveConditionFilters(nextFilters) {
 
   updateTimeSelectorButtons();
   renderCompactForecastList();
+  void renderMultiSpotOverview(currentDayKey);
 }
 
 function renderConditionTag(baseSpot, conditions) {
@@ -2196,6 +2581,7 @@ function setLanguage(lang, persist = true) {
     renderSlotDetail(null);
   }
   renderCompactForecastList();
+  void renderMultiSpotOverview(currentDayKey);
   if (latestRatingConditions) {
     renderSurfRating(latestRatingConditions);
   }
@@ -2441,6 +2827,7 @@ function clearActiveLiveCache() {
   updateNoResultsWithFiltersMessage(true);
   renderCompactForecastList();
   renderSlotDetail(null);
+  void renderMultiSpotOverview(null);
 }
 
 function hideSuggestions() {
@@ -2928,6 +3315,16 @@ function mergeWithFallbackSpot(spot, liveValues) {
 }
 
 function getPreferredTimeOffset() {
+  if (Number.isFinite(preferredSlotOffset)) {
+    const preferredContext = getLiveSlotContext(preferredSlotOffset);
+    if (preferredContext && passesHardConditionFilters(preferredContext)) {
+      const preferred = preferredSlotOffset;
+      preferredSlotOffset = null;
+      return preferred;
+    }
+    preferredSlotOffset = null;
+  }
+
   return getFirstFilteredAvailableOffset();
 }
 
@@ -2963,6 +3360,7 @@ function renderLiveOffset(offsetHours) {
   setForecastMeta(t('forecastMetaLive', { timeLabel: tijdLabel }), 'live');
   setActiveTimeSlotButton(offsetHours);
   renderCompactForecastList();
+  void renderMultiSpotOverview(currentDayKey);
   return true;
 }
 
@@ -2999,6 +3397,7 @@ async function updateForecastForSpot(spot) {
     }
 
     if (renderFirstAvailableSlotForCurrentDay()) {
+      void renderMultiSpotOverview(currentDayKey);
       return;
     }
   }
@@ -3031,6 +3430,7 @@ async function updateForecastForSpot(spot) {
     if (!renderFirstAvailableSlotForCurrentDay()) {
       throw new Error('Geen bruikbare tijdvakken beschikbaar');
     }
+    void renderMultiSpotOverview(currentDayKey);
   } catch (error) {
     pendingForecastRequests.delete(spotKey);
     if (requestId !== liveRequestId) return;
@@ -3039,6 +3439,7 @@ async function updateForecastForSpot(spot) {
     renderSpot(spot, spot);
     setForecastMeta(t('forecastMetaError', { spot: spot.naam }), 'error');
     setSearchMessage(t('searchApiError', { spot: spot.naam }), 'error');
+    void renderMultiSpotOverview(null);
   }
 }
 
@@ -3275,6 +3676,7 @@ function resetView() {
   liveRequestId += 1;
   activeTimeOffset = DEFAULT_TIME_OFFSET;
   currentDayKey = null;
+  preferredSlotOffset = null;
   setActiveTimeSlotButton(DEFAULT_TIME_OFFSET);
 
   setCurrentView('map');
@@ -3464,6 +3866,31 @@ if (forecastListViewEl) {
   });
 }
 
+if (multiSpotOverviewEl) {
+  multiSpotOverviewEl.addEventListener('click', (event) => {
+    const item = event.target.closest('.multi-spot-item');
+    if (!item) return;
+
+    const selectedSpot = getSpotById(item.dataset.spotId);
+    const bestOffset = Number(item.dataset.bestOffset);
+    const bestDayKey = item.dataset.dayKey;
+    if (!selectedSpot || !Number.isFinite(bestOffset)) return;
+
+    const activeSpotKey = activeSpot ? getSpotKey(activeSpot) : null;
+    if (activeSpotKey && activeSpotKey === getSpotKey(selectedSpot) && activeLiveCache) {
+      if (bestDayKey) {
+        currentDayKey = bestDayKey;
+      }
+      renderLiveOffset(bestOffset);
+      return;
+    }
+
+    preferredInitialOffset = bestOffset;
+    preferredSlotOffset = bestOffset;
+    selectSpot(selectedSpot, 'favorite', selectedSpot.naam);
+  });
+}
+
 favoriteToggleBtnEl.addEventListener('click', () => {
   if (!activeSpot) return;
 
@@ -3479,6 +3906,7 @@ favoriteToggleBtnEl.addEventListener('click', () => {
   saveFavoritesToStorage();
   updateFavoriteToggleForSpot(activeSpot);
   renderFavoritesList();
+  void renderMultiSpotOverview(currentDayKey);
   addTemporaryClass(favoriteToggleBtnEl, 'is-soft-pulse');
 });
 
@@ -3617,12 +4045,14 @@ initSpotMap();
 
 loadFavoritesFromStorage();
 renderFavoritesList();
+void renderMultiSpotOverview(currentDayKey);
 updateFavoriteToggleForSpot(null);
 updateShareButtonForSpot(null);
 
 const deepLinkedSpot = getDeepLinkedSpotFromUrl();
 const deepLinkedOffset = getDeepLinkedOffsetFromUrl();
 preferredInitialOffset = Number.isFinite(deepLinkedOffset) ? deepLinkedOffset : null;
+preferredSlotOffset = Number.isFinite(deepLinkedOffset) ? deepLinkedOffset : null;
 const restoredSpot = getLastSpotFromStorage();
 const initialSpot = deepLinkedSpot ?? restoredSpot ?? SURF_SPOTS[0];
 const shouldCenterOnInitialSpot = Boolean(deepLinkedSpot || restoredSpot);

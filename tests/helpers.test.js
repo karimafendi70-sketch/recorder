@@ -253,6 +253,115 @@ function formatSkillAdvice(slotContext) {
   return 'intermediate';
 }
 
+function getSlotQualityScore(slotContext, filters = { minSurfable: false, beginnerFriendly: false, preferClean: false }) {
+  if (!slotContext) {
+    return {
+      score: 0,
+      reasons: []
+    };
+  }
+
+  let score = 0;
+  const reasons = [];
+  const spotValues = slotContext.mergedSpot ?? slotContext.values ?? {};
+
+  if (slotContext.conditionTag === 'clean') {
+    score += 3;
+    reasons.push('clean');
+  } else if (slotContext.conditionTag === 'mixed') {
+    score += 1;
+    reasons.push('mixed');
+  } else {
+    reasons.push('choppy');
+  }
+
+  const waveHeight = spotValues.golfHoogteMeter;
+  if (Number.isFinite(waveHeight)) {
+    if (waveHeight >= 0.9 && waveHeight <= 2.0) {
+      score += 2;
+      reasons.push('good-wave-height');
+    } else if (waveHeight >= 0.7 && waveHeight <= 2.4) {
+      score += 1;
+      reasons.push('acceptable-wave-height');
+    } else if (waveHeight > 2.8) {
+      score -= 1;
+      reasons.push('heavy-wave-height');
+    }
+  }
+
+  if (Number.isFinite(spotValues.golfPeriodeSeconden) && spotValues.golfPeriodeSeconden >= 8) {
+    score += 1;
+    reasons.push('good-period');
+  }
+
+  const windDegrees = getWindDegreesForSpot(spotValues);
+  const coastOrientation = getCoastOrientationDeg(spotValues);
+  const windRelative = getWindRelativeToCoast(coastOrientation, windDegrees);
+
+  if (windRelative === 'offshore') {
+    score += 1;
+    reasons.push('offshore');
+  } else if (windRelative === 'onshore') {
+    score -= 1;
+    reasons.push('onshore');
+  } else {
+    reasons.push('cross');
+  }
+
+  if (slotContext.challenging) {
+    score -= 2;
+    reasons.push('challenging');
+  }
+
+  if (filters.minSurfable && !slotContext.minSurfable) {
+    score -= 2;
+  }
+
+  if (filters.beginnerFriendly && slotContext.challenging) {
+    score -= 3;
+  }
+
+  if (filters.preferClean) {
+    if (slotContext.conditionTag === 'clean') score += 1;
+    if (slotContext.conditionTag === 'choppy') score -= 2;
+  }
+
+  return {
+    score: Math.max(0, Math.min(10, score)),
+    reasons
+  };
+}
+
+function getSpotDayScore(spotId, dayKey, allSlotContextsForSpotAndDay, filters = {}) {
+  if (!spotId || !dayKey || !Array.isArray(allSlotContextsForSpotAndDay) || !allSlotContextsForSpotAndDay.length) {
+    return null;
+  }
+
+  const filteredSlots = allSlotContextsForSpotAndDay
+    .filter((slotContext) => slotContext?.dayKey === dayKey)
+    .filter((slotContext) => passesHardConditionFilters(slotContext, filters));
+
+  if (!filteredSlots.length) return null;
+
+  const scoredSlots = filteredSlots
+    .map((slotContext) => ({
+      slotContext,
+      score: getSlotQualityScore(slotContext, filters).score
+    }))
+    .sort((left, right) => right.score - left.score);
+
+  const best = scoredSlots[0];
+  const secondary = scoredSlots[1] ?? best;
+  const aggregateScore = Math.round((((best.score + secondary.score) / 2) + Number.EPSILON) * 10) / 10;
+
+  return {
+    spotId,
+    dayKey,
+    score: aggregateScore,
+    bestSlotKey: buildSlotKey(best.slotContext)
+  };
+}
+
 function passesHardConditionFilters(slotContext, filters) {
   if (!slotContext) return false;
 
@@ -536,6 +645,62 @@ function runSlotDetailHelperTests() {
   assertEqual(formatSkillAdvice({ conditionTag: 'mixed', challenging: false }), 'intermediate', 'formatSkillAdvice(intermediate)');
 }
 
+function runMultiSpotScoreTests() {
+  const cleanOffshore = {
+    dayKey: '2026-02-13',
+    offsetHours: 3,
+    conditionTag: 'clean',
+    challenging: false,
+    minSurfable: true,
+    mergedSpot: {
+      coastOrientationDeg: 270,
+      windRichtingGraden: 90,
+      windSnelheidKnopen: 11,
+      golfHoogteMeter: 1.4,
+      golfPeriodeSeconden: 9
+    }
+  };
+
+  const choppyOnshore = {
+    dayKey: '2026-02-13',
+    offsetHours: 6,
+    conditionTag: 'choppy',
+    challenging: true,
+    minSurfable: true,
+    mergedSpot: {
+      coastOrientationDeg: 270,
+      windRichtingGraden: 270,
+      windSnelheidKnopen: 24,
+      golfHoogteMeter: 2.9,
+      golfPeriodeSeconden: 7
+    }
+  };
+
+  const cleanScore = getSlotQualityScore(cleanOffshore).score;
+  const choppyScore = getSlotQualityScore(choppyOnshore).score;
+
+  if (!(cleanScore > choppyScore)) {
+    throw new Error(`getSlotQualityScore ranking failed: cleanScore=${cleanScore}, choppyScore=${choppyScore}`);
+  }
+
+  const penalizedScore = getSlotQualityScore(cleanOffshore, { preferClean: true, minSurfable: true, beginnerFriendly: true }).score;
+  if (!(penalizedScore >= cleanScore)) {
+    throw new Error(`getSlotQualityScore filter bonus failed: penalizedScore=${penalizedScore}, cleanScore=${cleanScore}`);
+  }
+
+  const spotDay = getSpotDayScore('spot-a', '2026-02-13', [cleanOffshore, choppyOnshore], {
+    minSurfable: false,
+    beginnerFriendly: false,
+    preferClean: false
+  });
+
+  if (!spotDay) {
+    throw new Error('getSpotDayScore returned null unexpectedly');
+  }
+
+  assertEqual(spotDay.bestSlotKey, '2026-02-13-3', 'getSpotDayScore(bestSlotKey)');
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
@@ -549,6 +714,7 @@ function runAll() {
   runDayPartTests();
   runSlotSelectionTests();
   runSlotDetailHelperTests();
+  runMultiSpotScoreTests();
   console.log('All tests passed');
 }
 
