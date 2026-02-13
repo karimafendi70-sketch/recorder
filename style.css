@@ -551,6 +551,47 @@ body {
   font-weight: 700;
 }
 
+.wind-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+.wind-icon {
+  --wind-rotation: 0deg;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  position: relative;
+  transform: rotate(var(--wind-rotation));
+  transform-origin: 50% 50%;
+}
+
+.wind-icon::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0.14rem;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 0.24rem solid transparent;
+  border-right: 0.24rem solid transparent;
+  border-bottom: 0.34rem solid #0369a1;
+}
+
+.wind-icon.is-unknown::before {
+  border-bottom-color: #94a3b8;
+}
+
+.wind-text {
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+}
+
 .favorites-block {
   margin-top: 1rem;
   padding-top: 0.85rem;
@@ -752,6 +793,19 @@ body {
     padding: 0.55rem 0.6rem;
   }
 
+  .wind-info {
+    gap: 0.35rem;
+  }
+
+  .wind-icon {
+    width: 0.92rem;
+    height: 0.92rem;
+  }
+
+  .wind-text {
+    font-size: 0.86rem;
+  }
+
   .favorites-block {
     margin-top: 0.8rem;
     padding-top: 0.7rem;
@@ -834,5 +888,9 @@ body {
   .info-list {
     font-size: 0.8rem;
     line-height: 1.35;
+  }
+
+  .wind-text {
+    font-size: 0.82rem;
   }
 }

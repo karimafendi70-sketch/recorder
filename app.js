@@ -2,6 +2,8 @@ const spotNameEl = document.getElementById('spotName');
 const waveHeightEl = document.getElementById('waveHeight');
 const wavePeriodEl = document.getElementById('wavePeriod');
 const windEl = document.getElementById('wind');
+const windIconEl = document.getElementById('windIcon');
+const windTextEl = document.getElementById('windText');
 const temperatureEl = document.getElementById('temperature');
 const forecastMetaEl = document.getElementById('forecastMeta');
 const surfRatingEl = document.getElementById('surfRating');
@@ -237,7 +239,22 @@ const infoTranslations = {
   }
 };
 
+const windTranslations = {
+  nl: { windLabel: 'Wind' },
+  en: { windLabel: 'Wind' },
+  fr: { windLabel: 'Vent' },
+  es: { windLabel: 'Viento' },
+  pt: { windLabel: 'Vento' },
+  de: { windLabel: 'Wind' }
+};
+
 Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(windTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
   }
@@ -282,6 +299,91 @@ function getLocaleForLanguage() {
   };
 
   return localeByLanguage[currentLanguage] ?? 'nl-NL';
+}
+
+function normalizeWindDegrees(degrees) {
+  if (!Number.isFinite(degrees)) return null;
+  const normalized = ((degrees % 360) + 360) % 360;
+  return Math.round(normalized);
+}
+
+function directionToDegrees(direction) {
+  if (typeof direction !== 'string') return null;
+
+  const normalizedDirection = direction.trim().toUpperCase();
+  const degreesByDirection = {
+    N: 0,
+    NO: 45,
+    NE: 45,
+    O: 90,
+    E: 90,
+    ZO: 135,
+    SE: 135,
+    Z: 180,
+    S: 180,
+    ZW: 225,
+    SW: 225,
+    W: 270,
+    NW: 315
+  };
+
+  return degreesByDirection[normalizedDirection] ?? null;
+}
+
+function formatWindDirection(directionOrDegrees) {
+  const degrees = Number.isFinite(directionOrDegrees)
+    ? normalizeWindDegrees(directionOrDegrees)
+    : directionToDegrees(directionOrDegrees);
+
+  if (!Number.isFinite(degrees)) {
+    if (typeof directionOrDegrees === 'string' && directionOrDegrees.trim()) {
+      return directionOrDegrees.trim().toUpperCase();
+    }
+    return '-';
+  }
+
+  const compassDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  const index = Math.round(degrees / 45) % 8;
+  return compassDirections[index];
+}
+
+function formatWindSpeed(speedValue) {
+  if (!Number.isFinite(speedValue)) return '-';
+  return `${Math.round(speedValue)} kn`;
+}
+
+function getWindDegreesForSpot(spot) {
+  if (!spot) return null;
+
+  const directDegrees = normalizeWindDegrees(spot.windRichtingGraden);
+  if (Number.isFinite(directDegrees)) return directDegrees;
+
+  return directionToDegrees(spot.windRichting);
+}
+
+function renderWindInfo(spot) {
+  const windDegrees = getWindDegreesForSpot(spot);
+  const windDirection = formatWindDirection(
+    Number.isFinite(windDegrees) ? windDegrees : spot?.windRichting
+  );
+  const windSpeed = formatWindSpeed(spot?.windSnelheidKnopen);
+  const windText = `${windSpeed} ${windDirection}`;
+
+  if (windTextEl) {
+    windTextEl.textContent = windText;
+  } else {
+    windEl.textContent = windText;
+  }
+
+  if (!windIconEl) return;
+
+  if (Number.isFinite(windDegrees)) {
+    windIconEl.style.setProperty('--wind-rotation', `${windDegrees}deg`);
+    windIconEl.classList.remove('is-unknown');
+  } else {
+    windIconEl.style.setProperty('--wind-rotation', '0deg');
+    windIconEl.classList.add('is-unknown');
+  }
 }
 
 function updateControlBadges() {
@@ -473,7 +575,7 @@ function renderSpot(spot, ratingConditions = spot) {
   spotNameEl.textContent = `${spot.naam} (${spot.land})`;
   waveHeightEl.textContent = `${spot.golfHoogteMeter.toFixed(1)} m`;
   wavePeriodEl.textContent = `${spot.golfPeriodeSeconden} s`;
-  windEl.textContent = `${spot.windSnelheidKnopen} kn ${spot.windRichting}`;
+  renderWindInfo(spot);
   temperatureEl.textContent = `${spot.watertemperatuurC} °C`;
   renderSurfRating(ratingConditions);
 }
@@ -529,7 +631,7 @@ function setLanguage(lang, persist = true) {
   if (timeSlot9hEl) timeSlot9hEl.textContent = t('timePlus9h');
   if (forecastLabelWaveHeightEl) forecastLabelWaveHeightEl.textContent = t('forecastWaveHeight');
   if (forecastLabelWavePeriodEl) forecastLabelWavePeriodEl.textContent = t('forecastWavePeriod');
-  if (forecastLabelWindEl) forecastLabelWindEl.textContent = t('forecastWind');
+  if (forecastLabelWindEl) forecastLabelWindEl.textContent = t('windLabel');
   if (forecastLabelTemperatureEl) forecastLabelTemperatureEl.textContent = t('forecastTemperature');
   if (favoritesHeadingEl) favoritesHeadingEl.textContent = t('favoritesHeading');
   if (favoritesSectionEl) favoritesSectionEl.setAttribute('aria-label', t('favoritesHeading'));
@@ -917,6 +1019,7 @@ function getLiveSnapshotForOffset(offsetHours) {
       golfHoogteMeter: marineHourly?.wave_height?.[marineIndex],
       golfPeriodeSeconden: marineHourly?.wave_period?.[marineIndex],
       windSnelheidKnopen: weatherHourly?.wind_speed_10m?.[weatherIndex],
+      windRichtingGraden: weatherHourly?.wind_direction_10m?.[weatherIndex],
       windRichting: toCompassDirection(weatherHourly?.wind_direction_10m?.[weatherIndex]),
       watertemperatuurC:
         marineHourly?.sea_surface_temperature?.[marineIndex] ??
@@ -973,6 +1076,9 @@ function mergeWithFallbackSpot(spot, liveValues) {
     windSnelheidKnopen: Number.isFinite(liveValues.windSnelheidKnopen)
       ? liveValues.windSnelheidKnopen
       : spot.windSnelheidKnopen,
+    windRichtingGraden: Number.isFinite(liveValues.windRichtingGraden)
+      ? liveValues.windRichtingGraden
+      : spot.windRichtingGraden,
     windRichting: liveValues.windRichting && liveValues.windRichting !== '-'
       ? liveValues.windRichting
       : spot.windRichting,
