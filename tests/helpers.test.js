@@ -362,6 +362,137 @@ function getSpotDayScore(spotId, dayKey, allSlotContextsForSpotAndDay, filters =
   };
 }
 
+function getConditionTagFromSlots(slots) {
+  const counts = slots.reduce((accumulator, slotContext) => {
+    const tag = slotContext?.conditionTag ?? 'mixed';
+    accumulator[tag] = (accumulator[tag] ?? 0) + 1;
+    return accumulator;
+  }, {});
+
+  return ['clean', 'mixed', 'choppy'].reduce((bestTag, tag) => {
+    const current = counts[tag] ?? 0;
+    const best = counts[bestTag] ?? -1;
+    return current > best ? tag : bestTag;
+  }, 'mixed');
+}
+
+function getDominantSwellDirectionFromSlots(slots) {
+  const countsByDirection = slots.reduce((accumulator, slotContext) => {
+    const degrees = getSwellDirectionDegrees(slotContext?.mergedSpot ?? slotContext?.values);
+    if (!Number.isFinite(degrees)) return accumulator;
+
+    const direction = formatWindDirection(degrees);
+    if (!direction || direction === '-') return accumulator;
+    accumulator[direction] = (accumulator[direction] ?? 0) + 1;
+    return accumulator;
+  }, {});
+
+  const [direction] = Object.entries(countsByDirection)
+    .sort((left, right) => right[1] - left[1])[0] ?? [];
+
+  return direction ?? '-';
+}
+
+function getBestSlotFromPartSlots(partSlots) {
+  if (!Array.isArray(partSlots) || !partSlots.length) return null;
+
+  return partSlots
+    .map((slotContext) => ({
+      slotContext,
+      score: getSlotQualityScore(slotContext, { includeActiveFilters: false }).score
+    }))
+    .sort((left, right) => right.score - left.score)[0]?.slotContext ?? null;
+}
+
+function buildDaySummaryStats(spotId, dayKey, groupedSlotsForDay) {
+  const dayParts = ['morning', 'afternoon', 'evening'];
+  const daySlots = dayParts.flatMap((dayPart) => groupedSlotsForDay?.[dayPart] ?? []);
+
+  if (!daySlots.length) {
+    return {
+      spotId,
+      dayKey,
+      hasData: false
+    };
+  }
+
+  const heights = daySlots
+    .map((slotContext) => slotContext?.mergedSpot?.golfHoogteMeter)
+    .filter((value) => Number.isFinite(value));
+  const periods = daySlots
+    .map((slotContext) => slotContext?.mergedSpot?.golfPeriodeSeconden)
+    .filter((value) => Number.isFinite(value));
+
+  const challengingRatio = daySlots.filter((slotContext) => slotContext.challenging).length / daySlots.length;
+  const dominantConditionTag = getConditionTagFromSlots(daySlots);
+  let overallSkillLevel = 'intermediate';
+  if (challengingRatio >= 0.5 || dominantConditionTag === 'choppy') {
+    overallSkillLevel = 'advanced';
+  } else if (dominantConditionTag === 'clean' && challengingRatio <= 0.2) {
+    overallSkillLevel = 'beginner';
+  }
+
+  const morningSlot = getBestSlotFromPartSlots(groupedSlotsForDay?.morning ?? []);
+  const afternoonSlot = getBestSlotFromPartSlots(groupedSlotsForDay?.afternoon ?? []);
+  const eveningSlot = getBestSlotFromPartSlots(groupedSlotsForDay?.evening ?? []);
+
+  return {
+    spotId,
+    dayKey,
+    hasData: true,
+    minHeight: heights.length ? Math.min(...heights) : null,
+    maxHeight: heights.length ? Math.max(...heights) : null,
+    minPeriod: periods.length ? Math.min(...periods) : null,
+    maxPeriod: periods.length ? Math.max(...periods) : null,
+    dominantSwellDirText: getDominantSwellDirectionFromSlots(daySlots),
+    dominantConditionTag,
+    morningConditionTag: morningSlot?.conditionTag ?? null,
+    afternoonConditionTag: afternoonSlot?.conditionTag ?? null,
+    eveningConditionTag: eveningSlot?.conditionTag ?? null,
+    morningWindDesc: morningSlot ? formatWindDescription(morningSlot) : null,
+    afternoonWindDesc: afternoonSlot ? formatWindDescription(afternoonSlot) : null,
+    eveningWindDesc: eveningSlot ? formatWindDescription(eveningSlot) : null,
+    overallSkillLevel
+  };
+}
+
+function buildDailySurfReportLines(dayStats, dayKey, language = 'en') {
+  const languageCode = language === 'nl' ? 'nl' : 'en';
+
+  if (!dayStats?.hasData) {
+    return [languageCode === 'nl' ? 'Onvoldoende data voor een dagrapport.' : 'Not enough data for a daily surf report.'];
+  }
+
+  const heightRange = Number.isFinite(dayStats.minHeight) && Number.isFinite(dayStats.maxHeight)
+    ? `${dayStats.minHeight.toFixed(1)}–${dayStats.maxHeight.toFixed(1)} m`
+    : '-';
+  const periodRange = Number.isFinite(dayStats.minPeriod) && Number.isFinite(dayStats.maxPeriod)
+    ? `${Math.round(dayStats.minPeriod)}–${Math.round(dayStats.maxPeriod)} s`
+    : '-';
+
+  const lineOne = languageCode === 'nl'
+    ? `${dayKey}: ${heightRange} ${dayStats.dominantSwellDirText}-swell met ${periodRange} periode, overwegend ${dayStats.dominantConditionTag}.`
+    : `${dayKey}: ${heightRange} ${dayStats.dominantSwellDirText} swell with ${periodRange} period, mostly ${dayStats.dominantConditionTag}.`;
+
+  const dayPartWindSegments = [
+    ['morning', dayStats.morningWindDesc],
+    ['afternoon', dayStats.afternoonWindDesc],
+    ['evening', dayStats.eveningWindDesc]
+  ]
+    .filter(([, value]) => Boolean(value))
+    .map(([part, value]) => `${part} ${value}`);
+
+  const lineTwo = dayPartWindSegments.length ? `Wind: ${dayPartWindSegments.join(', ')}.` : null;
+  const adviceByLevel = {
+    beginner: languageCode === 'nl' ? 'meestal geschikt voor beginners' : 'usually suitable for beginners',
+    intermediate: languageCode === 'nl' ? 'het beste voor intermediate surfers' : 'best for intermediate surfers',
+    advanced: languageCode === 'nl' ? 'vooral geschikt voor gevorderden' : 'mostly suitable for advanced surfers'
+  };
+  const lineThree = `${languageCode === 'nl' ? 'Advies' : 'Advice'}: ${adviceByLevel[dayStats.overallSkillLevel] ?? adviceByLevel.intermediate}.`;
+
+  return [lineOne, lineTwo, lineThree].filter((line) => Boolean(line));
+}
+
 function passesHardConditionFilters(slotContext, filters) {
   if (!slotContext) return false;
 
@@ -701,6 +832,75 @@ function runMultiSpotScoreTests() {
   assertEqual(spotDay.bestSlotKey, '2026-02-13-3', 'getSpotDayScore(bestSlotKey)');
 }
 
+function runDailyReportTests() {
+  const groupedSlotsForDay = {
+    morning: [
+      {
+        conditionTag: 'clean',
+        challenging: false,
+        mergedSpot: {
+          coastOrientationDeg: 270,
+          windRichtingGraden: 90,
+          windSnelheidKnopen: 10,
+          golfHoogteMeter: 1.1,
+          golfPeriodeSeconden: 8,
+          swellRichtingGraden: 300
+        }
+      }
+    ],
+    afternoon: [
+      {
+        conditionTag: 'mixed',
+        challenging: false,
+        mergedSpot: {
+          coastOrientationDeg: 270,
+          windRichtingGraden: 80,
+          windSnelheidKnopen: 12,
+          golfHoogteMeter: 1.4,
+          golfPeriodeSeconden: 9,
+          swellRichtingGraden: 295
+        }
+      }
+    ],
+    evening: [
+      {
+        conditionTag: 'choppy',
+        challenging: true,
+        mergedSpot: {
+          coastOrientationDeg: 270,
+          windRichtingGraden: 270,
+          windSnelheidKnopen: 22,
+          golfHoogteMeter: 2.6,
+          golfPeriodeSeconden: 10,
+          swellRichtingGraden: 290
+        }
+      }
+    ]
+  };
+
+  const stats = buildDaySummaryStats('spot-a', '2026-02-13', groupedSlotsForDay);
+  assertEqual(stats.hasData, true, 'buildDaySummaryStats(hasData)');
+  assertEqual(stats.minHeight, 1.1, 'buildDaySummaryStats(minHeight)');
+  assertEqual(stats.maxHeight, 2.6, 'buildDaySummaryStats(maxHeight)');
+
+  const reportLinesEn = buildDailySurfReportLines(stats, '2026-02-13', 'en').join(' ').toLowerCase();
+  if (!reportLinesEn.includes('swell') || !reportLinesEn.includes('advice')) {
+    throw new Error(`buildDailySurfReportLines(en) missing expected keywords: ${reportLinesEn}`);
+  }
+
+  const advancedStats = {
+    ...stats,
+    overallSkillLevel: 'advanced'
+  };
+  const reportLinesNl = buildDailySurfReportLines(advancedStats, '2026-02-13', 'nl').join(' ').toLowerCase();
+  if (!reportLinesNl.includes('gevorderden')) {
+    throw new Error(`buildDailySurfReportLines(nl advanced) missing expected keyword: ${reportLinesNl}`);
+  }
+
+  const fallback = buildDailySurfReportLines({ hasData: false }, '2026-02-13', 'en')[0];
+  assertEqual(fallback, 'Not enough data for a daily surf report.', 'buildDailySurfReportLines(fallback)');
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
@@ -715,6 +915,7 @@ function runAll() {
   runSlotSelectionTests();
   runSlotDetailHelperTests();
   runMultiSpotScoreTests();
+  runDailyReportTests();
   console.log('All tests passed');
 }
 

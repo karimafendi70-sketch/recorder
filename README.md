@@ -18,6 +18,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Compacte lijstweergave: naast kaartweergave is er een lijstmodus die per tijdvak snel hoogte/periode, wind en condition-tag toont.
 - Rijk slotdetailpaneel: extra laag onder de slots/lijst met uitgebreide swell-, wind- en conditie-uitleg plus korte advieszin per geselecteerd tijdvak (surf-forecast-achtige full-report stijl).
 - Multi-spot vergelijking: compact overzicht met topspots voor de actieve dag (huidige spot + favorieten), inclusief eenvoudige 0–10 kwaliteitsscore, beste tijdvak en kerncondities.
+- Automatisch dagrapport per spot: korte surf report-tekst per actieve dag/spot met hoogte-range, dominante swell/wind en skill-advies, geïnspireerd op surf-forecast-achtige samenvattingen.
 - Installable PWA-basis: manifest + service worker voor app-shell, zodat moderne browsers een install-optie tonen.
 - Wereldwijde spots + regiozoekervaring: spots uit Europa, Afrika/Atlantisch, Amerika's en Azië/Oceanië met regio-groepering in suggesties.
 - Meertaligheid + filters + persoonlijke state: NL/EN/FR/ES/PT/DE, niveau-filter (Alle niveaus/Beginner/Gevorderd), favorieten, last-used spot en reset-weergave.
@@ -62,6 +63,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Centrale slotselectie (`currentSlotKey`) wordt gedeeld tussen tijdvakknoppen, lijstitems en detailpaneel, zodat kaartweergave en lijstweergave exact dezelfde geselecteerde slotcontext tonen.
 - Score-helpers (`getSlotQualityScore` en `getSpotDayScore`) bouwen een lichte spotscore op bestaande signalen (condition-tag, swell, windrelatie, challenging-state en actieve filters).
 - Multi-spot overzicht rendert top N spots bovenop bestaande forecast-cache/snapshot-helpers en hergebruikt bestaande selectieflow bij klik op een toplijst-item.
+- Dagrapport-helpers bouwen per dag/spot een compacte tekstsamenvatting op dezelfde slot-, conditie- en scoredata zonder extra API-calls.
 - Manifest (`manifest.json`) en service worker (`service-worker.js`) verzorgen lichte shell-caching van statische assets (geen zware offline forecast-cache).
 - translations met t(...) en setLanguage(...) verzorgen alle meertalige UI-labels.
 - localStorage bewaart taal, favorieten en last-used spot.
