@@ -6,6 +6,7 @@ const windIconEl = document.getElementById('windIcon');
 const windTextEl = document.getElementById('windText');
 const swellBarEl = document.getElementById('swellBar');
 const swellTextEl = document.getElementById('swellText');
+const conditionTagEl = document.getElementById('conditionTag');
 const temperatureEl = document.getElementById('temperature');
 const forecastMetaEl = document.getElementById('forecastMeta');
 const surfRatingEl = document.getElementById('surfRating');
@@ -46,6 +47,7 @@ const legendItemOnshoreEl = document.getElementById('legendItemOnshore');
 const legendItemOffshoreEl = document.getElementById('legendItemOffshore');
 const legendWindExplanationEl = document.getElementById('legendWindExplanation');
 const legendSwellExplanationEl = document.getElementById('legendSwellExplanation');
+const legendConditionExplanationEl = document.getElementById('legendConditionExplanation');
 const forecastLabelWaveHeightEl = document.getElementById('forecastLabelWaveHeight');
 const forecastLabelWavePeriodEl = document.getElementById('forecastLabelWavePeriod');
 const forecastLabelSwellEl = document.getElementById('forecastLabelSwell');
@@ -419,6 +421,45 @@ const legendHelpTranslations = {
   }
 };
 
+const conditionTranslations = {
+  nl: {
+    conditionClean: 'Clean',
+    conditionMixed: 'Mixed',
+    conditionChoppy: 'Choppy',
+    legendConditionExplanation: 'Condities: Clean = vaker offshore/rustiger, Choppy = vaker onshore/rommeliger, Mixed = ertussenin.'
+  },
+  en: {
+    conditionClean: 'Clean',
+    conditionMixed: 'Mixed',
+    conditionChoppy: 'Choppy',
+    legendConditionExplanation: 'Conditions: Clean = more often offshore/calmer, Choppy = more often onshore/messier, Mixed = in-between.'
+  },
+  fr: {
+    conditionClean: 'Clean',
+    conditionMixed: 'Mixed',
+    conditionChoppy: 'Choppy',
+    legendConditionExplanation: 'Conditions : Clean = plutôt offshore/calme, Choppy = plutôt onshore/désordonné, Mixed = intermédiaire.'
+  },
+  es: {
+    conditionClean: 'Clean',
+    conditionMixed: 'Mixed',
+    conditionChoppy: 'Choppy',
+    legendConditionExplanation: 'Condiciones: Clean = más offshore/calma, Choppy = más onshore/revuelto, Mixed = intermedio.'
+  },
+  pt: {
+    conditionClean: 'Clean',
+    conditionMixed: 'Mixed',
+    conditionChoppy: 'Choppy',
+    legendConditionExplanation: 'Condições: Clean = mais offshore/calmo, Choppy = mais onshore/mexido, Mixed = intermédio.'
+  },
+  de: {
+    conditionClean: 'Clean',
+    conditionMixed: 'Mixed',
+    conditionChoppy: 'Choppy',
+    legendConditionExplanation: 'Bedingungen: Clean = eher offshore/ruhiger, Choppy = eher onshore/unruhiger, Mixed = dazwischen.'
+  }
+};
+
 const themeTranslations = {
   nl: {
     themeToggleLabel: 'Thema',
@@ -617,6 +658,12 @@ Object.entries(legendHelpTranslations).forEach(([lang, extraKeys]) => {
   }
 });
 
+Object.entries(conditionTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
 Object.entries(themeTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -744,6 +791,105 @@ function getSwellClassName(waveHeight) {
   return 'swell-very-high';
 }
 
+function getAngularDifferenceDegrees(a, b) {
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+  const normalizedA = normalizeWindDegrees(a);
+  const normalizedB = normalizeWindDegrees(b);
+  const diff = Math.abs(normalizedA - normalizedB);
+  return Math.min(diff, 360 - diff);
+}
+
+function getCoastOrientationDeg(spot) {
+  const explicitOrientation = normalizeWindDegrees(spot?.coastOrientationDeg);
+  if (Number.isFinite(explicitOrientation)) {
+    return explicitOrientation;
+  }
+
+  const regionDefaults = {
+    eu: 270,
+    af: 300,
+    am: 240,
+    ap: 135
+  };
+
+  const region = getSpotRegion(spot);
+  return regionDefaults[region] ?? 270;
+}
+
+function getWindRelativeToCoast(coastOrientationDeg, windDirectionDeg) {
+  if (!Number.isFinite(coastOrientationDeg) || !Number.isFinite(windDirectionDeg)) {
+    return 'cross';
+  }
+
+  const onshoreCenter = normalizeWindDegrees(coastOrientationDeg);
+  const offshoreCenter = normalizeWindDegrees(coastOrientationDeg + 180);
+  const onshoreDiff = getAngularDifferenceDegrees(windDirectionDeg, onshoreCenter);
+  const offshoreDiff = getAngularDifferenceDegrees(windDirectionDeg, offshoreCenter);
+
+  if (offshoreDiff <= 45) return 'offshore';
+  if (onshoreDiff <= 45) return 'onshore';
+  return 'cross';
+}
+
+function getSurfConditionTag(snapshot) {
+  if (!snapshot) return 'mixed';
+
+  const windDirectionDeg = getWindDegreesForSpot(snapshot);
+  const windSpeed = snapshot.windSnelheidKnopen;
+  const waveHeight = snapshot.golfHoogteMeter;
+  const coastOrientation = getCoastOrientationDeg(snapshot);
+  const windRelative = getWindRelativeToCoast(coastOrientation, windDirectionDeg);
+  const hasSteadySwell = Number.isFinite(waveHeight) && waveHeight >= 0.8;
+  const hardWind = Number.isFinite(windSpeed) && windSpeed >= 17;
+  const moderateWind = Number.isFinite(windSpeed) && windSpeed <= 14;
+  const challenging = isChallengingConditions(snapshot);
+
+  if (windRelative === 'onshore' || hardWind) {
+    return 'choppy';
+  }
+
+  if (windRelative === 'offshore' && moderateWind && hasSteadySwell && !challenging) {
+    return 'clean';
+  }
+
+  return 'mixed';
+}
+
+function getConditionLabelKey(tag) {
+  if (tag === 'clean') return 'conditionClean';
+  if (tag === 'choppy') return 'conditionChoppy';
+  return 'conditionMixed';
+}
+
+function renderConditionTag(baseSpot, conditions) {
+  if (!conditionTagEl) return;
+
+  const conditionSnapshot = {
+    ...baseSpot,
+    ...conditions
+  };
+  const conditionTag = getSurfConditionTag(conditionSnapshot);
+  const conditionKey = getConditionLabelKey(conditionTag);
+
+  conditionTagEl.textContent = t(conditionKey);
+  conditionTagEl.classList.remove('condition-tag-clean', 'condition-tag-mixed', 'condition-tag-choppy');
+  conditionTagEl.classList.add(`condition-tag-${conditionTag}`);
+}
+
+function getSwellDirectionDegrees(spot) {
+  const swellDirection = normalizeWindDegrees(spot?.swellRichtingGraden);
+  if (Number.isFinite(swellDirection)) {
+    return swellDirection;
+  }
+
+  const waveDirection = normalizeWindDegrees(spot?.golfRichtingGraden);
+  if (Number.isFinite(waveDirection)) {
+    return waveDirection;
+  }
+
+  return null;
+}
+
 function formatSwellText(spot) {
   const waveHeight = Number.isFinite(spot?.golfHoogteMeter)
     ? `${spot.golfHoogteMeter.toFixed(1)} m`
@@ -751,7 +897,14 @@ function formatSwellText(spot) {
   const wavePeriod = Number.isFinite(spot?.golfPeriodeSeconden)
     ? `${Math.round(spot.golfPeriodeSeconden)} s`
     : '-';
-  return `${waveHeight} · ${wavePeriod}`;
+  const swellDirection = getSwellDirectionDegrees(spot);
+  const directionSegment = Number.isFinite(swellDirection)
+    ? ` · ${Math.round(swellDirection)}°`
+    : '';
+  const secondarySwell = Number.isFinite(spot?.secundaireGolfHoogteMeter)
+    ? ` · +${spot.secundaireGolfHoogteMeter.toFixed(1)}m`
+    : '';
+  return `${waveHeight} · ${wavePeriod}${directionSegment}${secondarySwell}`;
 }
 
 function renderSwellInfo(spot) {
@@ -1000,6 +1153,7 @@ function renderSpot(spot, ratingConditions = spot) {
   wavePeriodEl.textContent = `${spot.golfPeriodeSeconden} s`;
   renderSwellInfo(spot);
   renderWindInfo(spot);
+  renderConditionTag(spot, ratingConditions);
   temperatureEl.textContent = `${spot.watertemperatuurC} °C`;
   renderSurfRating(ratingConditions);
 }
@@ -1101,6 +1255,7 @@ function setLanguage(lang, persist = true) {
   if (legendItemOffshoreEl) legendItemOffshoreEl.textContent = t('legendItemOffshore');
   if (legendWindExplanationEl) legendWindExplanationEl.textContent = t('legendWindExplanation');
   if (legendSwellExplanationEl) legendSwellExplanationEl.textContent = t('legendSwellExplanation');
+  if (legendConditionExplanationEl) legendConditionExplanationEl.textContent = t('legendConditionExplanation');
   if (timeSelectorEl) timeSelectorEl.setAttribute('aria-label', t('timeSelectorAria'));
   if (timeSlotNowEl) timeSlotNowEl.textContent = t('timeNow');
   if (timeSlot3hEl) timeSlot3hEl.textContent = t('timePlus3h');
@@ -1143,6 +1298,8 @@ function setLanguage(lang, persist = true) {
   renderFavoritesList();
   if (activeLiveCache) {
     renderLiveOffset(activeTimeOffset);
+  } else if (activeSpot) {
+    renderSpot(activeSpot, latestRatingConditions ?? activeSpot);
   } else {
     setForecastMeta(t('forecastMetaMock'));
   }
@@ -1617,7 +1774,7 @@ function buildMarineApiUrl(latitude, longitude) {
   const params = new URLSearchParams({
     latitude: String(latitude),
     longitude: String(longitude),
-    hourly: 'wave_height,wave_period,sea_surface_temperature',
+    hourly: 'wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_direction,wind_wave_height,sea_surface_temperature',
     forecast_days: '1',
     timezone: 'auto'
   });
@@ -1726,6 +1883,12 @@ function getLiveSnapshotForOffset(offsetHours) {
     values: {
       golfHoogteMeter: marineHourly?.wave_height?.[marineIndex],
       golfPeriodeSeconden: marineHourly?.wave_period?.[marineIndex],
+      golfRichtingGraden: marineHourly?.wave_direction?.[marineIndex],
+      swellRichtingGraden:
+        marineHourly?.swell_wave_direction?.[marineIndex] ?? marineHourly?.wave_direction?.[marineIndex],
+      primaireGolfHoogteMeter:
+        marineHourly?.swell_wave_height?.[marineIndex] ?? marineHourly?.wave_height?.[marineIndex],
+      secundaireGolfHoogteMeter: marineHourly?.wind_wave_height?.[marineIndex],
       windSnelheidKnopen: weatherHourly?.wind_speed_10m?.[weatherIndex],
       windRichtingGraden: weatherHourly?.wind_direction_10m?.[weatherIndex],
       windRichting: toCompassDirection(weatherHourly?.wind_direction_10m?.[weatherIndex]),
@@ -1781,6 +1944,18 @@ function mergeWithFallbackSpot(spot, liveValues) {
     golfPeriodeSeconden: Number.isFinite(liveValues.golfPeriodeSeconden)
       ? liveValues.golfPeriodeSeconden
       : spot.golfPeriodeSeconden,
+    golfRichtingGraden: Number.isFinite(liveValues.golfRichtingGraden)
+      ? liveValues.golfRichtingGraden
+      : spot.golfRichtingGraden,
+    swellRichtingGraden: Number.isFinite(liveValues.swellRichtingGraden)
+      ? liveValues.swellRichtingGraden
+      : spot.swellRichtingGraden,
+    primaireGolfHoogteMeter: Number.isFinite(liveValues.primaireGolfHoogteMeter)
+      ? liveValues.primaireGolfHoogteMeter
+      : spot.primaireGolfHoogteMeter,
+    secundaireGolfHoogteMeter: Number.isFinite(liveValues.secundaireGolfHoogteMeter)
+      ? liveValues.secundaireGolfHoogteMeter
+      : spot.secundaireGolfHoogteMeter,
     windSnelheidKnopen: Number.isFinite(liveValues.windSnelheidKnopen)
       ? liveValues.windSnelheidKnopen
       : spot.windSnelheidKnopen,

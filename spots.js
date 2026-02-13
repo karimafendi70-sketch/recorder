@@ -2,6 +2,7 @@ const SURF_SPOTS = [
   {
     id: 'scheveningen-nl',
     region: 'eu',
+    coastOrientationDeg: 270,
     naam: 'Scheveningen',
     land: 'Nederland',
     latitude: 52.11,
@@ -15,6 +16,7 @@ const SURF_SPOTS = [
   {
     id: 'hossegor-fr',
     region: 'eu',
+    coastOrientationDeg: 270,
     naam: 'Hossegor',
     land: 'Frankrijk',
     latitude: 43.665,
@@ -28,6 +30,7 @@ const SURF_SPOTS = [
   {
     id: 'jeffreys-bay-za',
     region: 'af',
+    coastOrientationDeg: 140,
     naam: 'Jeffreys Bay',
     land: 'Zuid-Afrika',
     latitude: -34.05,
@@ -41,6 +44,7 @@ const SURF_SPOTS = [
   {
     id: 'pipeline-us-hi',
     region: 'am',
+    coastOrientationDeg: 10,
     naam: 'Pipeline',
     land: 'Hawaï',
     latitude: 21.665,
@@ -54,6 +58,7 @@ const SURF_SPOTS = [
   {
     id: 'ericeira-pt',
     region: 'eu',
+    coastOrientationDeg: 270,
     naam: 'Ericeira',
     land: 'Portugal',
     latitude: 38.963,
@@ -67,6 +72,7 @@ const SURF_SPOTS = [
   {
     id: 'peniche-pt',
     region: 'eu',
+    coastOrientationDeg: 260,
     naam: 'Peniche',
     land: 'Portugal',
     latitude: 39.355,
@@ -80,6 +86,7 @@ const SURF_SPOTS = [
   {
     id: 'nazare-pt',
     region: 'eu',
+    coastOrientationDeg: 270,
     naam: 'Nazaré',
     land: 'Portugal',
     latitude: 39.602,
@@ -93,6 +100,7 @@ const SURF_SPOTS = [
   {
     id: 'carcavelos-pt',
     region: 'eu',
+    coastOrientationDeg: 240,
     naam: 'Carcavelos',
     land: 'Portugal',
     latitude: 38.676,
@@ -106,6 +114,7 @@ const SURF_SPOTS = [
   {
     id: 'mundaka-es',
     region: 'eu',
+    coastOrientationDeg: 350,
     naam: 'Mundaka',
     land: 'Spanje',
     latitude: 43.408,
@@ -119,6 +128,7 @@ const SURF_SPOTS = [
   {
     id: 'zarautz-es',
     region: 'eu',
+    coastOrientationDeg: 355,
     naam: 'Zarautz',
     land: 'Spanje',
     latitude: 43.287,
@@ -132,6 +142,7 @@ const SURF_SPOTS = [
   {
     id: 'sopelana-es',
     region: 'eu',
+    coastOrientationDeg: 350,
     naam: 'Sopelana',
     land: 'Spanje',
     latitude: 43.379,
@@ -145,6 +156,7 @@ const SURF_SPOTS = [
   {
     id: 'biarritz-fr',
     region: 'eu',
+    coastOrientationDeg: 300,
     naam: 'Biarritz',
     land: 'Frankrijk',
     latitude: 43.483,
@@ -158,6 +170,7 @@ const SURF_SPOTS = [
   {
     id: 'lacanau-fr',
     region: 'eu',
+    coastOrientationDeg: 270,
     naam: 'Lacanau',
     land: 'Frankrijk',
     latitude: 45.0,
@@ -171,6 +184,7 @@ const SURF_SPOTS = [
   {
     id: 'la-torche-fr',
     region: 'eu',
+    coastOrientationDeg: 260,
     naam: 'La Torche',
     land: 'Frankrijk',
     latitude: 47.84,
@@ -184,6 +198,7 @@ const SURF_SPOTS = [
   {
     id: 'newquay-uk',
     region: 'eu',
+    coastOrientationDeg: 300,
     naam: 'Newquay',
     land: 'Verenigd Koninkrijk',
     latitude: 50.416,
@@ -197,6 +212,7 @@ const SURF_SPOTS = [
   {
     id: 'thurso-east-uk',
     region: 'eu',
+    coastOrientationDeg: 60,
     naam: 'Thurso East',
     land: 'Verenigd Koninkrijk',
     latitude: 58.595,
@@ -210,6 +226,7 @@ const SURF_SPOTS = [
   {
     id: 'uluwatu-id',
     region: 'ap',
+    coastOrientationDeg: 200,
     naam: 'Uluwatu',
     land: 'Indonesië',
     latitude: -8.829,
@@ -223,6 +240,7 @@ const SURF_SPOTS = [
   {
     id: 'anchor-point-ma',
     region: 'af',
+    coastOrientationDeg: 320,
     naam: 'Anchor Point',
     land: 'Marokko',
     latitude: 30.544,
@@ -236,6 +254,7 @@ const SURF_SPOTS = [
   {
     id: 'taghazout-ma',
     region: 'af',
+    coastOrientationDeg: 320,
     naam: 'Taghazout',
     land: 'Marokko',
     latitude: 30.545,
@@ -249,6 +268,7 @@ const SURF_SPOTS = [
   {
     id: 'fuerteventura-es',
     region: 'af',
+    coastOrientationDeg: 0,
     naam: 'Fuerteventura',
     land: 'Canarische Eilanden',
     latitude: 28.357,
@@ -262,6 +282,7 @@ const SURF_SPOTS = [
   {
     id: 'lanzarote-es',
     region: 'af',
+    coastOrientationDeg: 330,
     naam: 'Lanzarote',
     land: 'Canarische Eilanden',
     latitude: 29.047,
@@ -275,6 +296,7 @@ const SURF_SPOTS = [
   {
     id: 'santa-cruz-us',
     region: 'am',
+    coastOrientationDeg: 240,
     naam: 'Santa Cruz',
     land: 'Verenigde Staten',
     latitude: 36.951,
@@ -288,6 +310,7 @@ const SURF_SPOTS = [
   {
     id: 'huntington-beach-us',
     region: 'am',
+    coastOrientationDeg: 220,
     naam: 'Huntington Beach',
     land: 'Verenigde Staten',
     latitude: 33.659,
@@ -301,6 +324,7 @@ const SURF_SPOTS = [
   {
     id: 'la-jolla-us',
     region: 'am',
+    coastOrientationDeg: 250,
     naam: 'La Jolla',
     land: 'Verenigde Staten',
     latitude: 32.832,
@@ -314,6 +338,7 @@ const SURF_SPOTS = [
   {
     id: 'outer-banks-us',
     region: 'am',
+    coastOrientationDeg: 95,
     naam: 'Outer Banks',
     land: 'Verenigde Staten',
     latitude: 35.558,
@@ -327,6 +352,7 @@ const SURF_SPOTS = [
   {
     id: 'arpoador-br',
     region: 'am',
+    coastOrientationDeg: 160,
     naam: 'Arpoador',
     land: 'Brazilië',
     latitude: -22.987,
@@ -340,6 +366,7 @@ const SURF_SPOTS = [
   {
     id: 'punta-de-lobos-cl',
     region: 'am',
+    coastOrientationDeg: 250,
     naam: 'Punta de Lobos',
     land: 'Chili',
     latitude: -34.416,
@@ -353,6 +380,7 @@ const SURF_SPOTS = [
   {
     id: 'canggu-id',
     region: 'ap',
+    coastOrientationDeg: 220,
     naam: 'Canggu',
     land: 'Indonesië',
     latitude: -8.648,
@@ -366,6 +394,7 @@ const SURF_SPOTS = [
   {
     id: 'gold-coast-au',
     region: 'ap',
+    coastOrientationDeg: 110,
     naam: 'Gold Coast',
     land: 'Australië',
     latitude: -28.016,
@@ -379,6 +408,7 @@ const SURF_SPOTS = [
   {
     id: 'manly-au',
     region: 'ap',
+    coastOrientationDeg: 100,
     naam: 'Manly',
     land: 'Australië',
     latitude: -33.797,
@@ -392,6 +422,7 @@ const SURF_SPOTS = [
   {
     id: 'raglan-nz',
     region: 'ap',
+    coastOrientationDeg: 270,
     naam: 'Raglan',
     land: 'Nieuw-Zeeland',
     latitude: -37.808,

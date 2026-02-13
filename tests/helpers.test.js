@@ -34,12 +34,99 @@ function getSwellClassName(waveHeight) {
   return 'swell-very-high';
 }
 
+function directionToDegrees(direction) {
+  if (typeof direction !== 'string') return null;
+
+  const normalizedDirection = direction.trim().toUpperCase();
+  const degreesByDirection = {
+    N: 0,
+    NO: 45,
+    NE: 45,
+    O: 90,
+    E: 90,
+    ZO: 135,
+    SE: 135,
+    Z: 180,
+    S: 180,
+    ZW: 225,
+    SW: 225,
+    W: 270,
+    NW: 315
+  };
+
+  return degreesByDirection[normalizedDirection] ?? null;
+}
+
+function getWindDegreesForSpot(spot) {
+  if (!spot) return null;
+
+  const directDegrees = normalizeWindDegrees(spot.windRichtingGraden);
+  if (Number.isFinite(directDegrees)) return directDegrees;
+
+  return directionToDegrees(spot.windRichting);
+}
+
+function getAngularDifferenceDegrees(a, b) {
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+  const normalizedA = normalizeWindDegrees(a);
+  const normalizedB = normalizeWindDegrees(b);
+  const diff = Math.abs(normalizedA - normalizedB);
+  return Math.min(diff, 360 - diff);
+}
+
+function getCoastOrientationDeg(spot) {
+  const explicitOrientation = normalizeWindDegrees(spot?.coastOrientationDeg);
+  if (Number.isFinite(explicitOrientation)) {
+    return explicitOrientation;
+  }
+  return 270;
+}
+
+function getWindRelativeToCoast(coastOrientationDeg, windDirectionDeg) {
+  if (!Number.isFinite(coastOrientationDeg) || !Number.isFinite(windDirectionDeg)) {
+    return 'cross';
+  }
+
+  const onshoreCenter = normalizeWindDegrees(coastOrientationDeg);
+  const offshoreCenter = normalizeWindDegrees(coastOrientationDeg + 180);
+  const onshoreDiff = getAngularDifferenceDegrees(windDirectionDeg, onshoreCenter);
+  const offshoreDiff = getAngularDifferenceDegrees(windDirectionDeg, offshoreCenter);
+
+  if (offshoreDiff <= 45) return 'offshore';
+  if (onshoreDiff <= 45) return 'onshore';
+  return 'cross';
+}
+
 function isChallengingConditions(conditions) {
   const waveHeight = conditions?.golfHoogteMeter;
   const wavePeriod = conditions?.golfPeriodeSeconden;
   const windSpeed = conditions?.windSnelheidKnopen;
 
   return waveHeight > 2.3 || windSpeed >= 18 || wavePeriod >= 12;
+}
+
+function getSurfConditionTag(snapshot) {
+  if (!snapshot) return 'mixed';
+
+  const windDirectionDeg = getWindDegreesForSpot(snapshot);
+  const windSpeed = snapshot.windSnelheidKnopen;
+  const waveHeight = snapshot.golfHoogteMeter;
+  const coastOrientation = getCoastOrientationDeg(snapshot);
+  const windRelative = getWindRelativeToCoast(coastOrientation, windDirectionDeg);
+  const hasSteadySwell = Number.isFinite(waveHeight) && waveHeight >= 0.8;
+  const hardWind = Number.isFinite(windSpeed) && windSpeed >= 17;
+  const moderateWind = Number.isFinite(windSpeed) && windSpeed <= 14;
+  const challenging = isChallengingConditions(snapshot);
+
+  if (windRelative === 'onshore' || hardWind) {
+    return 'choppy';
+  }
+
+  if (windRelative === 'offshore' && moderateWind && hasSteadySwell && !challenging) {
+    return 'clean';
+  }
+
+  return 'mixed';
 }
 
 function assertEqual(actual, expected, label) {
@@ -118,11 +205,60 @@ function runChallengingConditionsTests() {
   });
 }
 
+function runWindRelativeToCoastTests() {
+  const cases = [
+    [{ coast: 270, wind: 90 }, 'offshore'],
+    [{ coast: 270, wind: 60 }, 'offshore'],
+    [{ coast: 270, wind: 270 }, 'onshore'],
+    [{ coast: 270, wind: 20 }, 'cross']
+  ];
+
+  cases.forEach(([input, expected], index) => {
+    assertEqual(
+      getWindRelativeToCoast(input.coast, input.wind),
+      expected,
+      `getWindRelativeToCoast(case ${index + 1})`
+    );
+  });
+}
+
+function runSurfConditionTagTests() {
+  const cleanCase = {
+    coastOrientationDeg: 270,
+    windRichtingGraden: 90,
+    windSnelheidKnopen: 12,
+    golfHoogteMeter: 1.4,
+    golfPeriodeSeconden: 9
+  };
+
+  const choppyCase = {
+    coastOrientationDeg: 270,
+    windRichtingGraden: 275,
+    windSnelheidKnopen: 19,
+    golfHoogteMeter: 1.8,
+    golfPeriodeSeconden: 10
+  };
+
+  const mixedCase = {
+    coastOrientationDeg: 270,
+    windRichtingGraden: 20,
+    windSnelheidKnopen: 14,
+    golfHoogteMeter: 1.2,
+    golfPeriodeSeconden: 8
+  };
+
+  assertEqual(getSurfConditionTag(cleanCase), 'clean', 'getSurfConditionTag(clean)');
+  assertEqual(getSurfConditionTag(choppyCase), 'choppy', 'getSurfConditionTag(choppy)');
+  assertEqual(getSurfConditionTag(mixedCase), 'mixed', 'getSurfConditionTag(mixed)');
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
   runSwellClassTests();
   runChallengingConditionsTests();
+  runWindRelativeToCoastTests();
+  runSurfConditionTagTests();
   console.log('All tests passed');
 }
 

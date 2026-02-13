@@ -896,8 +896,9 @@ body {
 .swell-info {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 0.45rem;
-  white-space: nowrap;
 }
 
 .swell-bar {
@@ -938,6 +939,34 @@ body {
 .swell-text {
   font-variant-numeric: tabular-nums;
   color: var(--text-color);
+}
+
+.condition-tag {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  padding: 0.14rem 0.48rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-color);
+  background: var(--control-bg);
+}
+
+.condition-tag-clean {
+  background: color-mix(in srgb, var(--focus-ring) 22%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--focus-ring) 36%, var(--panel-border));
+}
+
+.condition-tag-mixed {
+  background: color-mix(in srgb, var(--muted-text) 10%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--muted-text) 22%, var(--panel-border));
+}
+
+.condition-tag-choppy {
+  background: color-mix(in srgb, var(--soft-text) 18%, var(--control-bg));
+  border-color: color-mix(in srgb, var(--soft-text) 28%, var(--panel-border));
 }
 
 .favorites-block {
