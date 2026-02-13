@@ -251,6 +251,10 @@ function initSpotMap() {
       offset: [0, -10]
     });
     marker.on('click', () => {
+      map.flyTo(markerPosition, 8, {
+        animate: true,
+        duration: 0.9
+      });
       setActiveMapMarker(marker);
       selectSpot(spot, 'map', spot.naam);
     });
