@@ -146,6 +146,36 @@ body {
   font-weight: 600;
 }
 
+.spot-map-section {
+  margin-top: 0.85rem;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0.8rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.spot-map-title {
+  margin: 0 0 0.55rem;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.spot-map-placeholder {
+  min-height: 190px;
+  border: 1px dashed #94a3b8;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.94rem;
+  font-weight: 600;
+  padding: 0.75rem;
+}
+
 .forecast-card {
   margin-top: 1rem;
   background: #ffffff;
@@ -471,6 +501,21 @@ body {
     padding: 0.75rem;
   }
 
+  .spot-map-section {
+    margin-top: 0.7rem;
+    padding: 0.65rem;
+  }
+
+  .spot-map-title {
+    margin-bottom: 0.45rem;
+    font-size: 0.94rem;
+  }
+
+  .spot-map-placeholder {
+    min-height: 145px;
+    font-size: 0.86rem;
+  }
+
   .search-row {
     flex-direction: column;
   }
@@ -551,6 +596,11 @@ body {
   .search-input {
     padding: 0.62rem 0.72rem;
     font-size: 0.95rem;
+  }
+
+  .spot-map-placeholder {
+    min-height: 125px;
+    font-size: 0.82rem;
   }
 
   .forecast-meta {

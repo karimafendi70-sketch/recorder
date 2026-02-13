@@ -60,6 +60,7 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 ## Toekomst-ideeën
 
 - Meer surfspots toevoegen.
+- Kaartplaats-holder staat al klaar in de UI als basis voor de toekomstige kaartweergave.
 - Kaartweergave toevoegen (bijv. Leaflet of eenvoudige embed).
 - Geavanceerdere surf-rating (extra parameters, per type surfer).
 - Responsieve layout verder finetunen.
