@@ -61,7 +61,7 @@ const MIN_ALLOWED_DISTANCE = 1;
 const NAME_MATCH_WEIGHT = 1;
 const LAND_MATCH_WEIGHT = 1;
 const TIME_SLOT_OFFSETS = [0, 3, 6, 9];
-const CACHE_TTL_MS = 10 * 60 * 1000;
+const FORECAST_CACHE_TTL_MS = 5 * 60 * 1000;
 const FAVORITES_STORAGE_KEY = 'freeSurfCastFavorites';
 const LAST_SPOT_STORAGE_KEY = 'freesurfcastLastSpotId';
 const OPEN_METEO_MARINE_BASE_URL = 'https://marine-api.open-meteo.com/v1/marine';
@@ -245,7 +245,8 @@ let activeSuggestionIndex = -1;
 let liveRequestId = 0;
 let activeTimeOffset = 0;
 let activeLiveCache = null;
-const liveForecastCacheBySpot = new Map();
+const forecastCache = new Map();
+const pendingForecastRequests = new Map();
 const favoriteSpotIds = new Set();
 const mapMarkersBySpotKey = new Map();
 let activeMapMarker = null;
@@ -749,7 +750,7 @@ function renderFavoritesList() {
 
 function isCacheEntryFresh(cacheEntry) {
   if (!cacheEntry || !cacheEntry.fetchedAt || !cacheEntry.data) return false;
-  return Date.now() - cacheEntry.fetchedAt <= CACHE_TTL_MS;
+  return Date.now() - cacheEntry.fetchedAt <= FORECAST_CACHE_TTL_MS;
 }
 
 function buildMarineApiUrl(latitude, longitude) {
@@ -973,7 +974,7 @@ async function updateForecastForSpot(spot) {
     return;
   }
 
-  const cacheEntry = liveForecastCacheBySpot.get(spotKey);
+  const cacheEntry = forecastCache.get(spotKey);
   if (isCacheEntryFresh(cacheEntry)) {
     activeLiveCache = cacheEntry.data;
     activeTimeOffset = TIME_SLOT_OFFSETS[0];
@@ -991,10 +992,18 @@ async function updateForecastForSpot(spot) {
   setForecastMeta(t('forecastMetaLoading', { spot: spot.naam }));
 
   try {
-    const liveForecast = await fetchLiveForecastForSpot(spot);
+    let fetchPromise = pendingForecastRequests.get(spotKey);
+    if (!fetchPromise) {
+      fetchPromise = fetchLiveForecastForSpot(spot);
+      pendingForecastRequests.set(spotKey, fetchPromise);
+    }
+
+    const liveForecast = await fetchPromise;
+
+    pendingForecastRequests.delete(spotKey);
     if (requestId !== liveRequestId) return;
 
-    liveForecastCacheBySpot.set(spotKey, {
+    forecastCache.set(spotKey, {
       fetchedAt: Date.now(),
       data: liveForecast
     });
@@ -1009,6 +1018,7 @@ async function updateForecastForSpot(spot) {
 
     renderLiveOffset(firstAvailableOffset);
   } catch (error) {
+    pendingForecastRequests.delete(spotKey);
     if (requestId !== liveRequestId) return;
 
     clearActiveLiveCache();
