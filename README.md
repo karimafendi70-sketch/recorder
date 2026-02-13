@@ -68,6 +68,9 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 
 ## Changelog
 
+- **v0.1.2 – Data update**
+	- Extra Europese surfspots toegevoegd in `spots.js` (o.a. Portugal, Spanje, Frankrijk en Verenigd Koninkrijk) voor issue #3.
+
 - **v0.1.1 – Patch**
 	- Inklapbare legend toegevoegd onder de surf-rating met toggle **Toon uitleg / Verberg uitleg**.
 	- Forecastkaart blijft compacter op kleinere schermen, terwijl alle uitleg beschikbaar blijft.
