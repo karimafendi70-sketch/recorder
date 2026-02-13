@@ -158,6 +158,22 @@ function getDayPart(timestamp) {
   return 'evening';
 }
 
+function buildSlotKey(slotContext) {
+  if (!slotContext?.dayKey || !Number.isFinite(slotContext.offsetHours)) return null;
+  return `${slotContext.dayKey}-${slotContext.offsetHours}`;
+}
+
+function getSelectedSlotContext(allSlotContexts, selectedSlotKey) {
+  if (!Array.isArray(allSlotContexts) || !allSlotContexts.length) return null;
+
+  if (selectedSlotKey) {
+    const match = allSlotContexts.find((slotContext) => buildSlotKey(slotContext) === selectedSlotKey);
+    if (match) return match;
+  }
+
+  return allSlotContexts[0] ?? null;
+}
+
 function passesHardConditionFilters(slotContext, filters) {
   if (!slotContext) return false;
 
@@ -365,6 +381,25 @@ function runDayPartTests() {
   assertEqual(getDayPart('invalid'), 'evening', 'getDayPart(invalid)');
 }
 
+function runSlotSelectionTests() {
+  const slots = [
+    { dayKey: '2026-02-13', offsetHours: 0 },
+    { dayKey: '2026-02-13', offsetHours: 3 },
+    { dayKey: '2026-02-14', offsetHours: 6 }
+  ];
+
+  assertEqual(buildSlotKey(slots[1]), '2026-02-13-3', 'buildSlotKey(valid)');
+  assertEqual(buildSlotKey({ dayKey: null, offsetHours: 3 }), null, 'buildSlotKey(invalid)');
+
+  const selected = getSelectedSlotContext(slots, '2026-02-14-6');
+  assertEqual(selected.offsetHours, 6, 'getSelectedSlotContext(match)');
+
+  const fallback = getSelectedSlotContext(slots, 'missing-key');
+  assertEqual(fallback.offsetHours, 0, 'getSelectedSlotContext(fallback)');
+
+  assertEqual(getSelectedSlotContext([], 'x'), null, 'getSelectedSlotContext(empty)');
+}
+
 function runAll() {
   runWindDirectionTests();
   runWindSpeedTests();
@@ -376,6 +411,7 @@ function runAll() {
   runHardFilterCombinationTests();
   runLocalDateKeyTests();
   runDayPartTests();
+  runSlotSelectionTests();
   console.log('All tests passed');
 }
 

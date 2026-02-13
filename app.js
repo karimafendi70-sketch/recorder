@@ -89,6 +89,7 @@ const dayOverviewEl = document.getElementById('dayOverview');
 const dayOverviewTitleEl = document.getElementById('dayOverviewTitle');
 const dayOverviewCardsEl = document.getElementById('dayOverviewCards');
 const timeSelectorEl = document.getElementById('timeSelector');
+const slotDetailEl = document.getElementById('slotDetail');
 const timeSlotNowEl = document.getElementById('timeSlotNow');
 const timeSlot3hEl = document.getElementById('timeSlot3h');
 const timeSlot6hEl = document.getElementById('timeSlot6h');
@@ -497,7 +498,23 @@ const powerUserTranslations = {
     dayPartAfternoon: 'Middag',
     dayPartEvening: 'Avond',
     dayToday: 'Vandaag',
-    dayTomorrow: 'Morgen'
+    dayTomorrow: 'Morgen',
+    detailTitle: 'Slotdetails',
+    detailSwellLabel: 'Swell',
+    detailWindLabel: 'Wind',
+    detailConditionsLabel: 'Conditie',
+    detailAdviceLabel: 'Advies',
+    detailSelectPrompt: 'Selecteer een tijdvak voor extra detail.',
+    detailSummaryLine: '{windText} met {swellText}, overwegend {conditionText}.',
+    detailAdviceBeginner: 'Meestal geschikt voor beginners.',
+    detailAdviceIntermediate: 'Geschikter voor intermediate surfers.',
+    detailAdviceAdvanced: 'Vooral geschikt voor gevorderde surfers.',
+    detailWindLight: 'lichte',
+    detailWindModerate: 'matige',
+    detailWindStrong: 'sterke',
+    detailWindOffshore: 'offshore',
+    detailWindOnshore: 'onshore',
+    detailWindCross: 'cross'
   },
   en: {
     filterConditionsTitle: 'Conditions',
@@ -513,7 +530,23 @@ const powerUserTranslations = {
     dayPartAfternoon: 'Afternoon',
     dayPartEvening: 'Evening',
     dayToday: 'Today',
-    dayTomorrow: 'Tomorrow'
+    dayTomorrow: 'Tomorrow',
+    detailTitle: 'Slot details',
+    detailSwellLabel: 'Swell',
+    detailWindLabel: 'Wind',
+    detailConditionsLabel: 'Condition',
+    detailAdviceLabel: 'Advice',
+    detailSelectPrompt: 'Select a time slot to see more detail.',
+    detailSummaryLine: '{windText} with {swellText}, mostly {conditionText}.',
+    detailAdviceBeginner: 'Usually suitable for beginners.',
+    detailAdviceIntermediate: 'Better suited for intermediate surfers.',
+    detailAdviceAdvanced: 'Mostly suitable for advanced surfers.',
+    detailWindLight: 'light',
+    detailWindModerate: 'moderate',
+    detailWindStrong: 'strong',
+    detailWindOffshore: 'offshore',
+    detailWindOnshore: 'onshore',
+    detailWindCross: 'cross'
   },
   fr: {
     filterConditionsTitle: 'Conditions',
@@ -529,7 +562,23 @@ const powerUserTranslations = {
     dayPartAfternoon: 'Après-midi',
     dayPartEvening: 'Soir',
     dayToday: 'Aujourd\'hui',
-    dayTomorrow: 'Demain'
+    dayTomorrow: 'Demain',
+    detailTitle: 'Détails du créneau',
+    detailSwellLabel: 'Houle',
+    detailWindLabel: 'Vent',
+    detailConditionsLabel: 'Condition',
+    detailAdviceLabel: 'Conseil',
+    detailSelectPrompt: 'Sélectionnez un créneau pour plus de détails.',
+    detailSummaryLine: '{windText} avec {swellText}, plutôt {conditionText}.',
+    detailAdviceBeginner: 'Souvent adapté aux débutants.',
+    detailAdviceIntermediate: 'Plutôt pour niveau intermédiaire.',
+    detailAdviceAdvanced: 'Surtout adapté aux surfeurs avancés.',
+    detailWindLight: 'vent léger',
+    detailWindModerate: 'vent modéré',
+    detailWindStrong: 'vent fort',
+    detailWindOffshore: 'offshore',
+    detailWindOnshore: 'onshore',
+    detailWindCross: 'cross'
   },
   es: {
     filterConditionsTitle: 'Condiciones',
@@ -545,7 +594,23 @@ const powerUserTranslations = {
     dayPartAfternoon: 'Tarde',
     dayPartEvening: 'Noche',
     dayToday: 'Hoy',
-    dayTomorrow: 'Mañana'
+    dayTomorrow: 'Mañana',
+    detailTitle: 'Detalle del slot',
+    detailSwellLabel: 'Oleaje',
+    detailWindLabel: 'Viento',
+    detailConditionsLabel: 'Condición',
+    detailAdviceLabel: 'Consejo',
+    detailSelectPrompt: 'Selecciona una franja para ver más detalle.',
+    detailSummaryLine: '{windText} con {swellText}, mayormente {conditionText}.',
+    detailAdviceBeginner: 'Normalmente apto para principiantes.',
+    detailAdviceIntermediate: 'Más adecuado para nivel intermedio.',
+    detailAdviceAdvanced: 'Principalmente para surfistas avanzados.',
+    detailWindLight: 'viento suave',
+    detailWindModerate: 'viento moderado',
+    detailWindStrong: 'viento fuerte',
+    detailWindOffshore: 'offshore',
+    detailWindOnshore: 'onshore',
+    detailWindCross: 'cross'
   },
   pt: {
     filterConditionsTitle: 'Condições',
@@ -561,7 +626,23 @@ const powerUserTranslations = {
     dayPartAfternoon: 'Tarde',
     dayPartEvening: 'Noite',
     dayToday: 'Hoje',
-    dayTomorrow: 'Amanhã'
+    dayTomorrow: 'Amanhã',
+    detailTitle: 'Detalhe do slot',
+    detailSwellLabel: 'Ondulação',
+    detailWindLabel: 'Vento',
+    detailConditionsLabel: 'Condição',
+    detailAdviceLabel: 'Conselho',
+    detailSelectPrompt: 'Selecione um horário para ver mais detalhe.',
+    detailSummaryLine: '{windText} com {swellText}, maioritariamente {conditionText}.',
+    detailAdviceBeginner: 'Normalmente adequado para iniciantes.',
+    detailAdviceIntermediate: 'Mais adequado para nível intermédio.',
+    detailAdviceAdvanced: 'Principalmente para surfistas avançados.',
+    detailWindLight: 'vento fraco',
+    detailWindModerate: 'vento moderado',
+    detailWindStrong: 'vento forte',
+    detailWindOffshore: 'offshore',
+    detailWindOnshore: 'onshore',
+    detailWindCross: 'cross'
   },
   de: {
     filterConditionsTitle: 'Bedingungen',
@@ -577,7 +658,23 @@ const powerUserTranslations = {
     dayPartAfternoon: 'Nachmittag',
     dayPartEvening: 'Abend',
     dayToday: 'Heute',
-    dayTomorrow: 'Morgen'
+    dayTomorrow: 'Morgen',
+    detailTitle: 'Slot-Details',
+    detailSwellLabel: 'Swell',
+    detailWindLabel: 'Wind',
+    detailConditionsLabel: 'Bedingung',
+    detailAdviceLabel: 'Hinweis',
+    detailSelectPrompt: 'Wähle ein Zeitfenster für mehr Details.',
+    detailSummaryLine: '{windText} mit {swellText}, überwiegend {conditionText}.',
+    detailAdviceBeginner: 'Meist für Anfänger geeignet.',
+    detailAdviceIntermediate: 'Eher für Fortgeschrittene geeignet.',
+    detailAdviceAdvanced: 'Vor allem für erfahrene Surfer geeignet.',
+    detailWindLight: 'leichter',
+    detailWindModerate: 'mäßiger',
+    detailWindStrong: 'starker',
+    detailWindOffshore: 'offshore',
+    detailWindOnshore: 'onshore',
+    detailWindCross: 'cross'
   }
 };
 
@@ -841,6 +938,7 @@ let activeConditionFilters = {
 };
 let currentDayKey = null;
 let preferredInitialOffset = null;
+let currentSlotKey = null;
 
 function t(key, vars = {}) {
   const languagePack = translations[currentLanguage] ?? translations.nl;
@@ -1292,6 +1390,137 @@ function getTimeSlotLabel(slotContext) {
   return `${t(getPartLabelKey(slotContext.dayPart))} ${timeLabel}`;
 }
 
+function buildSlotKey(slotContext) {
+  if (!slotContext?.dayKey || !Number.isFinite(slotContext.offsetHours)) return null;
+  return `${slotContext.dayKey}-${slotContext.offsetHours}`;
+}
+
+function getSelectedSlotContext(allSlotContexts, selectedSlotKey) {
+  if (!Array.isArray(allSlotContexts) || !allSlotContexts.length) return null;
+
+  if (selectedSlotKey) {
+    const match = allSlotContexts.find((slotContext) => buildSlotKey(slotContext) === selectedSlotKey);
+    if (match) return match;
+  }
+
+  return allSlotContexts[0] ?? null;
+}
+
+function getWindStrengthLabel(speed) {
+  if (!Number.isFinite(speed)) return t('detailWindModerate');
+  if (speed <= 11) return t('detailWindLight');
+  if (speed >= 18) return t('detailWindStrong');
+  return t('detailWindModerate');
+}
+
+function getWindRelationLabel(slotContext) {
+  const windDegrees = getWindDegreesForSpot(slotContext?.mergedSpot ?? slotContext?.values);
+  const coastOrientation = getCoastOrientationDeg(slotContext?.mergedSpot);
+  const relation = getWindRelativeToCoast(coastOrientation, windDegrees);
+
+  if (relation === 'offshore') return t('detailWindOffshore');
+  if (relation === 'onshore') return t('detailWindOnshore');
+  return t('detailWindCross');
+}
+
+function formatWindDescription(slotContext) {
+  const spotValues = slotContext?.mergedSpot ?? slotContext?.values ?? {};
+  const windDegrees = getWindDegreesForSpot(spotValues);
+  const windCompass = formatWindDirection(
+    Number.isFinite(windDegrees) ? windDegrees : spotValues.windRichting
+  );
+  const windSpeed = formatWindSpeed(spotValues.windSnelheidKnopen);
+  const windStrength = getWindStrengthLabel(spotValues.windSnelheidKnopen);
+  const windRelation = getWindRelationLabel(slotContext);
+
+  return `${windStrength} ${windCompass} ${windRelation} (${windSpeed})`;
+}
+
+function formatSwellDescription(slotContext) {
+  const spotValues = slotContext?.mergedSpot ?? slotContext?.values ?? {};
+  const waveHeight = Number.isFinite(spotValues.golfHoogteMeter)
+    ? `${spotValues.golfHoogteMeter.toFixed(1)} m`
+    : '-';
+  const wavePeriod = Number.isFinite(spotValues.golfPeriodeSeconden)
+    ? `${Math.round(spotValues.golfPeriodeSeconden)} s`
+    : '-';
+  const swellDirection = getSwellDirectionDegrees(spotValues);
+  const directionSegment = Number.isFinite(swellDirection)
+    ? `${Math.round(swellDirection)}° ${formatWindDirection(swellDirection)}`
+    : '-';
+  const secondary = Number.isFinite(spotValues.secundaireGolfHoogteMeter)
+    ? ` · +${spotValues.secundaireGolfHoogteMeter.toFixed(1)}m`
+    : '';
+
+  return `${waveHeight} @ ${wavePeriod} · ${directionSegment}${secondary}`;
+}
+
+function formatSkillAdvice(slotContext) {
+  if (!slotContext) return t('detailAdviceIntermediate');
+  if (slotContext.challenging || slotContext.conditionTag === 'choppy') return t('detailAdviceAdvanced');
+  if (slotContext.conditionTag === 'clean' && !slotContext.challenging) return t('detailAdviceBeginner');
+  return t('detailAdviceIntermediate');
+}
+
+function buildSlotDetailLines(slotContext) {
+  const windText = formatWindDescription(slotContext);
+  const swellText = formatSwellDescription(slotContext);
+  const conditionText = t(getConditionLabelKey(slotContext?.conditionTag ?? 'mixed'));
+
+  return {
+    windText,
+    swellText,
+    conditionText,
+    adviceText: formatSkillAdvice(slotContext),
+    summaryText: t('detailSummaryLine', {
+      windText,
+      swellText,
+      conditionText
+    })
+  };
+}
+
+function renderSlotDetail(selectedSlotContext) {
+  if (!slotDetailEl) return;
+
+  if (!selectedSlotContext) {
+    slotDetailEl.innerHTML = `
+      <p class="slot-detail-empty">${t('detailSelectPrompt')}</p>
+    `;
+    return;
+  }
+
+  const detailLines = buildSlotDetailLines(selectedSlotContext);
+  const dateLabel = formatCompactSlotTimeLabel(selectedSlotContext.time);
+  const slotLabel = getTimeSlotLabel(selectedSlotContext);
+
+  slotDetailEl.innerHTML = `
+    <p class="slot-detail-title">${t('detailTitle')} · ${slotLabel}</p>
+    <p class="slot-detail-subtitle">${dateLabel}</p>
+    <div class="slot-detail-grid">
+      <div class="slot-detail-row">
+        <span class="slot-detail-label">${t('detailSwellLabel')}</span>
+        <span class="slot-detail-value">${detailLines.swellText}</span>
+      </div>
+      <div class="slot-detail-row">
+        <span class="slot-detail-label">${t('detailWindLabel')}</span>
+        <span class="slot-detail-value">${detailLines.windText}</span>
+      </div>
+      <div class="slot-detail-row">
+        <span class="slot-detail-label">${t('detailConditionsLabel')}</span>
+        <span class="slot-detail-value">
+          <span class="condition-tag condition-tag-${selectedSlotContext.conditionTag}">${detailLines.conditionText}</span>
+        </span>
+      </div>
+      <div class="slot-detail-row">
+        <span class="slot-detail-label">${t('detailAdviceLabel')}</span>
+        <span class="slot-detail-value">${detailLines.adviceText}</span>
+      </div>
+    </div>
+    <p class="slot-detail-summary">${detailLines.summaryText}</p>
+  `;
+}
+
 function formatCompactSlotTimeLabel(time) {
   if (!time) return t('fallbackUnknownTime');
 
@@ -1323,12 +1552,17 @@ function renderCompactForecastList() {
 
   const filteredSlots = getSlotsForCurrentDay(groupedByDay)
     .filter((slotContext) => passesHardConditionFilters(slotContext));
+  const selectedSlot = getSelectedSlotContext(filteredSlots, currentSlotKey);
+  if (selectedSlot) {
+    currentSlotKey = buildSlotKey(selectedSlot);
+  }
 
   updateNoResultsWithFiltersMessage(filteredSlots.length > 0);
 
   if (!filteredSlots.length) {
     forecastListViewEl.innerHTML = `<p class="compact-forecast-empty">${t('noResultsWithFilters')}</p>`;
     forecastListViewEl.hidden = false;
+    renderSlotDetail(null);
     return;
   }
 
@@ -1343,9 +1577,11 @@ function renderCompactForecastList() {
         Number.isFinite(slot.windRichtingGraden) ? slot.windRichtingGraden : slot.windRichting
       );
       const preferredClass = isPreferredCleanSlot(slotContext) ? ' is-preferred' : '';
+      const isSelected = buildSlotKey(slotContext) === currentSlotKey;
+      const selectedClass = isSelected ? ' is-selected' : '';
 
       return `
-        <li class="compact-forecast-item${preferredClass}">
+        <li class="compact-forecast-item${preferredClass}${selectedClass}" data-slot-key="${buildSlotKey(slotContext)}" data-slot-offset="${slotContext.offsetHours}">
           <div class="compact-forecast-top">
             <span class="compact-forecast-time">${getTimeSlotLabel(slotContext)}</span>
             <span class="compact-forecast-time-meta">${formatCompactSlotTimeLabel(slotContext.time)}</span>
@@ -1365,6 +1601,7 @@ function renderCompactForecastList() {
     <ul class="compact-forecast-list">${rows}</ul>
   `;
   forecastListViewEl.hidden = false;
+  renderSlotDetail(selectedSlot);
 }
 
 function updateViewModeUI() {
@@ -1428,6 +1665,7 @@ function setCurrentDayKey(nextDayKey) {
 
   const firstDaySlot = getSlotsForCurrentDay(groupedByDay)[0];
   if (firstDaySlot) {
+    currentSlotKey = buildSlotKey(firstDaySlot);
     activeTimeOffset = firstDaySlot.offsetHours;
     renderSpot(firstDaySlot.mergedSpot, firstDaySlot.values);
     setForecastMeta(t('forecastMetaLive', { timeLabel: formatCompactSlotTimeLabel(firstDaySlot.time) }), 'live');
@@ -1927,11 +2165,14 @@ function setLanguage(lang, persist = true) {
     const rendered = renderLiveOffset(activeTimeOffset);
     if (!rendered) {
       updateTimeSelectorButtons();
+      renderSlotDetail(getSelectedSlotContext(getAllLiveSlotContexts(), currentSlotKey));
     }
   } else if (activeSpot) {
     renderSpot(activeSpot, latestRatingConditions ?? activeSpot);
+    renderSlotDetail(null);
   } else {
     setForecastMeta(t('forecastMetaMock'));
+    renderSlotDetail(null);
   }
   renderCompactForecastList();
   if (latestRatingConditions) {
@@ -2164,6 +2405,7 @@ function clearActiveLiveCache() {
   activeLiveCache = null;
   activeTimeOffset = 0;
   currentDayKey = null;
+  currentSlotKey = null;
   timeSelectorEl.hidden = true;
   timeSlotButtons.forEach((button) => {
     button.disabled = true;
@@ -2177,6 +2419,7 @@ function clearActiveLiveCache() {
   }
   updateNoResultsWithFiltersMessage(true);
   renderCompactForecastList();
+  renderSlotDetail(null);
 }
 
 function hideSuggestions() {
@@ -2576,6 +2819,7 @@ function updateTimeSelectorButtons() {
 
   timeSelectorEl.hidden = false;
   let hasFilteredResults = false;
+  const visibleSlots = [];
   const displaySlots = getDisplaySlotsForCurrentDay(groupedByDay);
 
   timeSlotButtons.forEach((button, index) => {
@@ -2586,12 +2830,14 @@ function updateTimeSelectorButtons() {
     button.classList.remove(...SLOT_CLASS_NAMES, 'slot-preferred');
     button.hidden = !isAvailable;
     button.dataset.slotOffset = slotContext ? String(slotContext.offsetHours) : '';
+    button.dataset.slotKey = slotContext ? buildSlotKey(slotContext) : '';
     button.textContent = slotContext ? getTimeSlotLabel(slotContext) : t('timeSlotUnavailable');
 
     if (!isVisibleByFilters) {
       button.classList.add('slot-neutral');
     } else {
       hasFilteredResults = true;
+      visibleSlots.push(slotContext);
       const slotRating = calculateSurfRating(slotContext.values);
       if (!slotRating?.score) {
         button.classList.add('slot-neutral');
@@ -2613,7 +2859,13 @@ function updateTimeSelectorButtons() {
     button.title = isAvailable ? '' : t('timeSlotUnavailable');
   });
 
+  const selectedVisibleSlot = getSelectedSlotContext(visibleSlots, currentSlotKey);
+  if (selectedVisibleSlot) {
+    currentSlotKey = buildSlotKey(selectedVisibleSlot);
+  }
+
   updateNoResultsWithFiltersMessage(hasFilteredResults);
+  renderSlotDetail(selectedVisibleSlot);
 }
 
 function mergeWithFallbackSpot(spot, liveValues) {
@@ -2662,6 +2914,7 @@ function renderFirstAvailableSlotForCurrentDay() {
   const firstSlot = getSlotsForCurrentDay(groupedByDay)[0];
   if (!firstSlot) return false;
 
+  currentSlotKey = buildSlotKey(firstSlot);
   activeTimeOffset = firstSlot.offsetHours;
   updateTimeSelectorButtons();
   renderSpot(firstSlot.mergedSpot, firstSlot.values);
@@ -2676,6 +2929,7 @@ function renderLiveOffset(offsetHours) {
   if (!passesHardConditionFilters(slotContext)) return false;
 
   currentDayKey = slotContext.dayKey ?? currentDayKey;
+  currentSlotKey = buildSlotKey(slotContext);
   activeTimeOffset = offsetHours;
   updateTimeSelectorButtons();
 
@@ -2694,6 +2948,7 @@ async function updateForecastForSpot(spot) {
   activeSpot = spot;
   if (isDifferentSpot) {
     currentDayKey = null;
+    currentSlotKey = null;
   }
   updateFavoriteToggleForSpot(spot);
   updateShareButtonForSpot(spot);
@@ -3172,6 +3427,17 @@ if (viewMapBtnEl && viewListBtnEl) {
 
   viewListBtnEl.addEventListener('click', () => {
     setCurrentView('list');
+  });
+}
+
+if (forecastListViewEl) {
+  forecastListViewEl.addEventListener('click', (event) => {
+    const item = event.target.closest('.compact-forecast-item');
+    if (!item) return;
+
+    const offset = Number(item.dataset.slotOffset);
+    if (!Number.isFinite(offset)) return;
+    renderLiveOffset(offset);
   });
 }
 

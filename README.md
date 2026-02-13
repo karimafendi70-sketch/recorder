@@ -16,6 +16,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Meerdaags dagoverzicht: compacte 3–4 daagse cards met dagrange (min/max hoogte) en dominante conditie-tag.
 - Dagselectie + dagdelen: wissel snel tussen dagen; tijdvakken en lijstweergave tonen dan alleen slots binnen de gekozen dag (ochtend/middag/avond).
 - Compacte lijstweergave: naast kaartweergave is er een lijstmodus die per tijdvak snel hoogte/periode, wind en condition-tag toont.
+- Rijk slotdetailpaneel: extra laag onder de slots/lijst met uitgebreide swell-, wind- en conditie-uitleg voor het geselecteerde tijdvak.
 - Installable PWA-basis: manifest + service worker voor app-shell, zodat moderne browsers een install-optie tonen.
 - Wereldwijde spots + regiozoekervaring: spots uit Europa, Afrika/Atlantisch, Amerika's en Azië/Oceanië met regio-groepering in suggesties.
 - Meertaligheid + filters + persoonlijke state: NL/EN/FR/ES/PT/DE, niveau-filter (Alle niveaus/Beginner/Gevorderd), favorieten, last-used spot en reset-weergave.
@@ -57,6 +58,7 @@ Probeer FreeSurfCast op [GitHub Pages](https://karimafendi70-sketch.github.io/re
 - Extra filter-state en view-state sturen zowel tijdvakknoppen als compacte lijstrendering op basis van dezelfde live snapshots/helpers.
 - Helpers groeperen live slots per dag en dagdeel (`morning`/`afternoon`/`evening`) en voeden daaruit zowel day-overview als tijdvakweergave.
 - Dagstate (`currentDayKey`) bepaalt de actieve dag zonder kaart/favorieten/deeplink-flow te breken.
+- Centrale slotselectie (`currentSlotKey`) wordt gedeeld tussen tijdvakknoppen, lijstitems en detailpaneel.
 - Manifest (`manifest.json`) en service worker (`service-worker.js`) verzorgen lichte shell-caching van statische assets (geen zware offline forecast-cache).
 - translations met t(...) en setLanguage(...) verzorgen alle meertalige UI-labels.
 - localStorage bewaart taal, favorieten en last-used spot.
