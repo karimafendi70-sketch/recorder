@@ -10,17 +10,17 @@
     <div class="app">
       <header class="header">
         <h1>FreeSurfCast</h1>
-        <p class="subtitle">Eenvoudige en gratis surf forecast starter</p>
+        <p class="subtitle">Gratis surf-forecast met snelle, heldere uitleg.</p>
       </header>
 
       <section class="search-section" aria-label="Zoek surfspot">
-        <label class="search-label" for="spotSearch">Zoek surfspot</label>
+        <label class="search-label" for="spotSearch">Zoek een surfspot</label>
         <div class="search-row">
           <input
             id="spotSearch"
             class="search-input"
             type="search"
-            placeholder="Bijv. Scheveningen"
+            placeholder="Bijv. Scheveningen of Portugal"
             autocomplete="off"
           />
           <button class="search-button" type="button">Zoeken</button>
@@ -36,7 +36,7 @@
         </div>
         <p id="forecastMeta" class="forecast-meta">Bron: mock-data</p>
         <p id="surfRating" class="surf-rating rating-neutral">Surf rating: n.v.t.</p>
-        <p id="ratingExplanation" class="rating-explanation">Waarom deze rating? Geen nadere uitleg beschikbaar.</p>
+        <p id="ratingExplanation" class="rating-explanation">Waarom deze score? Nog geen extra uitleg beschikbaar.</p>
         <div class="rating-legend" aria-label="Uitleg surf rating en windtermen">
           <button
             id="legendToggleBtn"
@@ -48,13 +48,13 @@
             Toon uitleg
           </button>
           <div id="ratingLegendBody" class="rating-legend-body" hidden>
-            <p class="rating-legend-title">Legenda</p>
+            <p class="rating-legend-title">Korte legenda</p>
             <ul class="rating-legend-list">
-              <li><span class="legend-dot legend-dot-good" aria-hidden="true"></span>Groen (4–5/5): goede surf, vaak prima golfhoogte en periode, wind relatief gunstig.</li>
-              <li><span class="legend-dot legend-dot-ok" aria-hidden="true"></span>Oranje (3/5): oké surf, surfbaar maar niet top (bijv. matige golfhoogte of wat meer wind).</li>
-              <li><span class="legend-dot legend-dot-bad" aria-hidden="true"></span>Rood (1–2/5): minder goede surf (te klein, te groot of te veel/onhandige wind).</li>
-              <li><strong>Onshore wind:</strong> wind blaast richting het strand, maakt golven vaak rommelig.</li>
-              <li><strong>Offshore wind:</strong> wind blaast van land naar zee, kan golven vaak cleaner maken.</li>
+              <li><span class="legend-dot legend-dot-good" aria-hidden="true"></span>Groen (4–5/5): vaak goede surf met gunstige condities.</li>
+              <li><span class="legend-dot legend-dot-ok" aria-hidden="true"></span>Oranje (3/5): surfbaar, maar niet op z'n best.</li>
+              <li><span class="legend-dot legend-dot-bad" aria-hidden="true"></span>Rood (1–2/5): meestal lastige of mindere condities.</li>
+              <li><strong>Onshore:</strong> wind richting strand, golven worden vaak rommeliger.</li>
+              <li><strong>Offshore:</strong> wind van land naar zee, golven worden vaak cleaner.</li>
             </ul>
           </div>
         </div>
@@ -72,7 +72,7 @@
         </ul>
 
         <section class="favorites-block" aria-label="Favoriete surfspots">
-          <h3>Favorieten</h3>
+          <h3>Jouw favorieten</h3>
           <ul id="favoritesList" class="favorites-list"></ul>
         </section>
       </main>

@@ -172,13 +172,13 @@ function renderSurfRating(conditions) {
   if (!rating?.score) {
     surfRatingEl.textContent = 'Surf rating: n.v.t.';
     surfRatingEl.classList.add('rating-neutral');
-    ratingExplanationEl.textContent = 'Waarom deze rating? Geen nadere uitleg beschikbaar.';
+    ratingExplanationEl.textContent = 'Waarom deze score? Nog geen extra uitleg beschikbaar.';
     return;
   }
 
   surfRatingEl.textContent = `Surf rating: ${rating.stars} ${rating.score}/5 – ${rating.label}`;
   surfRatingEl.classList.add(rating.ratingClass);
-  ratingExplanationEl.textContent = `Waarom deze rating? ${rating.explanation}`;
+  ratingExplanationEl.textContent = `Waarom deze score? ${rating.explanation}`;
 }
 
 function renderSpot(spot, ratingConditions = spot) {
@@ -740,7 +740,7 @@ function buildSuccessMessage(spot, method, matchBy) {
   const via = matchBy === 'land' ? 'land' : 'naam';
 
   if (method === 'fuzzy') {
-    return `Geen exacte match, dichtstbij via ${via}: ${spot.naam} (${spot.land})`;
+    return `Geen exacte match, beste resultaat via ${via}: ${spot.naam} (${spot.land})`;
   }
 
   return `Forecast geladen via ${via}: ${spot.naam} (${spot.land})`;
@@ -793,7 +793,7 @@ function handleInputSuggestions() {
 
   if (!normalizedQuery) {
     hideSuggestions();
-    setSearchMessage('Typ een spotnaam en druk op Enter of Zoeken.', '');
+    setSearchMessage('Typ een spotnaam en druk op Enter of klik op Zoeken.', '');
     return;
   }
 
@@ -801,7 +801,7 @@ function handleInputSuggestions() {
   renderSuggestions(matches);
 
   if (!matches.length) {
-    setSearchMessage('Geen directe substring-match. Druk op Enter voor typo-zoeking.', '');
+    setSearchMessage('Geen directe match. Druk op Enter voor een slimme match.', '');
   } else {
     setSearchMessage(`${matches.length} suggestie(s) gevonden.`, '');
   }
@@ -902,5 +902,5 @@ renderFavoritesList();
 updateFavoriteToggleForSpot(null);
 
 renderSpot(SURF_SPOTS[0], SURF_SPOTS[0]);
-setSearchMessage('Typ een spotnaam en druk op Enter of Zoeken.', '');
+setSearchMessage('Typ een spotnaam en druk op Enter of klik op Zoeken.', '');
 updateForecastForSpot(SURF_SPOTS[0]);

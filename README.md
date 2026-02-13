@@ -5,6 +5,10 @@
 FreeSurfCast is een simpele, gratis surf-forecast webapp met focus op UX, geïnspireerd op surf-forecast.com.  
 De app draait volledig in de browser op plain HTML/CSS/JavaScript en gebruikt gratis Open-Meteo data.
 
+## Live demo
+
+Probeer FreeSurfCast direct op [GitHub Pages](https://karimafendi70-sketch.github.io/recorder/).
+
 ## Belangrijkste features
 
 - Multi-spot surf forecast via Open-Meteo (marine + weer endpoints), zonder API-key.
@@ -66,6 +70,7 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 - **v0.1.1 – Patch**
 	- Inklapbare legend toegevoegd onder de surf-rating met toggle **Toon uitleg / Verberg uitleg**.
 	- Forecastkaart blijft compacter op kleinere schermen, terwijl alle uitleg beschikbaar blijft.
+	- Kleine mobile polish: compactere spacing en kortere NL-teksten voor snellere scanbaarheid.
 
 - **v0.1 – MVP**
 	- Eerste werkende versie met:
