@@ -376,6 +376,32 @@ body {
   outline-offset: 2px;
 }
 
+.view-actions {
+  margin: -0.2rem 0 0.65rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reset-view-btn {
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.34rem 0.68rem;
+  cursor: pointer;
+}
+
+.reset-view-btn:hover {
+  background: #e2e8f0;
+}
+
+.reset-view-btn:focus-visible {
+  outline: 2px solid #0284c7;
+  outline-offset: 2px;
+}
+
 .rating-explanation {
   margin: -0.35rem 0 0.9rem;
   padding: 0.55rem 0.7rem;
@@ -592,6 +618,53 @@ body {
   color: #0f172a;
 }
 
+.swell-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+.swell-bar {
+  width: 3rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.swell-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.swell-bar.swell-low .swell-bar-fill {
+  width: 30%;
+  background: #7dd3fc;
+}
+
+.swell-bar.swell-med .swell-bar-fill {
+  width: 52%;
+  background: #38bdf8;
+}
+
+.swell-bar.swell-high .swell-bar-fill {
+  width: 76%;
+  background: #0ea5e9;
+}
+
+.swell-bar.swell-very-high .swell-bar-fill {
+  width: 96%;
+  background: #0369a1;
+}
+
+.swell-text {
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+}
+
 .favorites-block {
   margin-top: 1rem;
   padding-top: 0.85rem;
@@ -738,6 +811,15 @@ body {
     text-overflow: ellipsis;
   }
 
+  .view-actions {
+    margin-bottom: 0.58rem;
+  }
+
+  .reset-view-btn {
+    font-size: 0.76rem;
+    padding: 0.3rem 0.62rem;
+  }
+
   .control-group {
     gap: 0.34rem;
     padding: 0.28rem 0.36rem;
@@ -804,6 +886,19 @@ body {
 
   .wind-text {
     font-size: 0.86rem;
+  }
+
+  .swell-info {
+    gap: 0.34rem;
+  }
+
+  .swell-bar {
+    width: 2.6rem;
+    height: 0.46rem;
+  }
+
+  .swell-text {
+    font-size: 0.85rem;
   }
 
   .favorites-block {
@@ -892,5 +987,9 @@ body {
 
   .wind-text {
     font-size: 0.82rem;
+  }
+
+  .swell-text {
+    font-size: 0.8rem;
   }
 }

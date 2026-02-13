@@ -71,6 +71,11 @@
           </select>
           <span id="levelCurrentBadge" class="control-current" aria-hidden="true">Alle niveaus</span>
         </div>
+        <div class="view-actions">
+          <button id="resetViewButton" class="reset-view-btn" type="button" aria-label="Reset weergave">
+            Reset weergave
+          </button>
+        </div>
         <p id="ratingExplanation" class="rating-explanation">Waarom deze score? Nog geen extra uitleg beschikbaar.</p>
         <div id="ratingLegend" class="rating-legend" aria-label="Uitleg surf rating en windtermen">
           <button
@@ -102,6 +107,15 @@
         <ul class="forecast-list">
           <li><span id="forecastLabelWaveHeight">Golfhoogte</span><strong id="waveHeight">1.2 m</strong></li>
           <li><span id="forecastLabelWavePeriod">Periode</span><strong id="wavePeriod">8 s</strong></li>
+          <li>
+            <span id="forecastLabelSwell">Golven</span>
+            <strong id="swellInfo" class="swell-info">
+              <span id="swellBar" class="swell-bar swell-low" aria-hidden="true">
+                <span class="swell-bar-fill"></span>
+              </span>
+              <span id="swellText" class="swell-text">1.2 m · 8 s</span>
+            </strong>
+          </li>
           <li>
             <span id="forecastLabelWind">Wind</span>
             <strong id="wind" class="wind-info">

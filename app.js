@@ -4,6 +4,9 @@ const wavePeriodEl = document.getElementById('wavePeriod');
 const windEl = document.getElementById('wind');
 const windIconEl = document.getElementById('windIcon');
 const windTextEl = document.getElementById('windText');
+const swellInfoEl = document.getElementById('swellInfo');
+const swellBarEl = document.getElementById('swellBar');
+const swellTextEl = document.getElementById('swellText');
 const temperatureEl = document.getElementById('temperature');
 const forecastMetaEl = document.getElementById('forecastMeta');
 const surfRatingEl = document.getElementById('surfRating');
@@ -35,6 +38,7 @@ const legendItemOnshoreEl = document.getElementById('legendItemOnshore');
 const legendItemOffshoreEl = document.getElementById('legendItemOffshore');
 const forecastLabelWaveHeightEl = document.getElementById('forecastLabelWaveHeight');
 const forecastLabelWavePeriodEl = document.getElementById('forecastLabelWavePeriod');
+const forecastLabelSwellEl = document.getElementById('forecastLabelSwell');
 const forecastLabelWindEl = document.getElementById('forecastLabelWind');
 const forecastLabelTemperatureEl = document.getElementById('forecastLabelTemperature');
 const favoritesHeadingEl = document.getElementById('favoritesHeading');
@@ -46,6 +50,7 @@ const infoLine2El = document.getElementById('infoLine2');
 const infoLine3El = document.getElementById('infoLine3');
 const infoLine4El = document.getElementById('infoLine4');
 const levelSelectEl = document.getElementById('levelSelect');
+const resetViewButtonEl = document.getElementById('resetViewButton');
 const legendToggleBtnEl = document.getElementById('legendToggleBtn');
 const ratingLegendBodyEl = document.getElementById('ratingLegendBody');
 const spotMapEl = document.getElementById('spotMap');
@@ -66,6 +71,7 @@ const MIN_ALLOWED_DISTANCE = 1;
 const NAME_MATCH_WEIGHT = 1;
 const LAND_MATCH_WEIGHT = 1;
 const TIME_SLOT_OFFSETS = [0, 3, 6, 9];
+const DEFAULT_TIME_OFFSET = 0;
 const FORECAST_CACHE_TTL_MS = 5 * 60 * 1000;
 const FAVORITES_STORAGE_KEY = 'freeSurfCastFavorites';
 const LAST_SPOT_STORAGE_KEY = 'freesurfcastLastSpotId';
@@ -248,6 +254,45 @@ const windTranslations = {
   de: { windLabel: 'Wind' }
 };
 
+const swellTranslations = {
+  nl: {
+    swellLabel: 'Golven',
+    resetViewLabel: 'Reset weergave',
+    resetViewAria: 'Reset spot, tijdvak, niveau en kaartweergave',
+    resetViewDone: 'Weergave teruggezet naar basisstand.'
+  },
+  en: {
+    swellLabel: 'Swell',
+    resetViewLabel: 'Reset view',
+    resetViewAria: 'Reset spot, time slot, level, and map view',
+    resetViewDone: 'View reset to default state.'
+  },
+  fr: {
+    swellLabel: 'Vagues',
+    resetViewLabel: 'Réinitialiser la vue',
+    resetViewAria: 'Réinitialiser spot, créneau, niveau et carte',
+    resetViewDone: 'Vue réinitialisée à l\'état par défaut.'
+  },
+  es: {
+    swellLabel: 'Oleaje',
+    resetViewLabel: 'Restablecer vista',
+    resetViewAria: 'Restablecer spot, franja, nivel y mapa',
+    resetViewDone: 'Vista restablecida al estado base.'
+  },
+  pt: {
+    swellLabel: 'Ondulação',
+    resetViewLabel: 'Repor vista',
+    resetViewAria: 'Repor pico, horário, nível e mapa',
+    resetViewDone: 'Vista reposta ao estado base.'
+  },
+  de: {
+    swellLabel: 'Wellen',
+    resetViewLabel: 'Ansicht zurücksetzen',
+    resetViewAria: 'Spot, Zeitfenster, Niveau und Karte zurücksetzen',
+    resetViewDone: 'Ansicht auf Standard zurückgesetzt.'
+  }
+};
+
 Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
@@ -255,6 +300,12 @@ Object.entries(infoTranslations).forEach(([lang, extraKeys]) => {
 });
 
 Object.entries(windTranslations).forEach(([lang, extraKeys]) => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], extraKeys);
+  }
+});
+
+Object.entries(swellTranslations).forEach(([lang, extraKeys]) => {
   if (translations[lang]) {
     Object.assign(translations[lang], extraKeys);
   }
@@ -350,6 +401,33 @@ function formatWindDirection(directionOrDegrees) {
 function formatWindSpeed(speedValue) {
   if (!Number.isFinite(speedValue)) return '-';
   return `${Math.round(speedValue)} kn`;
+}
+
+function getSwellClassName(waveHeight) {
+  if (!Number.isFinite(waveHeight)) return 'swell-low';
+  if (waveHeight < 0.8) return 'swell-low';
+  if (waveHeight < 1.6) return 'swell-med';
+  if (waveHeight < 2.6) return 'swell-high';
+  return 'swell-very-high';
+}
+
+function formatSwellText(spot) {
+  const waveHeight = Number.isFinite(spot?.golfHoogteMeter)
+    ? `${spot.golfHoogteMeter.toFixed(1)} m`
+    : '-';
+  const wavePeriod = Number.isFinite(spot?.golfPeriodeSeconden)
+    ? `${Math.round(spot.golfPeriodeSeconden)} s`
+    : '-';
+  return `${waveHeight} · ${wavePeriod}`;
+}
+
+function renderSwellInfo(spot) {
+  if (!swellBarEl || !swellTextEl) return;
+
+  const swellClass = getSwellClassName(spot?.golfHoogteMeter);
+  swellBarEl.classList.remove('swell-low', 'swell-med', 'swell-high', 'swell-very-high');
+  swellBarEl.classList.add(swellClass);
+  swellTextEl.textContent = formatSwellText(spot);
 }
 
 function getWindDegreesForSpot(spot) {
@@ -575,6 +653,7 @@ function renderSpot(spot, ratingConditions = spot) {
   spotNameEl.textContent = `${spot.naam} (${spot.land})`;
   waveHeightEl.textContent = `${spot.golfHoogteMeter.toFixed(1)} m`;
   wavePeriodEl.textContent = `${spot.golfPeriodeSeconden} s`;
+  renderSwellInfo(spot);
   renderWindInfo(spot);
   temperatureEl.textContent = `${spot.watertemperatuurC} °C`;
   renderSurfRating(ratingConditions);
@@ -631,8 +710,13 @@ function setLanguage(lang, persist = true) {
   if (timeSlot9hEl) timeSlot9hEl.textContent = t('timePlus9h');
   if (forecastLabelWaveHeightEl) forecastLabelWaveHeightEl.textContent = t('forecastWaveHeight');
   if (forecastLabelWavePeriodEl) forecastLabelWavePeriodEl.textContent = t('forecastWavePeriod');
+  if (forecastLabelSwellEl) forecastLabelSwellEl.textContent = t('swellLabel');
   if (forecastLabelWindEl) forecastLabelWindEl.textContent = t('windLabel');
   if (forecastLabelTemperatureEl) forecastLabelTemperatureEl.textContent = t('forecastTemperature');
+  if (resetViewButtonEl) {
+    resetViewButtonEl.textContent = t('resetViewLabel');
+    resetViewButtonEl.setAttribute('aria-label', t('resetViewAria'));
+  }
   if (favoritesHeadingEl) favoritesHeadingEl.textContent = t('favoritesHeading');
   if (favoritesSectionEl) favoritesSectionEl.setAttribute('aria-label', t('favoritesHeading'));
   if (infoSectionEl) infoSectionEl.setAttribute('aria-label', t('infoSectionAria'));
@@ -705,6 +789,19 @@ function centerMapOnSpot(spot, options = {}) {
   }
 
   spotMapInstance.setView(targetPosition, zoomLevel, {
+    animate: false
+  });
+}
+
+function resetMapViewToDefault() {
+  if (!spotMapInstance) return;
+
+  if (activeMapMarker) {
+    activeMapMarker.setZIndexOffset(0);
+    activeMapMarker = null;
+  }
+
+  spotMapInstance.setView([44, 2], 2, {
     animate: false
   });
 }
@@ -1092,6 +1189,14 @@ function findFirstAvailableOffset() {
   return TIME_SLOT_OFFSETS.find((offset) => Boolean(getLiveSnapshotForOffset(offset)));
 }
 
+function getPreferredTimeOffset() {
+  if (getLiveSnapshotForOffset(DEFAULT_TIME_OFFSET)) {
+    return DEFAULT_TIME_OFFSET;
+  }
+
+  return findFirstAvailableOffset();
+}
+
 function renderLiveOffset(offsetHours) {
   const snapshot = getLiveSnapshotForOffset(offsetHours);
   if (!snapshot || !activeLiveCache) return false;
@@ -1133,10 +1238,10 @@ async function updateForecastForSpot(spot) {
   const cacheEntry = forecastCache.get(spotKey);
   if (isCacheEntryFresh(cacheEntry)) {
     activeLiveCache = cacheEntry.data;
-    activeTimeOffset = TIME_SLOT_OFFSETS[0];
+    activeTimeOffset = DEFAULT_TIME_OFFSET;
     updateTimeSelectorButtons();
 
-    const firstAvailableOffset = findFirstAvailableOffset();
+    const firstAvailableOffset = getPreferredTimeOffset();
     if (firstAvailableOffset !== undefined) {
       renderLiveOffset(firstAvailableOffset);
       return;
@@ -1164,10 +1269,10 @@ async function updateForecastForSpot(spot) {
       data: liveForecast
     });
     activeLiveCache = liveForecast;
-    activeTimeOffset = TIME_SLOT_OFFSETS[0];
+    activeTimeOffset = DEFAULT_TIME_OFFSET;
     updateTimeSelectorButtons();
 
-    const firstAvailableOffset = findFirstAvailableOffset();
+    const firstAvailableOffset = getPreferredTimeOffset();
     if (firstAvailableOffset === undefined) {
       throw new Error('Geen bruikbare tijdvakken beschikbaar');
     }
@@ -1376,8 +1481,45 @@ function selectSpot(spot, method, query, options = {}) {
 
   searchInputEl.value = stableSpot.naam;
   hideSuggestions();
-  saveLastSpotToStorage(stableSpot);
+  if (options.persistLastSpot !== false) {
+    saveLastSpotToStorage(stableSpot);
+  }
   return true;
+}
+
+function resetView() {
+  liveRequestId += 1;
+  activeTimeOffset = DEFAULT_TIME_OFFSET;
+  setActiveTimeSlotButton(DEFAULT_TIME_OFFSET);
+
+  if (levelSelectEl) {
+    levelSelectEl.value = 'all';
+  }
+  setCurrentLevel('all');
+  updateControlBadges();
+
+  try {
+    localStorage.removeItem(LAST_SPOT_STORAGE_KEY);
+  } catch {
+    // storage kan geblokkeerd zijn; reset gaat verder
+  }
+
+  const defaultSpot = SURF_SPOTS[0] ?? null;
+  if (defaultSpot) {
+    selectSpot(defaultSpot, 'restore', defaultSpot.naam, {
+      silent: true,
+      centerMap: true,
+      animateMap: false,
+      mapZoom: 7,
+      persistLastSpot: false
+    });
+  } else {
+    resetMapViewToDefault();
+    clearActiveLiveCache();
+    setForecastMeta(t('forecastMetaMock'));
+  }
+
+  setSearchMessage(t('resetViewDone'), '');
 }
 
 function handleSearch() {
@@ -1534,6 +1676,12 @@ if (languageSelectEl) {
     if (!searchInputEl.value.trim()) {
       setSearchMessage(t('searchHintDefault'), '');
     }
+  });
+}
+
+if (resetViewButtonEl) {
+  resetViewButtonEl.addEventListener('click', () => {
+    resetView();
   });
 }
 

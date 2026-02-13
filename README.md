@@ -20,6 +20,8 @@ Probeer FreeSurfCast direct op [GitHub Pages](https://karimafendi70-sketch.githu
 	- `Nu`, `+3u`, `+6u`, `+9u`,
 	- hergebruikt dezelfde opgehaalde API-response (geen extra calls per klik),
 	- caching per spot met TTL (standaard 10 minuten).
+- Compacte swell-/golfvisualisatie per actief tijdvak (hoogte + periode + eenvoudige intensiteitsbalk).
+- Snelle actie **Reset weergave**: zet spot, tijdvak, niveau en kaartfocus terug naar basisstand, terwijl taalkeuze behouden blijft.
 - Surf-rating:
 	- 1–5 sterren,
 	- kleurcodes (rood/oranje/groen),
@@ -70,6 +72,10 @@ Alles draait client-side en werkt direct zodra de pagina opent.
 - Deployen naar GitHub Pages of Vercel.
 
 ## Changelog
+
+- **v0.1.6 – swell + reset update**
+	- Simpele swell-/golfvisualisatie toegevoegd in de forecast (tekst + compacte intensiteitsbalk per actief tijdvak).
+	- Nieuwe **Reset weergave**-actie toegevoegd die spot, tijdvak, niveau-filter en kaartfocus terugzet, zonder taal te wijzigen.
 
 - **v0.1.5 – info/disclaimer update**
 	- Compacte meertalige sectie toegevoegd: **Over FreeSurfCast / Help / Disclaimer** met korte veiligheids- en gebruikscontext.
