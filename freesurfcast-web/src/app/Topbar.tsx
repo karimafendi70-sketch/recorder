@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./AuthProvider";
-import { useLanguage, type TranslationKey } from "./LanguageProvider";
+import { useLanguage, SUPPORTED_LANGS, LANG_LABELS, type Lang, type TranslationKey } from "./LanguageProvider";
 
 const NAV_ITEMS: { href: string; labelKey: TranslationKey }[] = [
   { href: "/", labelKey: "nav.home" },
@@ -44,14 +44,18 @@ export function Topbar() {
         </nav>
 
         <div className="auth-indicator">
-          <button
-            type="button"
-            className="lang-toggle"
-            onClick={() => setLang(lang === "en" ? "nl" : "en")}
-            aria-label="Switch language"
+          <select
+            className="lang-select"
+            value={lang}
+            onChange={(e) => setLang(e.target.value as Lang)}
+            aria-label="Select language"
           >
-            {lang === "en" ? "🇳🇱 NL" : "🇬🇧 EN"}
-          </button>
+            {SUPPORTED_LANGS.map((l) => (
+              <option key={l} value={l}>
+                {LANG_LABELS[l]}
+              </option>
+            ))}
+          </select>
 
           {!user ? (
             <Link href="/login" className="btn btn-ghost">

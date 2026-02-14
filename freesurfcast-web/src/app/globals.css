@@ -178,24 +178,25 @@ h2 {
   flex-shrink: 0;
 }
 
-.lang-toggle {
+.lang-select {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.55rem;
+  padding: 0.25rem 0.5rem;
   font-size: 0.78rem;
   font-weight: 700;
   border: 1.5px solid var(--panel-border);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   background: var(--panel);
   color: var(--foreground);
   cursor: pointer;
   transition: border-color var(--transition), color var(--transition);
 }
 
-.lang-toggle:hover {
+.lang-select:hover,
+.lang-select:focus-visible {
   border-color: var(--accent);
   color: var(--accent);
+  outline: none;
 }
 
 .user-pill {
