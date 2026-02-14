@@ -224,6 +224,13 @@ const dict = {
     fr: "Ouvrir un ticket GitHub →",
     es: "Abrir issue en GitHub →",
   },
+  "home.moroccoHint": {
+    en: "Try it with Moroccan spots like Anchor Point, Imsouane Bay or Safi — see how the score follows your profile.",
+    nl: "Probeer het met Marokkaanse spots zoals Anchor Point, Imsouane Bay of Safi — zie hoe de score met je profiel meebeweegt.",
+    de: "Probiere es mit marokkanischen Spots wie Anchor Point, Imsouane Bay oder Safi — sieh, wie der Score deinem Profil folgt.",
+    fr: "Essayez avec des spots marocains comme Anchor Point, Imsouane Bay ou Safi — voyez comment le score suit votre profil.",
+    es: "Pruébalo con spots marroquíes como Anchor Point, Imsouane Bay o Safi — mira cómo la puntuación sigue tu perfil.",
+  },
 
   // ── Forecast ──────────────────────────────
   "forecast.title": {
@@ -467,6 +474,13 @@ const dict = {
     de: "Keine Spots passen zu diesen Filtern — versuche, einen zu entfernen.",
     fr: "Aucun spot ne correspond à ces filtres — essayez d'en retirer un.",
     es: "Ningún spot coincide con estos filtros — intenta quitar uno.",
+  },
+  "browser.preset.morocco": {
+    en: "Morocco only",
+    nl: "Alleen Marokko",
+    de: "Nur Marokko",
+    fr: "Maroc seulement",
+    es: "Solo Marruecos",
   },
   "filter.beginner": {
     en: "Beginner",

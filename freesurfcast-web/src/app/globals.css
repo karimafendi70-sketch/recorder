@@ -411,6 +411,14 @@ h2 {
   flex-shrink: 0;
 }
 
+.morocco-hint {
+  margin-top: 0.65rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+  font-style: italic;
+}
+
 /* ── Lead paragraph (reusable) ───────────────── */
 
 .page-lead {

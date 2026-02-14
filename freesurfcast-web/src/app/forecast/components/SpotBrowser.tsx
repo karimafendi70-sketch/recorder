@@ -12,6 +12,7 @@
 
 import { useState, useMemo } from "react";
 import {
+  SPOT_CATALOG,
   getCountries,
   filterSpots,
   getDifficultyTags,
@@ -52,11 +53,14 @@ export function SpotBrowser({ activeSpotId, scoreBySpotId, onSelect }: SpotBrows
   const countries = useMemo(() => getCountries(), []);
   const difficulties = useMemo(() => getDifficultyTags(), []);
   const spotTypes = useMemo(() => getSpotTypes(), []);
+  const hasMorocco = useMemo(() => SPOT_CATALOG.some((s) => s.country === "Morocco"), []);
 
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyTag | null>(null);
   const [selectedSpotType, setSelectedSpotType] = useState<SpotType | null>(null);
   const [expanded, setExpanded] = useState(false);
+
+  const moroccoActive = selectedCountry === "Morocco" && !selectedDifficulty && !selectedSpotType;
 
   const filteredSpots = useMemo(() => {
     if (!selectedCountry && !selectedDifficulty && !selectedSpotType) return [];
@@ -74,6 +78,16 @@ export function SpotBrowser({ activeSpotId, scoreBySpotId, onSelect }: SpotBrows
 
   function toggleCountry(c: string) {
     setSelectedCountry((prev) => (prev === c ? null : c));
+  }
+
+  function activateMorocco() {
+    if (moroccoActive) {
+      setSelectedCountry(null);
+    } else {
+      setSelectedCountry("Morocco");
+      setSelectedDifficulty(null);
+      setSelectedSpotType(null);
+    }
   }
 
   function toggleDifficulty(d: DifficultyTag) {
@@ -98,6 +112,19 @@ export function SpotBrowser({ activeSpotId, scoreBySpotId, onSelect }: SpotBrows
 
       {expanded && (
         <div className={styles.browserPanel}>
+          {/* Morocco preset */}
+          {hasMorocco && (
+            <div className={styles.browserFilterGroup}>
+              <button
+                type="button"
+                className={`${styles.browserChip} ${styles.presetChip} ${moroccoActive ? styles.browserChipActive : ""}`}
+                onClick={activateMorocco}
+              >
+                🇲🇦 {t("browser.preset.morocco")}
+              </button>
+            </div>
+          )}
+
           {/* Country pills */}
           <div className={styles.browserFilterGroup}>
             <span className={styles.browserFilterLabel}>{t("browse.country")}</span>

@@ -55,6 +55,7 @@ export default function Home() {
             <li><span className="step-icon">⚙️</span> {t("home.step2")}</li>
             <li><span className="step-icon">📊</span> {t("home.step3")}</li>
           </ol>
+          <p className="morocco-hint">{t("home.moroccoHint")}</p>
         </div>
 
         <div className="about-ideas">

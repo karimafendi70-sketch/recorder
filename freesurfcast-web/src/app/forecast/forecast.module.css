@@ -840,6 +840,11 @@
   border-color: #11606a;
 }
 
+.presetChip {
+  border-style: dashed;
+  font-weight: 600;
+}
+
 .browserResults {
   display: grid;
   gap: 0.35rem;
