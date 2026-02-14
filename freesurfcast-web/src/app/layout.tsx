@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "./AuthProvider";
+import { FavoritesProvider } from "./FavoritesProvider";
+import { LanguageProvider } from "./LanguageProvider";
 import { PreferencesProvider } from "./PreferencesProvider";
 import { Topbar } from "./Topbar";
 import "./globals.css";
@@ -32,14 +34,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AuthProvider>
-          <PreferencesProvider>
-            <Topbar />
-            <main className="app-shell">
-              <div className="app-container">{children}</div>
-            </main>
-          </PreferencesProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <PreferencesProvider>
+              <FavoritesProvider>
+                <Topbar />
+                <main className="app-shell">
+                  <div className="app-container">{children}</div>
+                </main>
+              </FavoritesProvider>
+            </PreferencesProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

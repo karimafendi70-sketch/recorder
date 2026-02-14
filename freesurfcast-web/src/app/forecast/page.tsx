@@ -12,19 +12,25 @@ import {
 import { buildTimelineDataForDay } from "@/lib/timeline";
 import { ProtectedRoute } from "../ProtectedRoute";
 import { usePreferences } from "../PreferencesProvider";
+import { useFavorites } from "../FavoritesProvider";
+import { useLanguage } from "../LanguageProvider";
 import { DaypartOverview } from "./components/DaypartOverview";
 import { ForecastHeader } from "./components/ForecastHeader";
-import { SpotSelector } from "./components/SpotSelector";
+import { SpotSearchBar } from "./components/SpotSearchBar";
 import { SlotCards } from "./components/SlotCards";
+import { ScoreExplainer } from "./components/ScoreExplainer";
 import { createCatalogSpots, type DayPart, type ForecastSlot } from "./mockData";
 import {
   buildQualityOptions,
   buildSlotKey,
   getUiScoreClass,
+  getWindRelativeToCoast,
 } from "./scoringHelpers";
 
 export default function ForecastPage() {
   const { preferences: prefs, isUsingDefaults } = usePreferences();
+  const { addRecent } = useFavorites();
+  const { t } = useLanguage();
   const dayKey = "today";
   const dayLabel = useMemo(
     () =>
@@ -63,7 +69,15 @@ export default function ForecastPage() {
 
   const defaultSpotId = spotRankings[0]?.spotId ?? spots[0]?.id ?? "";
 
-  const [activeSpotId, setActiveSpotId] = useState(defaultSpotId);
+  const [activeSpotId, setActiveSpotIdRaw] = useState(defaultSpotId);
+
+  const handleSpotChange = useCallback(
+    (spotId: string) => {
+      setActiveSpotIdRaw(spotId);
+      addRecent(spotId);
+    },
+    [addRecent]
+  );
 
   const resolvedSpotId = useMemo(
     () => (spots.some((spot) => spot.id === activeSpotId) ? activeSpotId : defaultSpotId),
@@ -123,53 +137,83 @@ export default function ForecastPage() {
     [dayKey, activeSpot, qualityForSlot]
   );
 
-  const overviewData = useMemo(
-    () => {
-      const daypartOrder: DayPart[] = ["morning", "afternoon", "evening"];
-      return daypartOrder.map((part) => {
-        const cell = heatmapRows[0]?.scoresByDayPart[part] ?? null;
-        const relatedSlot = activeSpot.slots.find((slot) => slot.id === cell?.slotKey);
-        const score = cell?.score ?? null;
+  const overviewData = useMemo(() => {
+    const daypartOrder: DayPart[] = ["morning", "afternoon", "evening"];
+    return daypartOrder.map((part) => {
+      const cell = heatmapRows[0]?.scoresByDayPart[part] ?? null;
+      const relatedSlot = activeSpot.slots.find((slot) => slot.id === cell?.slotKey);
+      const score = cell?.score ?? null;
 
-        return {
-          key: part,
-          label: part,
-          timeLabel: relatedSlot?.timeLabel ?? "--",
-          score,
-          scoreClass: score !== null ? getUiScoreClass(score) : "low",
-        };
-      });
-    },
-    [heatmapRows, activeSpot]
-  );
+      return {
+        key: part,
+        label: part,
+        timeLabel: relatedSlot?.timeLabel ?? "--",
+        score,
+        scoreClass: score !== null ? getUiScoreClass(score) : "low",
+      };
+    });
+  }, [heatmapRows, activeSpot]);
+
+  /* -- Explainer data for active spot -- */
+  const explainerData = useMemo(() => {
+    const ranking = spotRankings.find((r) => r.spotId === activeSpot.id);
+    const bestSlot = ranking?.bestSlotKey
+      ? activeSpot.slots.find((s) => s.id === ranking.bestSlotKey)
+      : activeSpot.slots[0];
+    const merged = bestSlot?.mergedSpot as Record<string, unknown> | undefined;
+    const coastDeg = merged?.coastOrientationDeg as number | undefined;
+    const windDeg = merged?.windDirectionDeg as number | undefined;
+    const windLabel =
+      coastDeg != null && windDeg != null
+        ? getWindRelativeToCoast(coastDeg, windDeg)
+        : undefined;
+
+    return {
+      score: ranking?.score ?? 0,
+      scoreClass: getUiScoreClass(ranking?.score ?? 0),
+      reasons: ranking?.reasons ?? [],
+      waveHeight: merged?.golfHoogteMeter as number | undefined,
+      wavePeriod: merged?.golfPeriodeSeconden as number | undefined,
+      windDirection: windLabel,
+    };
+  }, [spotRankings, activeSpot]);
 
   return (
     <ProtectedRoute>
       <section className="stack-lg">
         {isUsingDefaults && (
           <div className="defaults-banner">
-            <span>🧭</span>
+            <span>{"\ud83e\udded"}</span>
             <p>
-              You&apos;re using default preferences.{" "}
-              <a href="/profile">Edit&nbsp;profile</a> to get more accurate guidance.
+              {t("forecast.defaultsBanner")}{" "}
+              <a href="/profile">{t("forecast.editProfile")}</a>
             </p>
           </div>
         )}
 
-        <SpotSelector
-          spots={spots.map((spot) => ({ id: spot.id, name: spot.name }))}
+        <SpotSearchBar
           activeSpotId={activeSpot.id}
           scoreBySpotId={scoreBySpotId}
-          onChange={setActiveSpotId}
+          onSelect={handleSpotChange}
         />
 
         <ForecastHeader
-          title="Today’s forecast"
+          title={t("forecast.title")}
           dayLabel={dayLabel}
           activeSpot={activeSpot.name}
           skillLevel={prefs.skillLevel}
-          preferredRange={`${prefs.preferredMinHeight}m – ${prefs.preferredMaxHeight}m`}
-          cleanPreference={prefs.likesClean ? "Prefers clean" : "Mixed ok"}
+          preferredRange={`${prefs.preferredMinHeight}m \u2013 ${prefs.preferredMaxHeight}m`}
+          cleanPreference={prefs.likesClean ? t("forecast.prefersClean") : t("forecast.mixedOk")}
+        />
+
+        <ScoreExplainer
+          spotName={activeSpot.name}
+          score={explainerData.score}
+          scoreClass={explainerData.scoreClass}
+          reasons={explainerData.reasons}
+          waveHeight={explainerData.waveHeight}
+          wavePeriod={explainerData.wavePeriod}
+          windDirection={explainerData.windDirection}
         />
 
         <SlotCards slots={slotCards} />

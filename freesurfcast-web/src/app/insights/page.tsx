@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { buildDaypartHeatmapData } from "@/lib/heatmap";
 import { buildMultiSpotOverview } from "@/lib/spots";
+import { getSpotById } from "@/lib/spots/catalog";
 import {
   getSpotDayScore,
   type SlotContext,
@@ -11,10 +12,12 @@ import {
 import { buildTimelineDataForDay } from "@/lib/timeline";
 import { ProtectedRoute } from "../ProtectedRoute";
 import { usePreferences } from "../PreferencesProvider";
+import { useLanguage } from "../LanguageProvider";
 import { createCatalogSpots, type ForecastSlot } from "../forecast/mockData";
 import {
   buildSlotKey,
   getUiScoreClass,
+  getWindRelativeToCoast,
   makeQualityForSlot,
 } from "../forecast/scoringHelpers";
 import { MultiSpotRanking } from "./components/MultiSpotRanking";
@@ -26,12 +29,13 @@ const DAY_PARTS = ["morning", "afternoon", "evening"] as const;
 
 export default function InsightsPage() {
   const { preferences: prefs, isUsingDefaults } = usePreferences();
+  const { t } = useLanguage();
   const dayKey = "today";
   const spots = useMemo(() => createCatalogSpots(dayKey), [dayKey]);
 
   const qualityForSlot = useMemo(() => makeQualityForSlot(prefs), [prefs]);
 
-  /* ── 1) Multi-spot ranking ───────────────────── */
+  /* -- 1) Multi-spot ranking -- */
   const rankings = useMemo(
     () =>
       buildMultiSpotOverview(dayKey, spots, {
@@ -60,14 +64,14 @@ export default function InsightsPage() {
           spotName: spot?.name ?? entry.spotId,
           score: entry.score,
           scoreClass: getUiScoreClass(entry.score),
-          bestSlotLabel: bestSlot ? `${bestSlot.label} (${bestSlot.timeLabel})` : "–",
+          bestSlotLabel: bestSlot ? `${bestSlot.label} (${bestSlot.timeLabel})` : "\u2013",
           reasons: (entry.reasons ?? []).slice(0, 2),
         };
       }),
     [rankings, spots]
   );
 
-  /* ── 2) Daypart heatmap ──────────────────────── */
+  /* -- 2) Daypart heatmap -- */
   const heatmapRows = useMemo(
     () =>
       buildDaypartHeatmapData(dayKey, spots, {
@@ -100,7 +104,7 @@ export default function InsightsPage() {
     [heatmapRows]
   );
 
-  /* ── 3) Timeline (best spot) ─────────────────── */
+  /* -- 3) Timeline (best spot) -- */
   const bestSpot = useMemo(
     () => spots.find((s) => s.id === rankings[0]?.spotId) ?? spots[0],
     [spots, rankings]
@@ -126,12 +130,41 @@ export default function InsightsPage() {
     () =>
       timelineRows.map((row) => ({
         time: row.time,
-        dayPart: row.dayPart ?? "–",
+        dayPart: row.dayPart ?? "\u2013",
         score: row.score,
         scoreClass: getUiScoreClass(row.score),
       })),
     [timelineRows]
   );
+
+  /* -- Best spot summary -- */
+  const bestSummary = useMemo(() => {
+    if (rankedSpots.length === 0) return null;
+    const top = rankedSpots[0];
+    const catalogSpot = getSpotById(top.spotId);
+    const forecastSpot = spots.find((s) => s.id === top.spotId);
+    const bestSlot = forecastSpot?.slots[0];
+    const merged = bestSlot?.mergedSpot as Record<string, unknown> | undefined;
+    const coastDeg = merged?.coastOrientationDeg as number | undefined;
+    const windDeg = merged?.windDirectionDeg as number | undefined;
+    const windLabel =
+      coastDeg != null && windDeg != null
+        ? getWindRelativeToCoast(coastDeg, windDeg)
+        : null;
+
+    return {
+      name: top.spotName,
+      country: catalogSpot?.country ?? "",
+      score: top.score,
+      scoreClass: top.scoreClass,
+      reasons: top.reasons,
+      waveHeight: merged?.golfHoogteMeter as number | undefined,
+      wavePeriod: merged?.golfPeriodeSeconden as number | undefined,
+      windLabel,
+      difficulty: catalogSpot?.difficultyTag ?? null,
+      notes: catalogSpot?.notes ?? null,
+    };
+  }, [rankedSpots, spots]);
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -140,33 +173,61 @@ export default function InsightsPage() {
       <section className="stack-lg">
         {isUsingDefaults && (
           <div className="defaults-banner">
-            <span>🧭</span>
+            <span>{"\ud83e\udded"}</span>
             <p>
-              You&apos;re using default preferences.{" "}
-              <a href="/profile">Edit&nbsp;profile</a> to get more accurate guidance.
+              {t("forecast.defaultsBanner")}{" "}
+              <a href="/profile">{t("forecast.editProfile")}</a>
             </p>
           </div>
         )}
 
         <header className={styles.heroCard}>
-          <p className={styles.heroEyebrow}>Insights</p>
-          <h1 className={styles.heroTitle}>Multi-spot overview</h1>
+          <p className={styles.heroEyebrow}>{t("insights.eyebrow")}</p>
+          <h1 className={styles.heroTitle}>{t("insights.title")}</h1>
           <p className={styles.heroSubtitle}>
-            Rankings, daypart heatmap and timeline — powered by your profile preferences.
+            {t("insights.subtitle")}
           </p>
         </header>
 
-        {rankedSpots.length > 0 && (
-          <div className={`${styles.bestSpotCard} ${styles[`bestSpot${capitalize(rankedSpots[0].scoreClass)}`]}`}>
-            <p className={styles.bestSpotEyebrow}>👑 Best spot right now</p>
-            <p className={styles.bestSpotName}>{rankedSpots[0].spotName}</p>
+        {bestSummary && (
+          <div className={`${styles.bestSpotCard} ${styles[`bestSpot${capitalize(bestSummary.scoreClass)}`]}`}>
+            <p className={styles.bestSpotEyebrow}>{t("insights.bestSpot")}</p>
+            <p className={styles.bestSpotName}>
+              {bestSummary.name}
+              {bestSummary.country && <span className={styles.bestSpotCountry}> \u2014 {bestSummary.country}</span>}
+            </p>
             <p className={styles.bestSpotMeta}>
-              Score: <strong>{rankedSpots[0].score.toFixed(1)}</strong>
-              {rankedSpots[0].reasons.length > 0 && (
-                <> — {rankedSpots[0].reasons.join(", ")}</>
+              {t("general.score")}: <strong>{bestSummary.score.toFixed(1)}</strong>
+              {bestSummary.reasons.length > 0 && (
+                <> \u2014 {bestSummary.reasons.join(", ")}</>
               )}
             </p>
-            <a href="/forecast" className={styles.bestSpotLink}>View forecast →</a>
+
+            {/* Mini stats */}
+            <div className={styles.bestSpotStats}>
+              {bestSummary.waveHeight != null && (
+                <span className={styles.bestSpotStat}>{"\ud83c\udf0a"} {bestSummary.waveHeight.toFixed(1)}m</span>
+              )}
+              {bestSummary.wavePeriod != null && (
+                <span className={styles.bestSpotStat}>{"\u23f1"} {bestSummary.wavePeriod}s</span>
+              )}
+              {bestSummary.windLabel && (
+                <span className={styles.bestSpotStat}>{"\ud83d\udca8"} {bestSummary.windLabel}</span>
+              )}
+              {bestSummary.difficulty && (
+                <span className={styles.bestSpotStat}>{"\ud83c\udfaf"} {bestSummary.difficulty}</span>
+              )}
+            </div>
+
+            {/* Why best text */}
+            {bestSummary.notes && (
+              <div className={styles.whyBestBlock}>
+                <p className={styles.whyBestTitle}>{t("insights.whyBest")}</p>
+                <p className={styles.whyBestText}>{bestSummary.notes}</p>
+              </div>
+            )}
+
+            <a href="/forecast" className={styles.bestSpotLink}>{t("insights.viewForecast")}</a>
           </div>
         )}
 

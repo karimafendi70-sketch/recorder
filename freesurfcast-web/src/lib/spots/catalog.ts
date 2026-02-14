@@ -6,6 +6,8 @@
 
 export type Region = "eu" | "am" | "af" | "ap";
 
+export type DifficultyTag = "beginner" | "intermediate" | "advanced" | "mixed";
+
 export interface SurfSpot {
   id: string;
   region: Region;
@@ -24,6 +26,12 @@ export interface SurfSpot {
   windDirectionDeg: number;
   /** Water temperature in °C */
   waterTempC: number;
+  /** Difficulty tag for the spot */
+  difficultyTag: DifficultyTag;
+  /** Short description / notes */
+  notes: string;
+  /** Whether this spot is featured / highlighted in the UI */
+  featured?: boolean;
 }
 
 /* ── Dutch abbreviation → degrees mapping ──── */
@@ -57,6 +65,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 14,
     windDirectionDeg: w("NO"),
     waterTempC: 17,
+    difficultyTag: "beginner",
+    notes: "Most popular Dutch beach break; consistent but cold.",
   },
   {
     id: "hossegor-fr",
@@ -71,6 +81,9 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 12,
     windDirectionDeg: w("W"),
     waterTempC: 19,
+    difficultyTag: "advanced",
+    notes: "Heavy sand-bottom barrels; hosts WSL events.",
+    featured: true,
   },
   {
     id: "ericeira-pt",
@@ -85,6 +98,9 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 11,
     windDirectionDeg: w("NW"),
     waterTempC: 18,
+    difficultyTag: "intermediate",
+    notes: "World Surfing Reserve with multiple reef and point breaks.",
+    featured: true,
   },
   {
     id: "peniche-pt",
@@ -99,6 +115,9 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 13,
     windDirectionDeg: w("NW"),
     waterTempC: 18,
+    difficultyTag: "mixed",
+    notes: "Peninsula with breaks for all levels; Supertubos is world-class.",
+    featured: true,
   },
   {
     id: "nazare-pt",
@@ -113,6 +132,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 15,
     windDirectionDeg: w("W"),
     waterTempC: 17,
+    difficultyTag: "advanced",
+    notes: "Big-wave capital of Europe; underwater canyon creates giants.",
   },
   {
     id: "carcavelos-pt",
@@ -127,6 +148,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 12,
     windDirectionDeg: w("NW"),
     waterTempC: 18,
+    difficultyTag: "beginner",
+    notes: "Sandy beach near Lisbon; mellow waves, easy access.",
   },
   {
     id: "mundaka-es",
@@ -141,6 +164,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 11,
     windDirectionDeg: w("W"),
     waterTempC: 17,
+    difficultyTag: "advanced",
+    notes: "Legendary left-hand river-mouth barrel in the Basque Country.",
   },
   {
     id: "zarautz-es",
@@ -155,6 +180,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 14,
     windDirectionDeg: w("NW"),
     waterTempC: 18,
+    difficultyTag: "beginner",
+    notes: "Long sandy beach; great for learning in summer.",
   },
   {
     id: "sopelana-es",
@@ -169,6 +196,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 13,
     windDirectionDeg: w("W"),
     waterTempC: 17,
+    difficultyTag: "intermediate",
+    notes: "Cliff-backed beach break near Bilbao; consistent swell.",
   },
   {
     id: "biarritz-fr",
@@ -183,6 +212,9 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 12,
     windDirectionDeg: w("W"),
     waterTempC: 19,
+    difficultyTag: "mixed",
+    notes: "Birthplace of European surfing; multiple peaks for all levels.",
+    featured: true,
   },
   {
     id: "lacanau-fr",
@@ -197,6 +229,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 13,
     windDirectionDeg: w("NW"),
     waterTempC: 18,
+    difficultyTag: "intermediate",
+    notes: "Punchy beach break on the Atlantic coast; competition-grade.",
   },
   {
     id: "la-torche-fr",
@@ -211,6 +245,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 14,
     windDirectionDeg: w("W"),
     waterTempC: 16,
+    difficultyTag: "intermediate",
+    notes: "Exposed Brittany point break; windy but reliable.",
   },
   {
     id: "newquay-uk",
@@ -225,6 +261,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 15,
     windDirectionDeg: w("ZW"),
     waterTempC: 15,
+    difficultyTag: "beginner",
+    notes: "UK surf capital; Fistral Beach is the main break.",
   },
   {
     id: "thurso-east-uk",
@@ -239,6 +277,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 16,
     windDirectionDeg: w("W"),
     waterTempC: 12,
+    difficultyTag: "advanced",
+    notes: "Cold-water right-hand reef; Scotland's premier wave.",
   },
 
   // ───── Africa ─────────────────────────────────
@@ -255,6 +295,9 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 10,
     windDirectionDeg: w("ZW"),
     waterTempC: 21,
+    difficultyTag: "advanced",
+    notes: "One of the world's best right-hand point breaks.",
+    featured: true,
   },
   {
     id: "anchor-point-ma",
@@ -269,6 +312,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 12,
     windDirectionDeg: w("NO"),
     waterTempC: 19,
+    difficultyTag: "intermediate",
+    notes: "Long right-hand point break; best in winter swells.",
   },
   {
     id: "taghazout-ma",
@@ -283,6 +328,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 11,
     windDirectionDeg: w("NO"),
     waterTempC: 19,
+    difficultyTag: "mixed",
+    notes: "Surf village with multiple breaks for different levels.",
   },
   {
     id: "fuerteventura-es",
@@ -297,6 +344,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 15,
     windDirectionDeg: w("N"),
     waterTempC: 22,
+    difficultyTag: "intermediate",
+    notes: "Volcanic reef breaks; windy but warm year-round.",
   },
   {
     id: "lanzarote-es",
@@ -311,6 +360,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 14,
     windDirectionDeg: w("N"),
     waterTempC: 22,
+    difficultyTag: "intermediate",
+    notes: "Powerful reef breaks; La Santa Left is the stand-out.",
   },
 
   // ───── Americas ───────────────────────────────
@@ -327,6 +378,9 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 16,
     windDirectionDeg: w("NO"),
     waterTempC: 25,
+    difficultyTag: "advanced",
+    notes: "The most famous wave in the world; shallow reef barrels.",
+    featured: true,
   },
   {
     id: "santa-cruz-us",
@@ -341,6 +395,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 10,
     windDirectionDeg: w("NW"),
     waterTempC: 15,
+    difficultyTag: "mixed",
+    notes: "Steamer Lane and Pleasure Point; NorCal surf hub.",
   },
   {
     id: "huntington-beach-us",
@@ -355,6 +411,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 9,
     windDirectionDeg: w("W"),
     waterTempC: 18,
+    difficultyTag: "beginner",
+    notes: "Surf City USA; long pier break, gentle for beginners.",
   },
   {
     id: "la-jolla-us",
@@ -369,6 +427,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 8,
     windDirectionDeg: w("W"),
     waterTempC: 19,
+    difficultyTag: "beginner",
+    notes: "Scenic SoCal reef and beach breaks; warm water.",
   },
   {
     id: "outer-banks-us",
@@ -383,6 +443,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 14,
     windDirectionDeg: w("ZW"),
     waterTempC: 20,
+    difficultyTag: "intermediate",
+    notes: "Barrier island chain; picks up East-coast hurricane swells.",
   },
   {
     id: "arpoador-br",
@@ -397,6 +459,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 12,
     windDirectionDeg: w("ZO"),
     waterTempC: 24,
+    difficultyTag: "beginner",
+    notes: "Rio's iconic city surf, between Ipanema and Copacabana.",
   },
   {
     id: "punta-de-lobos-cl",
@@ -411,6 +475,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 13,
     windDirectionDeg: w("Z"),
     waterTempC: 15,
+    difficultyTag: "advanced",
+    notes: "Powerful big-wave left; Chile's most famous break.",
   },
 
   // ───── Asia-Pacific ───────────────────────────
@@ -427,6 +493,9 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 9,
     windDirectionDeg: w("ZO"),
     waterTempC: 27,
+    difficultyTag: "advanced",
+    notes: "Clifftop temple reef break; long barrels on the Indian Ocean.",
+    featured: true,
   },
   {
     id: "canggu-id",
@@ -441,6 +510,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 10,
     windDirectionDeg: w("ZO"),
     waterTempC: 28,
+    difficultyTag: "mixed",
+    notes: "Trendy beach break area; Old Man's suits all levels.",
   },
   {
     id: "gold-coast-au",
@@ -455,6 +526,9 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 12,
     windDirectionDeg: w("O"),
     waterTempC: 24,
+    difficultyTag: "mixed",
+    notes: "Superbank to Snapper Rocks; world-class sand-bottom points.",
+    featured: true,
   },
   {
     id: "manly-au",
@@ -469,6 +543,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 13,
     windDirectionDeg: w("ZO"),
     waterTempC: 22,
+    difficultyTag: "beginner",
+    notes: "Sydney's ferry-accessible beach; great for learners.",
   },
   {
     id: "raglan-nz",
@@ -483,8 +559,17 @@ export const SPOT_CATALOG: SurfSpot[] = [
     windSpeedKnots: 11,
     windDirectionDeg: w("ZW"),
     waterTempC: 18,
+    difficultyTag: "intermediate",
+    notes: "Long left-hand point break; NZ's most consistent wave.",
   },
 ];
+
+/* ── Helpers ─────────────────────────────────── */
+
+/** Return the 8 featured/highlighted spots. */
+export function getFeaturedSpots(): SurfSpot[] {
+  return SPOT_CATALOG.filter((s) => s.featured);
+}
 
 /* ── Search helper ───────────────────────────── */
 

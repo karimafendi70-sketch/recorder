@@ -293,6 +293,47 @@
   text-decoration-color: #156f78;
 }
 
+.bestSpotCountry {
+  font-weight: 400;
+  font-size: 0.82rem;
+  color: var(--muted, #5d7178);
+}
+
+.bestSpotStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.15rem;
+}
+
+.bestSpotStat {
+  font-size: 0.82rem;
+  color: var(--muted, #5d7178);
+}
+
+.whyBestBlock {
+  background: rgba(21, 111, 120, 0.06);
+  border-radius: var(--radius-sm, 6px);
+  padding: 0.6rem 0.8rem;
+  margin-top: 0.2rem;
+}
+
+.whyBestTitle {
+  margin: 0 0 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent, #156f78);
+}
+
+.whyBestText {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--foreground, #1b2f35);
+}
+
 /* ── Daypart heatmap ──────────────────────────── */
 .heatmapWrap {
   overflow-x: auto;

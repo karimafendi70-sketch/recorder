@@ -3,17 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./AuthProvider";
+import { useLanguage, type TranslationKey } from "./LanguageProvider";
 
-const NAV_ITEMS = [
-  { href: "/", label: "Home" },
-  { href: "/forecast", label: "Forecast" },
-  { href: "/insights", label: "Insights" },
-  { href: "/profile", label: "Profile" },
+const NAV_ITEMS: { href: string; labelKey: TranslationKey }[] = [
+  { href: "/", labelKey: "nav.home" },
+  { href: "/forecast", labelKey: "nav.forecast" },
+  { href: "/insights", labelKey: "nav.insights" },
+  { href: "/profile", labelKey: "nav.profile" },
 ];
 
 export function Topbar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { lang, setLang, t } = useLanguage();
 
   return (
     <header className="topbar-wrap">
@@ -34,22 +36,31 @@ export function Topbar() {
 
             return (
               <Link key={item.href} href={item.href} className={isActive ? "nav-link active" : "nav-link"}>
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             );
           })}
         </nav>
 
         <div className="auth-indicator">
+          <button
+            type="button"
+            className="lang-toggle"
+            onClick={() => setLang(lang === "en" ? "nl" : "en")}
+            aria-label="Switch language"
+          >
+            {lang === "en" ? "🇳🇱 NL" : "🇬🇧 EN"}
+          </button>
+
           {!user ? (
             <Link href="/login" className="btn btn-ghost">
-              Login
+              {t("nav.login")}
             </Link>
           ) : (
             <>
-              <span className="user-pill">Logged in as {user.email}</span>
+              <span className="user-pill">{t("nav.loggedInAs")} {user.email}</span>
               <button type="button" className="btn btn-ghost" onClick={logout}>
-                Logout
+                {t("nav.logout")}
               </button>
             </>
           )}
