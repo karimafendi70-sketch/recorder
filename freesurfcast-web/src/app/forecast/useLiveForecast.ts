@@ -4,21 +4,29 @@
  *  Fetches /api/forecast and returns ForecastSpot[].
  *  Falls back to mock/catalog data on error or
  *  while loading, so the page always renders.
+ *
+ *  State machine:
+ *    idle → loading → success | error
+ *    (on dayKey change: loading again)
+ *
+ *  Includes a 300 ms debounce so rapid spot switches
+ *  don't trigger a fetch-storm.
  * ────────────────────────────────────────────── */
 
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ForecastSpot } from "./mockData";
 import { createCatalogSpots } from "./mockData";
 
-export type DataSource = "live" | "mock" | "loading";
+export type LiveStatus = "idle" | "loading" | "success" | "error";
 
-interface LiveForecastState {
+export interface UseLiveForecastResult {
   spots: ForecastSpot[];
-  source: DataSource;
-  error: string | null;
+  status: LiveStatus;
+  isLive: boolean;
   fetchedAt: string | null;
+  errorMessage: string | null;
 }
 
 interface ApiSuccessResponse {
@@ -27,56 +35,64 @@ interface ApiSuccessResponse {
   spots: ForecastSpot[];
 }
 
-export function useLiveForecast(dayKey: string): LiveForecastState {
+const DEBOUNCE_MS = 300;
+
+export function useLiveForecast(dayKey: string): UseLiveForecastResult {
   const mockSpots = useMemo(() => createCatalogSpots(dayKey), [dayKey]);
 
-  const [state, setState] = useState<LiveForecastState>({
-    spots: mockSpots,
-    source: "loading",
-    error: null,
-    fetchedAt: null,
-  });
+  const [spots, setSpots] = useState<ForecastSpot[]>(mockSpots);
+  const [status, setStatus] = useState<LiveStatus>("idle");
+  const [isLive, setIsLive] = useState(false);
+  const [fetchedAt, setFetchedAt] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
+    // Clear any pending debounce
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    // Set loading after debounce delay (avoids flicker on rapid switches)
+    timerRef.current = setTimeout(() => {
+      if (!cancelled) setStatus("loading");
+    }, DEBOUNCE_MS);
+
     async function load() {
       try {
-        const res = await fetch("/api/forecast", {
-          // Don't cache in the browser — let the server do ISR caching
-          cache: "no-store",
-        });
+        const res = await fetch("/api/forecast", { cache: "no-store" });
 
-        if (!res.ok) {
-          throw new Error(`API returned ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`API returned ${res.status}`);
 
         const json = (await res.json()) as ApiSuccessResponse;
 
         if (!cancelled && Array.isArray(json.spots) && json.spots.length > 0) {
-          setState({
-            spots: json.spots,
-            source: "live",
-            error: null,
-            fetchedAt: json.fetchedAt ?? new Date().toISOString(),
-          });
+          setSpots(json.spots);
+          setIsLive(true);
+          setFetchedAt(json.fetchedAt ?? new Date().toISOString());
+          setErrorMessage(null);
+          setStatus("success");
         }
       } catch (err) {
         if (!cancelled) {
-          console.warn("[useLiveForecast] Falling back to mock data:", err);
-          setState({
-            spots: mockSpots,
-            source: "mock",
-            error: err instanceof Error ? err.message : String(err),
-            fetchedAt: null,
-          });
+          const msg = err instanceof Error ? err.message : String(err);
+          console.warn("[useLiveForecast] Falling back to mock data:", msg);
+          setSpots(mockSpots);
+          setIsLive(false);
+          setFetchedAt(null);
+          setErrorMessage(msg);
+          setStatus("error");
         }
       }
     }
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [dayKey, mockSpots]);
 
-  return state;
+  return { spots, status, isLive, fetchedAt, errorMessage };
 }

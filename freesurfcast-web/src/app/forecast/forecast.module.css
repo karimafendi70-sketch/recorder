@@ -607,6 +607,26 @@
   border-color: #e0c878;
 }
 
+.dataSourceLoading {
+  color: var(--accent);
+  background: var(--accent-light);
+  border-color: rgba(21, 111, 120, 0.2);
+}
+
+.dataSourceSpinner {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  border-top-color: transparent;
+  animation: badgeSpin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes badgeSpin {
+  to { transform: rotate(360deg); }
+}
+
 .dataSourceDot {
   width: 7px;
   height: 7px;

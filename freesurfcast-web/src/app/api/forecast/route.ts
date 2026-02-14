@@ -45,7 +45,14 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    /* ── All spots (batch) ─────────────────── */
+    /* ── All spots (batch) ────────────────────
+     *  fetchMultiSpotForecast already batches with
+     *  a concurrency limit (6 at a time) and each
+     *  individual fetch uses { next: { revalidate: 1800 } }
+     *  so the Next.js fetch cache de-duplicates within
+     *  a single render AND across the 30-min ISR window.
+     *  No extra de-dup needed here.
+     * ────────────────────────────────────────── */
     const raws = await fetchMultiSpotForecast(SPOT_CATALOG, 6);
     const adapted = adaptMultiSpot(raws, SPOT_CATALOG, dayKey);
 

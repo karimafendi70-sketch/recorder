@@ -108,7 +108,13 @@ const dict = {
   "forecast.noResults": { en: "No spots found", nl: "Geen spots gevonden" },
   "forecast.searchHint": { en: "Search a spot and tap ★ to save it as a favourite", nl: "Zoek een spot en tik op ★ om als favoriet op te slaan" },
   "forecast.liveData": { en: "Live data", nl: "Live data" },
-  "forecast.mockData": { en: "Mock data (API unavailable)", nl: "Mock data (API onbereikbaar)" },
+  "forecast.mockData": { en: "Mock data (fallback)", nl: "Mock data (fallback)" },
+  "forecast.loadingData": { en: "Loading live data…", nl: "Live data laden…" },
+  "forecast.loadingLive": { en: "Fetching live conditions…", nl: "Actuele condities ophalen…" },
+  "forecast.fallbackBanner": {
+    en: "Live data is temporarily unavailable — showing fallback data instead.",
+    nl: "Live data is tijdelijk niet beschikbaar — we tonen fallback-data.",
+  },
 
   // Browse / filter
   "browse.show": { en: "Browse spots by country & filter", nl: "Blader per land & filter" },

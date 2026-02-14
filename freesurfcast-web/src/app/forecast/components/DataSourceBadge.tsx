@@ -5,21 +5,30 @@
 
 "use client";
 
-import type { DataSource } from "../useLiveForecast";
+import type { LiveStatus } from "../useLiveForecast";
 import { useLanguage } from "../../LanguageProvider";
 import styles from "../forecast.module.css";
 
 type DataSourceBadgeProps = {
-  source: DataSource;
+  status: LiveStatus;
+  isLive: boolean;
   fetchedAt: string | null;
 };
 
-export function DataSourceBadge({ source, fetchedAt }: DataSourceBadgeProps) {
+export function DataSourceBadge({ status, isLive, fetchedAt }: DataSourceBadgeProps) {
   const { lang, t } = useLanguage();
 
-  if (source === "loading") return null;
+  if (status === "idle") return null;
 
-  const isLive = source === "live";
+  if (status === "loading") {
+    return (
+      <div className={`${styles.dataSourceBadge} ${styles.dataSourceLoading}`}>
+        <span className={styles.dataSourceSpinner} />
+        <span>{t("forecast.loadingData")}</span>
+      </div>
+    );
+  }
+
   const label = isLive ? t("forecast.liveData") : t("forecast.mockData");
 
   const timeStr = fetchedAt

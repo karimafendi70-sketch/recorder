@@ -32,7 +32,7 @@ export default function InsightsPage() {
   const { preferences: prefs, isUsingDefaults } = usePreferences();
   const { t } = useLanguage();
   const dayKey = "today";
-  const { spots } = useLiveForecast(dayKey);
+  const { spots, status } = useLiveForecast(dayKey);
 
   const qualityForSlot = useMemo(() => makeQualityForSlot(prefs), [prefs]);
 
@@ -172,6 +172,17 @@ export default function InsightsPage() {
   return (
     <ProtectedRoute>
       <section className="stack-lg">
+        {status === "error" && (
+          <div className="fallback-banner">
+            <span>⚠️</span>
+            <p>{t("forecast.fallbackBanner")}</p>
+          </div>
+        )}
+
+        {status === "loading" && (
+          <p className="page-lead loading-pulse">{t("forecast.loadingLive")}</p>
+        )}
+
         {isUsingDefaults && (
           <div className="defaults-banner">
             <span>{"\ud83e\udded"}</span>

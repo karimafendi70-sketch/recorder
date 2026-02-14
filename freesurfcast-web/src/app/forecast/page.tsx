@@ -55,7 +55,7 @@ function ForecastContent() {
     []
   );
 
-  const { spots, source, fetchedAt } = useLiveForecast(dayKey);
+  const { spots, status, isLive, fetchedAt, errorMessage } = useLiveForecast(dayKey);
 
   const qualityOptions = useMemo(() => buildQualityOptions(prefs), [prefs]);
 
@@ -199,9 +199,20 @@ function ForecastContent() {
   return (
     <ProtectedRoute>
       <section className="stack-lg">
-        <DataSourceBadge source={source} fetchedAt={fetchedAt} />
+        <DataSourceBadge status={status} isLive={isLive} fetchedAt={fetchedAt} />
 
-        <p className="page-lead">{t("forecast.lead")}</p>
+        {status === "error" && errorMessage && (
+          <div className="fallback-banner">
+            <span>⚠️</span>
+            <p>{t("forecast.fallbackBanner")}</p>
+          </div>
+        )}
+
+        {status === "loading" && (
+          <p className="page-lead loading-pulse">{t("forecast.loadingLive")}</p>
+        )}
+
+        {status !== "loading" && <p className="page-lead">{t("forecast.lead")}</p>}
 
         {isUsingDefaults && (
           <div className="defaults-banner">
