@@ -570,19 +570,19 @@ const dict = {
     fr: "E-mail",
     es: "Correo electrónico",
   },
-  "login.password": {
-    en: "Password",
-    nl: "Wachtwoord",
-    de: "Passwort",
-    fr: "Mot de passe",
-    es: "Contraseña",
+  "login.sendMagicLink": {
+    en: "Send login link",
+    nl: "Stuur inloglink",
+    de: "Login-Link senden",
+    fr: "Envoyer le lien de connexion",
+    es: "Enviar enlace de inicio de sesión",
   },
-  "login.submit": {
-    en: "Sign in",
-    nl: "Inloggen",
-    de: "Anmelden",
-    fr: "Se connecter",
-    es: "Iniciar sesión",
+  "login.magicLinkSent": {
+    en: "Check your email — we sent you a login link!",
+    nl: "Check je e-mail — we hebben een inloglink gestuurd!",
+    de: "Schau in dein Postfach — wir haben dir einen Login-Link gesendet!",
+    fr: "Vérifiez votre e-mail — nous vous avons envoyé un lien de connexion !",
+    es: "Revisa tu correo — te hemos enviado un enlace de inicio de sesión!",
   },
   "login.guest": {
     en: "Continue as guest",

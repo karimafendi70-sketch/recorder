@@ -208,6 +208,45 @@ h2 {
   text-overflow: ellipsis;
 }
 
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.avatar-chip {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(145deg, var(--accent), #4ba8ae);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+.login-success-msg {
+  background: var(--accent-light);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  text-align: center;
+  color: var(--accent);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.login-error-msg {
+  color: #b33a3a;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 /* ── Layout stacks ───────────────────────────── */
 
 .stack-lg {

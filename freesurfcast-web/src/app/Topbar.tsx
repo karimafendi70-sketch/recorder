@@ -62,12 +62,14 @@ export function Topbar() {
               {t("nav.login")}
             </Link>
           ) : (
-            <>
-              <span className="user-pill">{t("nav.loggedInAs")} {user.email}</span>
+            <div className="user-menu">
+              <span className="avatar-chip" title={user.email}>
+                {user.email.charAt(0).toUpperCase()}
+              </span>
               <button type="button" className="btn btn-ghost" onClick={logout}>
                 {t("nav.logout")}
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>
