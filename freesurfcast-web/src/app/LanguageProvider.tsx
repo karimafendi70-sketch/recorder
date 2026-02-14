@@ -98,6 +98,22 @@ const dict = {
   "forecast.liveData": { en: "Live data", nl: "Live data" },
   "forecast.mockData": { en: "Mock data (API unavailable)", nl: "Mock data (API onbereikbaar)" },
 
+  // Browse / filter
+  "browse.show": { en: "Browse spots by country", nl: "Blader door spots per land" },
+  "browse.hide": { en: "Hide browser", nl: "Verberg browser" },
+  "browse.country": { en: "Country", nl: "Land" },
+  "browse.difficulty": { en: "Difficulty", nl: "Niveau" },
+  "browse.spotType": { en: "Spot type", nl: "Spottype" },
+  "browse.noResults": { en: "No spots match these filters", nl: "Geen spots gevonden met deze filters" },
+  "filter.beginner": { en: "Beginner", nl: "Beginner" },
+  "filter.intermediate": { en: "Intermediate", nl: "Gevorderd" },
+  "filter.advanced": { en: "Advanced", nl: "Expert" },
+  "filter.mixed": { en: "Mixed", nl: "Gemengd" },
+  "filter.beach": { en: "Beach break", nl: "Strandbreak" },
+  "filter.reef": { en: "Reef break", nl: "Rifbreak" },
+  "filter.point": { en: "Point break", nl: "Pointbreak" },
+  "filter.mixedType": { en: "Mixed", nl: "Gemengd" },
+
   // Insights
   "insights.eyebrow": { en: "Insights", nl: "Inzichten" },
   "insights.title": { en: "Multi-spot overview", nl: "Multi-spot overzicht" },

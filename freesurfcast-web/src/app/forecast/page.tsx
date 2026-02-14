@@ -20,6 +20,7 @@ import { SpotSearchBar } from "./components/SpotSearchBar";
 import { SlotCards } from "./components/SlotCards";
 import { ScoreExplainer } from "./components/ScoreExplainer";
 import { DataSourceBadge } from "./components/DataSourceBadge";
+import { SpotBrowser } from "./components/SpotBrowser";
 import { type DayPart, type ForecastSlot } from "./mockData";
 import { useLiveForecast } from "./useLiveForecast";
 import {
@@ -196,6 +197,12 @@ export default function ForecastPage() {
         )}
 
         <SpotSearchBar
+          activeSpotId={activeSpot.id}
+          scoreBySpotId={scoreBySpotId}
+          onSelect={handleSpotChange}
+        />
+
+        <SpotBrowser
           activeSpotId={activeSpot.id}
           scoreBySpotId={scoreBySpotId}
           onSelect={handleSpotChange}

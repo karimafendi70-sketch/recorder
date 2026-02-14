@@ -8,6 +8,10 @@ export type Region = "eu" | "am" | "af" | "ap";
 
 export type DifficultyTag = "beginner" | "intermediate" | "advanced" | "mixed";
 
+export type SpotType = "beach" | "reef" | "point" | "mixed";
+
+export type Orientation = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
+
 export interface SurfSpot {
   id: string;
   region: Region;
@@ -32,6 +36,10 @@ export interface SurfSpot {
   notes: string;
   /** Whether this spot is featured / highlighted in the UI */
   featured?: boolean;
+  /** Break type */
+  spotType: SpotType;
+  /** Cardinal orientation the coast faces */
+  orientation: Orientation;
 }
 
 /* ── Dutch abbreviation → degrees mapping ──── */
@@ -48,6 +56,12 @@ const WIND_DEG: Record<string, number> = {
 
 function w(dir: string): number {
   return WIND_DEG[dir] ?? 0;
+}
+
+/** Derive cardinal orientation from degrees */
+function orient(deg: number): Orientation {
+  const DIRS: Orientation[] = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  return DIRS[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
 }
 
 export const SPOT_CATALOG: SurfSpot[] = [
@@ -67,6 +81,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 17,
     difficultyTag: "beginner",
     notes: "Most popular Dutch beach break; consistent but cold.",
+    spotType: "beach",
+    orientation: orient(270),
   },
   {
     id: "hossegor-fr",
@@ -84,6 +100,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     difficultyTag: "advanced",
     notes: "Heavy sand-bottom barrels; hosts WSL events.",
     featured: true,
+    spotType: "beach",
+    orientation: orient(270),
   },
   {
     id: "ericeira-pt",
@@ -101,6 +119,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     difficultyTag: "intermediate",
     notes: "World Surfing Reserve with multiple reef and point breaks.",
     featured: true,
+    spotType: "mixed",
+    orientation: orient(270),
   },
   {
     id: "peniche-pt",
@@ -118,6 +138,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     difficultyTag: "mixed",
     notes: "Peninsula with breaks for all levels; Supertubos is world-class.",
     featured: true,
+    spotType: "beach",
+    orientation: orient(260),
   },
   {
     id: "nazare-pt",
@@ -134,6 +156,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 17,
     difficultyTag: "advanced",
     notes: "Big-wave capital of Europe; underwater canyon creates giants.",
+    spotType: "beach",
+    orientation: orient(270),
   },
   {
     id: "carcavelos-pt",
@@ -150,6 +174,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 18,
     difficultyTag: "beginner",
     notes: "Sandy beach near Lisbon; mellow waves, easy access.",
+    spotType: "beach",
+    orientation: orient(240),
   },
   {
     id: "mundaka-es",
@@ -166,6 +192,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 17,
     difficultyTag: "advanced",
     notes: "Legendary left-hand river-mouth barrel in the Basque Country.",
+    spotType: "point",
+    orientation: orient(350),
   },
   {
     id: "zarautz-es",
@@ -182,6 +210,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 18,
     difficultyTag: "beginner",
     notes: "Long sandy beach; great for learning in summer.",
+    spotType: "beach",
+    orientation: orient(355),
   },
   {
     id: "sopelana-es",
@@ -198,6 +228,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 17,
     difficultyTag: "intermediate",
     notes: "Cliff-backed beach break near Bilbao; consistent swell.",
+    spotType: "beach",
+    orientation: orient(350),
   },
   {
     id: "biarritz-fr",
@@ -215,6 +247,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     difficultyTag: "mixed",
     notes: "Birthplace of European surfing; multiple peaks for all levels.",
     featured: true,
+    spotType: "beach",
+    orientation: orient(300),
   },
   {
     id: "lacanau-fr",
@@ -231,6 +265,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 18,
     difficultyTag: "intermediate",
     notes: "Punchy beach break on the Atlantic coast; competition-grade.",
+    spotType: "beach",
+    orientation: orient(270),
   },
   {
     id: "la-torche-fr",
@@ -247,6 +283,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 16,
     difficultyTag: "intermediate",
     notes: "Exposed Brittany point break; windy but reliable.",
+    spotType: "point",
+    orientation: orient(260),
   },
   {
     id: "newquay-uk",
@@ -263,6 +301,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 15,
     difficultyTag: "beginner",
     notes: "UK surf capital; Fistral Beach is the main break.",
+    spotType: "beach",
+    orientation: orient(300),
   },
   {
     id: "thurso-east-uk",
@@ -279,6 +319,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 12,
     difficultyTag: "advanced",
     notes: "Cold-water right-hand reef; Scotland's premier wave.",
+    spotType: "reef",
+    orientation: orient(60),
   },
 
   // ───── Africa ─────────────────────────────────
@@ -298,6 +340,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     difficultyTag: "advanced",
     notes: "One of the world's best right-hand point breaks.",
     featured: true,
+    spotType: "point",
+    orientation: orient(140),
   },
   {
     id: "anchor-point-ma",
@@ -314,6 +358,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 19,
     difficultyTag: "intermediate",
     notes: "Long right-hand point break; best in winter swells.",
+    spotType: "point",
+    orientation: orient(320),
   },
   {
     id: "taghazout-ma",
@@ -330,6 +376,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 19,
     difficultyTag: "mixed",
     notes: "Surf village with multiple breaks for different levels.",
+    spotType: "mixed",
+    orientation: orient(320),
   },
   {
     id: "fuerteventura-es",
@@ -346,6 +394,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 22,
     difficultyTag: "intermediate",
     notes: "Volcanic reef breaks; windy but warm year-round.",
+    spotType: "reef",
+    orientation: orient(0),
   },
   {
     id: "lanzarote-es",
@@ -362,6 +412,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 22,
     difficultyTag: "intermediate",
     notes: "Powerful reef breaks; La Santa Left is the stand-out.",
+    spotType: "reef",
+    orientation: orient(330),
   },
 
   // ───── Americas ───────────────────────────────
@@ -381,6 +433,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     difficultyTag: "advanced",
     notes: "The most famous wave in the world; shallow reef barrels.",
     featured: true,
+    spotType: "reef",
+    orientation: orient(10),
   },
   {
     id: "santa-cruz-us",
@@ -397,6 +451,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 15,
     difficultyTag: "mixed",
     notes: "Steamer Lane and Pleasure Point; NorCal surf hub.",
+    spotType: "point",
+    orientation: orient(240),
   },
   {
     id: "huntington-beach-us",
@@ -413,6 +469,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 18,
     difficultyTag: "beginner",
     notes: "Surf City USA; long pier break, gentle for beginners.",
+    spotType: "beach",
+    orientation: orient(220),
   },
   {
     id: "la-jolla-us",
@@ -429,6 +487,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 19,
     difficultyTag: "beginner",
     notes: "Scenic SoCal reef and beach breaks; warm water.",
+    spotType: "reef",
+    orientation: orient(250),
   },
   {
     id: "outer-banks-us",
@@ -445,6 +505,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 20,
     difficultyTag: "intermediate",
     notes: "Barrier island chain; picks up East-coast hurricane swells.",
+    spotType: "beach",
+    orientation: orient(95),
   },
   {
     id: "arpoador-br",
@@ -461,6 +523,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 24,
     difficultyTag: "beginner",
     notes: "Rio's iconic city surf, between Ipanema and Copacabana.",
+    spotType: "beach",
+    orientation: orient(160),
   },
   {
     id: "punta-de-lobos-cl",
@@ -477,6 +541,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 15,
     difficultyTag: "advanced",
     notes: "Powerful big-wave left; Chile's most famous break.",
+    spotType: "point",
+    orientation: orient(250),
   },
 
   // ───── Asia-Pacific ───────────────────────────
@@ -496,6 +562,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     difficultyTag: "advanced",
     notes: "Clifftop temple reef break; long barrels on the Indian Ocean.",
     featured: true,
+    spotType: "reef",
+    orientation: orient(200),
   },
   {
     id: "canggu-id",
@@ -512,6 +580,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 28,
     difficultyTag: "mixed",
     notes: "Trendy beach break area; Old Man's suits all levels.",
+    spotType: "beach",
+    orientation: orient(220),
   },
   {
     id: "gold-coast-au",
@@ -529,6 +599,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     difficultyTag: "mixed",
     notes: "Superbank to Snapper Rocks; world-class sand-bottom points.",
     featured: true,
+    spotType: "point",
+    orientation: orient(110),
   },
   {
     id: "manly-au",
@@ -545,6 +617,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 22,
     difficultyTag: "beginner",
     notes: "Sydney's ferry-accessible beach; great for learners.",
+    spotType: "beach",
+    orientation: orient(100),
   },
   {
     id: "raglan-nz",
@@ -561,6 +635,8 @@ export const SPOT_CATALOG: SurfSpot[] = [
     waterTempC: 18,
     difficultyTag: "intermediate",
     notes: "Long left-hand point break; NZ's most consistent wave.",
+    spotType: "point",
+    orientation: orient(270),
   },
 ];
 
@@ -569,6 +645,41 @@ export const SPOT_CATALOG: SurfSpot[] = [
 /** Return the 8 featured/highlighted spots. */
 export function getFeaturedSpots(): SurfSpot[] {
   return SPOT_CATALOG.filter((s) => s.featured);
+}
+
+/** Return a sorted list of unique country names in the catalog. */
+export function getCountries(): string[] {
+  const set = new Set(SPOT_CATALOG.map((s) => s.country));
+  return [...set].sort((a, b) => a.localeCompare(b));
+}
+
+/** Return all spots for a given country (exact match). */
+export function getSpotsByCountry(country: string): SurfSpot[] {
+  return SPOT_CATALOG.filter((s) => s.country === country);
+}
+
+/** Return unique spot types present in the catalog. */
+export function getSpotTypes(): SpotType[] {
+  return [...new Set(SPOT_CATALOG.map((s) => s.spotType))];
+}
+
+/** Return unique difficulty tags present in the catalog. */
+export function getDifficultyTags(): DifficultyTag[] {
+  return [...new Set(SPOT_CATALOG.map((s) => s.difficultyTag))];
+}
+
+/** Filter spots by optional country, difficulty, and spot type. */
+export function filterSpots(opts: {
+  country?: string | null;
+  difficulty?: DifficultyTag | null;
+  spotType?: SpotType | null;
+}): SurfSpot[] {
+  return SPOT_CATALOG.filter((s) => {
+    if (opts.country && s.country !== opts.country) return false;
+    if (opts.difficulty && s.difficultyTag !== opts.difficulty) return false;
+    if (opts.spotType && s.spotType !== opts.spotType) return false;
+    return true;
+  });
 }
 
 /* ── Search helper ───────────────────────────── */
