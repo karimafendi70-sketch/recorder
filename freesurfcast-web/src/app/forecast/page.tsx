@@ -16,7 +16,7 @@ import { DaypartOverview } from "./components/DaypartOverview";
 import { ForecastHeader } from "./components/ForecastHeader";
 import { SpotSelector } from "./components/SpotSelector";
 import { SlotCards } from "./components/SlotCards";
-import { createMockSpots, type DayPart, type ForecastSlot } from "./mockData";
+import { createCatalogSpots, type DayPart, type ForecastSlot } from "./mockData";
 import {
   buildQualityOptions,
   buildSlotKey,
@@ -36,7 +36,7 @@ export default function ForecastPage() {
     []
   );
 
-  const spots = useMemo(() => createMockSpots(dayKey), [dayKey]);
+  const spots = useMemo(() => createCatalogSpots(dayKey), [dayKey]);
 
   const qualityOptions = useMemo(() => buildQualityOptions(prefs), [prefs]);
 

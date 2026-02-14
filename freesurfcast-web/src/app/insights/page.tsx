@@ -11,7 +11,7 @@ import {
 import { buildTimelineDataForDay } from "@/lib/timeline";
 import { ProtectedRoute } from "../ProtectedRoute";
 import { usePreferences } from "../PreferencesProvider";
-import { createMockSpots, type ForecastSlot } from "../forecast/mockData";
+import { createCatalogSpots, type ForecastSlot } from "../forecast/mockData";
 import {
   buildSlotKey,
   getUiScoreClass,
@@ -27,7 +27,7 @@ const DAY_PARTS = ["morning", "afternoon", "evening"] as const;
 export default function InsightsPage() {
   const { preferences: prefs, isUsingDefaults } = usePreferences();
   const dayKey = "today";
-  const spots = useMemo(() => createMockSpots(dayKey), [dayKey]);
+  const spots = useMemo(() => createCatalogSpots(dayKey), [dayKey]);
 
   const qualityForSlot = useMemo(() => makeQualityForSlot(prefs), [prefs]);
 
