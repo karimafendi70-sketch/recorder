@@ -1,0 +1,356 @@
+/* ── Section card (shared base) ────────────────── */
+.sectionCard {
+  background: #ffffff;
+  border: 1px solid #d6e5ea;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(13, 54, 66, 0.06);
+  padding: 1.15rem 1.2rem;
+  display: grid;
+  gap: 0.85rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.sectionCard:hover {
+  box-shadow: 0 16px 36px rgba(13, 54, 66, 0.09);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.sectionHeader p {
+  margin: 0;
+  color: #5f767d;
+  font-size: 0.83rem;
+}
+
+/* ── Hero ─────────────────────────────────────── */
+.heroCard {
+  background: linear-gradient(165deg, #e2eff3, #f8fcfd 68%);
+  border: 1px solid #cfe2e8;
+  border-radius: 22px;
+  box-shadow: 0 16px 32px rgba(13, 54, 66, 0.07);
+  padding: 1.3rem 1.4rem;
+  display: grid;
+  gap: 0.55rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroCard::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -60px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(21, 111, 120, 0.06), transparent 70%);
+  pointer-events: none;
+}
+
+.heroEyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 750;
+  color: #156f78;
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.heroSubtitle {
+  margin: 0;
+  color: #4b666e;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+/* ── Multi-spot ranking ───────────────────────── */
+.rankingList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.rankingRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1.5px solid #d7e6eb;
+  border-radius: 14px;
+  padding: 0.7rem 0.85rem;
+  background: #fafdfe;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.rankingRow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 54, 66, 0.06);
+}
+
+.rowHigh {
+  border-color: #7dd4a8;
+  background: linear-gradient(170deg, #edf9f2, #f5fcf7);
+}
+
+.rowMedium {
+  border-color: #cdd89e;
+  background: linear-gradient(170deg, #f5f8e9, #fafcf1);
+}
+
+.rowLow {
+  border-color: #e0b8be;
+  background: linear-gradient(170deg, #fdf2f3, #fef8f8);
+}
+
+.rankBadge {
+  min-width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  font-weight: 750;
+  font-size: 0.82rem;
+  color: #3a6068;
+  background: rgba(21, 111, 120, 0.06);
+  border-radius: 999px;
+}
+
+.rankingInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.spotName {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.spotHint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #5c737b;
+}
+
+.rankingRight {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: end;
+}
+
+.scorePill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-weight: 750;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+.pillHigh {
+  background: #d5f4e4;
+  color: #15603a;
+}
+
+.pillMedium {
+  background: #e8f0d5;
+  color: #526617;
+}
+
+.pillLow {
+  background: #f7dddc;
+  color: #8a3131;
+}
+
+.reasonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.reasonChip {
+  border-radius: 999px;
+  background: rgba(17, 58, 68, 0.07);
+  color: #35555d;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.42rem;
+  transition: background 0.15s ease;
+}
+
+.reasonChip:hover {
+  background: rgba(17, 58, 68, 0.13);
+}
+
+/* ── Daypart heatmap ──────────────────────────── */
+.heatmapWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.heatmapTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 5px;
+  font-size: 0.84rem;
+}
+
+.heatmapCorner {
+  text-align: left;
+  font-size: 0.76rem;
+  color: #5c737b;
+  padding: 0.35rem 0.5rem;
+}
+
+.heatmapColHeader {
+  text-transform: capitalize;
+  font-weight: 750;
+  font-size: 0.76rem;
+  color: #156f78;
+  padding: 0.35rem 0.5rem;
+  text-align: center;
+}
+
+.heatmapRowHeader {
+  font-weight: 700;
+  color: #1b3a42;
+  padding: 0.4rem 0.5rem;
+  white-space: nowrap;
+}
+
+.heatmapCell {
+  text-align: center;
+  font-weight: 750;
+  padding: 0.5rem 0.55rem;
+  border-radius: 10px;
+  background: #f0f6f8;
+  color: #5c737b;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.heatmapCell:hover {
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(13, 54, 66, 0.1);
+  z-index: 1;
+  position: relative;
+}
+
+.cellHigh {
+  background: linear-gradient(150deg, #c3f0d5, #d5f4e4);
+  color: #15603a;
+}
+
+.cellMedium {
+  background: linear-gradient(150deg, #dde8c0, #e8f0d5);
+  color: #526617;
+}
+
+.cellLow {
+  background: linear-gradient(150deg, #f0cace, #f7dddc);
+  color: #8a3131;
+}
+
+/* ── Timeline preview ─────────────────────────── */
+.timelineGrid {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.timelineRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.timelineTime {
+  min-width: 52px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #3b5c64;
+}
+
+.barTrack {
+  flex: 1;
+  height: 20px;
+  background: #eaf3f6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.barHigh {
+  background: linear-gradient(90deg, #72d4a0, #4dbe80);
+}
+
+.barMedium {
+  background: linear-gradient(90deg, #c5d57e, #afc454);
+}
+
+.barLow {
+  background: linear-gradient(90deg, #e0a6a6, #d08080);
+}
+
+.timelineScore {
+  min-width: 44px;
+  text-align: right;
+  font-weight: 750;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 0.14rem 0.44rem;
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 640px) {
+  .heroCard {
+    padding: 1rem 1.05rem;
+    border-radius: 16px;
+  }
+
+  .sectionCard {
+    padding: 0.85rem 0.9rem;
+    border-radius: 14px;
+  }
+
+  .sectionHeader {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .rankingRow {
+    flex-wrap: wrap;
+  }
+
+  .rankingRight {
+    width: 100%;
+    flex-direction: row;
+    justify-items: start;
+  }
+
+  .barTrack {
+    height: 16px;
+  }
+}

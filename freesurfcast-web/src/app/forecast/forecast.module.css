@@ -1,0 +1,351 @@
+.headerCard {
+  background: linear-gradient(165deg, #e2eff3, #f8fcfd 68%);
+  border: 1px solid #cfe2e8;
+  border-radius: 22px;
+  box-shadow: 0 16px 32px rgba(13, 54, 66, 0.07);
+  padding: 1.3rem 1.4rem;
+  display: grid;
+  gap: 0.9rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.headerCard::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -50px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(21, 111, 120, 0.06), transparent 70%);
+  pointer-events: none;
+}
+
+.headerTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 750;
+  color: #156f78;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.spotMeta {
+  text-align: right;
+  color: #48656d;
+  font-size: 0.84rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.spotMeta p,
+.sectionHeader p,
+.slotMeta,
+.daypartLabel {
+  margin: 0;
+}
+
+.preferenceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.preferencePill {
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(21, 111, 120, 0.18);
+  background: rgba(21, 111, 120, 0.06);
+  color: #1a5158;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.preferencePill:hover {
+  background: rgba(21, 111, 120, 0.12);
+  transform: translateY(-1px);
+}
+
+.sectionCard {
+  background: #ffffff;
+  border: 1px solid #d6e5ea;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(13, 54, 66, 0.06);
+  padding: 1.15rem 1.2rem;
+  display: grid;
+  gap: 0.85rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.sectionCard:hover {
+  box-shadow: 0 16px 36px rgba(13, 54, 66, 0.09);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.sectionHeader p {
+  color: #5f767d;
+  font-size: 0.83rem;
+}
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.8rem;
+}
+
+.slotCard,
+.daypartCard {
+  border-radius: 14px;
+  border: 1.5px solid #d7e6eb;
+  padding: 0.85rem 0.9rem;
+  background: #fafdfe;
+  display: grid;
+  gap: 0.45rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.slotCard:hover,
+.daypartCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(13, 54, 66, 0.08);
+}
+
+.slotCardHigh,
+.scoreHigh {
+  border-color: #7dd4a8;
+  background: linear-gradient(170deg, #edf9f2, #f5fcf7);
+  color: #134c2f;
+}
+
+.slotCardMedium,
+.scoreMedium {
+  border-color: #cdd89e;
+  background: linear-gradient(170deg, #f5f8e9, #fafcf1);
+  color: #5f641f;
+}
+
+.slotCardLow,
+.scoreLow {
+  border-color: #e0b8be;
+  background: linear-gradient(170deg, #fdf2f3, #fef8f8);
+  color: #7f3232;
+}
+
+.slotTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.slotLabel {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.slotMeta {
+  color: #5c737b;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+
+.scoreBadge {
+  display: inline-flex;
+  border: 1.5px solid currentcolor;
+  border-radius: 999px;
+  padding: 0.16rem 0.55rem;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
+.scoreValue {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+
+.reasonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.reasonChip {
+  border-radius: 999px;
+  background: rgba(17, 58, 68, 0.07);
+  color: #35555d;
+  font-size: 0.71rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  transition: background 0.15s ease;
+}
+
+.reasonChip:hover {
+  background: rgba(17, 58, 68, 0.13);
+}
+
+.daypartGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 0.75rem;
+}
+
+.daypartLabel {
+  text-transform: capitalize;
+  font-size: 0.8rem;
+  color: #557078;
+  font-weight: 600;
+}
+
+.selectorCard {
+  background: #ffffff;
+  border: 1px solid #d6e5ea;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(13, 54, 66, 0.06);
+  padding: 1rem 1.15rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.selectorHeaderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.selectorTitle {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.selectorHint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #5f767d;
+}
+
+.selectorPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.selectorPill {
+  border: 1.5px solid #c7dde4;
+  background: #f9fcfd;
+  color: #22515a;
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 0.3rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.83rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.selectorPill:hover {
+  background: #e9f4f7;
+  border-color: #a8cdd4;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(13, 54, 66, 0.06);
+}
+
+.selectorPill:focus-visible {
+  outline: 2px solid #156f78;
+  outline-offset: 2px;
+}
+
+.selectorPillActive {
+  background: #d1eaee;
+  border-color: #7fbac5;
+  color: #0e3b42;
+  box-shadow: inset 0 -2px 0 0 #156f78;
+}
+
+.selectorPillScore {
+  font-size: 0.72rem;
+  font-weight: 750;
+  background: rgba(13, 78, 89, 0.12);
+  color: inherit;
+  border-radius: 999px;
+  padding: 0.12rem 0.42rem;
+}
+
+@media (max-width: 640px) {
+  .headerCard {
+    padding: 1rem 1.05rem;
+    border-radius: 16px;
+  }
+
+  .sectionCard,
+  .selectorCard {
+    padding: 0.85rem 0.9rem;
+    border-radius: 14px;
+  }
+
+  .sectionHeader {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .headerTopRow {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .spotMeta {
+    text-align: left;
+  }
+
+  .selectorHeaderRow {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .slotGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .slotGrid {
+    grid-template-columns: 1fr;
+  }
+}
