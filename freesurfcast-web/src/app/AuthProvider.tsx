@@ -4,13 +4,11 @@
  *  When NEXT_PUBLIC_SUPABASE_URL & _ANON_KEY are set:
  *    → uses Supabase Auth (magic-link OTP flow)
  *    → loads/creates a row in the `profiles` table
+ *    → syncs language preference ↔ profile.default_language
  *
  *  When env vars are missing:
  *    → falls back to the legacy localStorage mock auth
  *    → the app still works fully without a backend
- *
- *  TODO (Pakket A2): sync preferences, favorites and
- *       language to the Supabase profile.
  * ────────────────────────────────────────────── */
 
 "use client";
@@ -21,10 +19,16 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
-import { defaultProfile, type Profile } from "@/lib/profile";
+import {
+  defaultProfile,
+  fetchProfile,
+  upsertProfile,
+  type Profile,
+} from "@/lib/profile";
 import { useLanguage } from "./LanguageProvider";
 
 /* ── Public types ────────────────────────────── */
@@ -49,6 +53,8 @@ export interface AuthContextValue {
   signOut: () => Promise<void>;
   /** Legacy alias for signOut. */
   logout: () => void;
+  /** Merge partial data into the Supabase profile (no-op for mock/guest). */
+  updateProfile: (partial: Partial<Omit<Profile, "id" | "created_at">>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -72,35 +78,27 @@ function loadMockUser(): AuthUser | null {
 /* ── Provider component ──────────────────────── */
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { lang } = useLanguage();
+  const { lang, setLang } = useLanguage();
   const supabaseReady = isSupabaseConfigured();
 
   const [user, setUser] = useState<AuthUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  /* ── Ref: prevents language write-back loop after profile load ── */
+  const langSyncedFromProfile = useRef(false);
+
   /* ── Profile loader (Supabase) ────────────── */
   const loadProfile = useCallback(
     async (userId: string) => {
       if (!supabaseReady) return;
       try {
-        const sb = getSupabase();
-        const { data, error } = await sb
-          .from("profiles")
-          .select("*")
-          .eq("id", userId)
-          .maybeSingle();
+        let loaded = await fetchProfile(userId);
 
-        if (error) {
-          console.warn("[auth] Failed to load profile:", error.message);
-          return;
-        }
-
-        if (data) {
-          setProfile(data as Profile);
-        } else {
+        if (!loaded) {
           // First login – create a default profile row
           const newRow = defaultProfile(userId, lang);
+          const sb = getSupabase();
           const { data: inserted, error: insertErr } = await sb
             .from("profiles")
             .insert(newRow)
@@ -109,15 +107,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           if (insertErr) {
             console.warn("[auth] Failed to create profile:", insertErr.message);
-          } else {
-            setProfile(inserted as Profile);
+            return;
           }
+          loaded = inserted as Profile;
+        }
+
+        setProfile(loaded);
+
+        // Sync language FROM profile on initial load
+        if (loaded.default_language && loaded.default_language !== lang) {
+          langSyncedFromProfile.current = true;
+          setLang(loaded.default_language);
         }
       } catch (err) {
         console.warn("[auth] Profile load error:", err);
       }
     },
-    [lang, supabaseReady]
+    [lang, supabaseReady, setLang]
   );
 
   /* ── Supabase session bootstrap ───────────── */
@@ -173,7 +179,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [supabaseReady, loadProfile]);
 
+  /* ── Language → profile sync (debounced) ──── */
+  const langSyncTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => {
+    if (langSyncedFromProfile.current) {
+      langSyncedFromProfile.current = false;
+      return;
+    }
+    if (!user || user.id === "mock" || !profile) return;
+
+    clearTimeout(langSyncTimer.current);
+    langSyncTimer.current = setTimeout(() => {
+      upsertProfile(user.id, { default_language: lang });
+      setProfile((prev) => prev ? { ...prev, default_language: lang } : prev);
+    }, 800);
+
+    return () => clearTimeout(langSyncTimer.current);
+  }, [lang, user, profile]);
+
   /* ── Actions ───────────────────────────────── */
+
+  const updateProfileFn = useCallback(
+    async (partial: Partial<Omit<Profile, "id" | "created_at">>) => {
+      if (!user || user.id === "mock") return;
+      const updated = await upsertProfile(user.id, partial);
+      if (updated) setProfile(updated);
+    },
+    [user]
+  );
 
   const signInWithEmail = useCallback(
     async (email: string): Promise<{ error?: string }> => {
@@ -218,8 +251,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login: (email: string) => { signInWithEmail(email); },
       signOut,
       logout: () => { signOut(); },
+      updateProfile: updateProfileFn,
     }),
-    [user, profile, loading, signInWithEmail, signOut]
+    [user, profile, loading, signInWithEmail, signOut, updateProfileFn]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

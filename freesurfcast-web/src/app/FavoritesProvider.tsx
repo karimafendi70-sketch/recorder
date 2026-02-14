@@ -1,6 +1,7 @@
 /* ──────────────────────────────────────────────
  *  FreeSurfCast – Favorites Provider
- *  Stores favourite spot IDs in localStorage.
+ *  Stores favourite spot IDs in localStorage + syncs
+ *  to Supabase profile for logged-in users.
  * ────────────────────────────────────────────── */
 
 "use client";
@@ -9,10 +10,13 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
+import { useAuth } from "./AuthProvider";
 
 const STORAGE_KEY = "freesurfcast:favorites";
 const RECENT_KEY = "freesurfcast:recentSpots";
@@ -67,11 +71,73 @@ function saveRecent(ids: string[]) {
   localStorage.setItem(RECENT_KEY, JSON.stringify(ids));
 }
 
+/** Serialize favorites + recents for comparison (sort favorites for order-independence) */
+function serializeForSync(favs: Set<string>, recents: string[]): string {
+  return JSON.stringify({ f: [...favs].sort(), r: recents });
+}
+
 /* ── Provider ──────────────────────────────── */
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
+  const { user, profile, updateProfile } = useAuth();
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(() => loadSet(STORAGE_KEY));
   const [recentIds, setRecentIds] = useState<string[]>(loadRecent);
+
+  // Track last synced state to avoid write-back loops
+  const lastProfileSync = useRef<string>("");
+
+  /* ── Load from profile when logged-in ──────── */
+  useEffect(() => {
+    if (!user || user.id === "mock" || !profile) return;
+
+    const hasProfileFavs = profile.favorites && profile.favorites.length > 0;
+    const hasProfileRecent = profile.recent_spots && profile.recent_spots.length > 0;
+
+    if (hasProfileFavs || hasProfileRecent) {
+      const newFavs = new Set(profile.favorites ?? []);
+      const newRecent = (profile.recent_spots ?? []).slice(0, MAX_RECENT);
+      const json = serializeForSync(newFavs, newRecent);
+      if (json !== lastProfileSync.current) {
+        lastProfileSync.current = json;
+        queueMicrotask(() => {
+          setFavoriteIds(newFavs);
+          setRecentIds(newRecent);
+        });
+        saveSet(STORAGE_KEY, newFavs);
+        saveRecent(newRecent);
+      }
+    } else {
+      // Profile has no favorites/recents yet → seed from localStorage
+      const currentFavs = loadSet(STORAGE_KEY);
+      const currentRecent = loadRecent();
+      lastProfileSync.current = serializeForSync(currentFavs, currentRecent);
+      if (currentFavs.size > 0 || currentRecent.length > 0) {
+        updateProfile({
+          favorites: [...currentFavs],
+          recent_spots: currentRecent,
+        });
+      }
+    }
+  }, [user, profile, updateProfile]);
+
+  /* ── Debounced write-back to profile ───────── */
+  const syncTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => {
+    if (!user || user.id === "mock") return;
+    const json = serializeForSync(favoriteIds, recentIds);
+    if (json === lastProfileSync.current) return;
+    lastProfileSync.current = json;
+
+    clearTimeout(syncTimer.current);
+    syncTimer.current = setTimeout(() => {
+      updateProfile({
+        favorites: [...favoriteIds],
+        recent_spots: recentIds,
+      });
+    }, 800);
+
+    return () => clearTimeout(syncTimer.current);
+  }, [favoriteIds, recentIds, user, updateProfile]);
 
   const toggleFavorite = useCallback((spotId: string) => {
     setFavoriteIds((prev) => {

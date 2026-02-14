@@ -607,6 +607,13 @@ const dict = {
     fr: "Dites à FreeSurfCast comment et où vous aimez surfer — tous les scores et aperçus s'adaptent automatiquement.",
     es: "Dile a FreeSurfCast cómo y dónde te gusta surfear — todas las puntuaciones y análisis se adaptan automáticamente.",
   },
+  "profile.synced": {
+    en: "Your profile, favourites and language are synced to your account.",
+    nl: "Je profiel, favorieten en taal worden gesynchroniseerd met je account.",
+    de: "Dein Profil, Favoriten und Sprache werden mit deinem Konto synchronisiert.",
+    fr: "Votre profil, vos favoris et votre langue sont synchronisés avec votre compte.",
+    es: "Tu perfil, favoritos e idioma están sincronizados con tu cuenta.",
+  },
   "profile.skill": {
     en: "Skill level",
     nl: "Surfniveau",

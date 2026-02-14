@@ -44,6 +44,18 @@
   line-height: 1.55;
 }
 
+.syncedHint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--accent);
+  padding: 0.3rem 0.6rem;
+  background: var(--accent-light);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+
 /* ── Section cards ─────────────────────────── */
 
 .sectionCard {
