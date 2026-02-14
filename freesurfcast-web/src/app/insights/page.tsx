@@ -13,7 +13,8 @@ import { buildTimelineDataForDay } from "@/lib/timeline";
 import { ProtectedRoute } from "../ProtectedRoute";
 import { usePreferences } from "../PreferencesProvider";
 import { useLanguage } from "../LanguageProvider";
-import { createCatalogSpots, type ForecastSlot } from "../forecast/mockData";
+import { type ForecastSlot } from "../forecast/mockData";
+import { useLiveForecast } from "../forecast/useLiveForecast";
 import {
   buildSlotKey,
   getUiScoreClass,
@@ -31,7 +32,7 @@ export default function InsightsPage() {
   const { preferences: prefs, isUsingDefaults } = usePreferences();
   const { t } = useLanguage();
   const dayKey = "today";
-  const spots = useMemo(() => createCatalogSpots(dayKey), [dayKey]);
+  const { spots } = useLiveForecast(dayKey);
 
   const qualityForSlot = useMemo(() => makeQualityForSlot(prefs), [prefs]);
 

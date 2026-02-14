@@ -19,7 +19,9 @@ import { ForecastHeader } from "./components/ForecastHeader";
 import { SpotSearchBar } from "./components/SpotSearchBar";
 import { SlotCards } from "./components/SlotCards";
 import { ScoreExplainer } from "./components/ScoreExplainer";
-import { createCatalogSpots, type DayPart, type ForecastSlot } from "./mockData";
+import { DataSourceBadge } from "./components/DataSourceBadge";
+import { type DayPart, type ForecastSlot } from "./mockData";
+import { useLiveForecast } from "./useLiveForecast";
 import {
   buildQualityOptions,
   buildSlotKey,
@@ -42,7 +44,7 @@ export default function ForecastPage() {
     []
   );
 
-  const spots = useMemo(() => createCatalogSpots(dayKey), [dayKey]);
+  const { spots, source, fetchedAt } = useLiveForecast(dayKey);
 
   const qualityOptions = useMemo(() => buildQualityOptions(prefs), [prefs]);
 
@@ -181,6 +183,8 @@ export default function ForecastPage() {
   return (
     <ProtectedRoute>
       <section className="stack-lg">
+        <DataSourceBadge source={source} fetchedAt={fetchedAt} />
+
         {isUsingDefaults && (
           <div className="defaults-banner">
             <span>{"\ud83e\udded"}</span>

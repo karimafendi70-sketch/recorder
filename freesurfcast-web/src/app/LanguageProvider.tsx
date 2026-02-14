@@ -95,6 +95,8 @@ const dict = {
   "forecast.editProfile": { en: "Edit profile", nl: "Profiel bewerken" },
   "forecast.noResults": { en: "No spots found", nl: "Geen spots gevonden" },
   "forecast.searchHint": { en: "Search a spot and tap ★ to save it", nl: "Zoek een spot en tik op ★ om te bewaren" },
+  "forecast.liveData": { en: "Live data", nl: "Live data" },
+  "forecast.mockData": { en: "Mock data (API unavailable)", nl: "Mock data (API onbereikbaar)" },
 
   // Insights
   "insights.eyebrow": { en: "Insights", nl: "Inzichten" },

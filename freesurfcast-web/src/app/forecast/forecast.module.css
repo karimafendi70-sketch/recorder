@@ -554,6 +554,65 @@
   gap: 0.15rem;
 }
 
+/* ── Empty-state messages ───────────────────── */
+
+.searchEmpty {
+  padding: 0.75rem 1rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+  text-align: center;
+  border: 1.5px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  margin-top: 4px;
+}
+
+.searchHint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── Data-source badge ──────────────────────── */
+
+.dataSourceBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.76rem;
+  font-weight: 650;
+  border-radius: var(--radius-full);
+  border: 1.5px solid;
+  width: fit-content;
+}
+
+.dataSourceLive {
+  color: #1a6e3e;
+  background: #e6f6ed;
+  border-color: #a2d9b8;
+}
+
+.dataSourceMock {
+  color: #7a5a1f;
+  background: #fef7e6;
+  border-color: #e0c878;
+}
+
+.dataSourceDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.dataSourceTime {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
 /* ── Empty-state messages ────────────────────── */
 
 .searchEmpty {
