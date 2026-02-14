@@ -17,6 +17,20 @@ import {
 
 const STORAGE_KEY = "freesurfcast:prefs";
 
+/* ── Defaults check ────────────────────────── */
+
+function isDefaultPreferences(prefs: UserPreferences): boolean {
+  const defaults = getDefaultUserPreferences("intermediate");
+  return (
+    prefs.skillLevel === defaults.skillLevel &&
+    prefs.preferredMinHeight === defaults.preferredMinHeight &&
+    prefs.preferredMaxHeight === defaults.preferredMaxHeight &&
+    prefs.likesClean === defaults.likesClean &&
+    prefs.canHandleChallenging === defaults.canHandleChallenging &&
+    prefs.autoBeginnerFilter === defaults.autoBeginnerFilter
+  );
+}
+
 /* ── Context shape ─────────────────────────── */
 
 interface PreferencesContextValue {
@@ -24,6 +38,8 @@ interface PreferencesContextValue {
   preferences: UserPreferences;
   /** Whether preferences have been loaded from storage */
   ready: boolean;
+  /** True when preferences still equal the out-of-the-box defaults */
+  isUsingDefaults: boolean;
   /** Replace preferences in memory AND persist to localStorage */
   setPreferences: (next: UserPreferences) => void;
 }
@@ -45,9 +61,11 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     saveUserPreferences(next, { storage: localStorage, storageKey: STORAGE_KEY });
   }, []);
 
+  const isUsingDefaults = useMemo(() => isDefaultPreferences(preferences), [preferences]);
+
   const value = useMemo<PreferencesContextValue>(
-    () => ({ preferences, ready: true, setPreferences }),
-    [preferences, setPreferences]
+    () => ({ preferences, ready: true, isUsingDefaults, setPreferences }),
+    [preferences, isUsingDefaults, setPreferences]
   );
 
   return (

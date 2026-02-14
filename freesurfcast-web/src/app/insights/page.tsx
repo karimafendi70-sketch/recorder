@@ -25,7 +25,7 @@ import styles from "./insights.module.css";
 const DAY_PARTS = ["morning", "afternoon", "evening"] as const;
 
 export default function InsightsPage() {
-  const { preferences: prefs } = usePreferences();
+  const { preferences: prefs, isUsingDefaults } = usePreferences();
   const dayKey = "today";
   const spots = useMemo(() => createMockSpots(dayKey), [dayKey]);
 
@@ -136,6 +136,16 @@ export default function InsightsPage() {
   return (
     <ProtectedRoute>
       <section className="stack-lg">
+        {isUsingDefaults && (
+          <div className="defaults-banner">
+            <span>🧭</span>
+            <p>
+              You&apos;re using default preferences.{" "}
+              <a href="/profile">Edit&nbsp;profile</a> to get more accurate guidance.
+            </p>
+          </div>
+        )}
+
         <header className={styles.heroCard}>
           <p className={styles.heroEyebrow}>Insights</p>
           <h1 className={styles.heroTitle}>Multi-spot overview</h1>

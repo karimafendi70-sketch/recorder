@@ -24,9 +24,17 @@ export default function Home() {
           <span>Timeline</span>
           <span>Profile-driven</span>
         </div>
-        <Link href="/forecast" className="btn btn-primary" style={{ justifySelf: "start" }}>
-          Open Forecast →
-        </Link>
+        <div className="hero-actions">
+          <Link href="/forecast" className="btn btn-primary">
+            Open Forecast →
+          </Link>
+          <Link href="/profile" className="btn btn-ghost">
+            Set up your surf profile
+          </Link>
+        </div>
+        <p className="muted" style={{ fontSize: "0.82rem" }}>
+          Your profile will personalise all scores and insights.
+        </p>
       </div>
 
       {/* ── About ─────────────────────────────── */}

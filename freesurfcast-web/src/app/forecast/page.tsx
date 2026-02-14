@@ -24,7 +24,7 @@ import {
 } from "./scoringHelpers";
 
 export default function ForecastPage() {
-  const { preferences: prefs } = usePreferences();
+  const { preferences: prefs, isUsingDefaults } = usePreferences();
   const dayKey = "today";
   const dayLabel = useMemo(
     () =>
@@ -146,6 +146,16 @@ export default function ForecastPage() {
   return (
     <ProtectedRoute>
       <section className="stack-lg">
+        {isUsingDefaults && (
+          <div className="defaults-banner">
+            <span>🧭</span>
+            <p>
+              You&apos;re using default preferences.{" "}
+              <a href="/profile">Edit&nbsp;profile</a> to get more accurate guidance.
+            </p>
+          </div>
+        )}
+
         <SpotSelector
           spots={spots.map((spot) => ({ id: spot.id, name: spot.name }))}
           activeSpotId={activeSpot.id}
