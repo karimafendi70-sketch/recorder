@@ -33,6 +33,8 @@ import {
 } from "./scoringHelpers";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { usePageView, trackSpotSelected } from "@/lib/trackClient";
+import { buildSurfWindows } from "@/lib/forecast/surfWindows";
+import { SurfWindowsPanel } from "./components/SurfWindowsPanel";
 
 export default function ForecastPage() {
   return (
@@ -144,6 +146,18 @@ function ForecastContent() {
         };
       }),
     [timelineRows, activeSpot]
+  );
+
+  /* ── Surf Windows (grouped high-scoring time blocks) ── */
+  const surfWindows = useMemo(
+    () =>
+      buildSurfWindows(
+        activeSpot.slots,
+        activeSpot.id,
+        qualityForSlot,
+        { minScore: 5, maxWindows: 5 },
+      ),
+    [activeSpot, qualityForSlot]
   );
 
   const heatmapRows = useMemo(
@@ -258,6 +272,8 @@ function ForecastContent() {
           wavePeriod={explainerData.wavePeriod}
           windDirection={explainerData.windDirection}
         />
+
+        <SurfWindowsPanel windows={surfWindows} />
 
         <SlotCards slots={slotCards} />
 

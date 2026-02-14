@@ -374,6 +374,57 @@ const dict = {
     es: "Los datos en vivo no están disponibles temporalmente — mostrando datos de respaldo.",
   },
 
+  // ── Surf Windows ──────────────────────────
+  "surfWindows.title": {
+    en: "Surf Windows",
+    nl: "Surf Windows",
+    de: "Surf-Fenster",
+    fr: "Créneaux surf",
+    es: "Ventanas de surf",
+  },
+  "surfWindows.subtitle": {
+    en: "Best time blocks for this spot",
+    nl: "Beste tijdblokken voor deze spot",
+    de: "Beste Zeitfenster für diesen Spot",
+    fr: "Meilleurs créneaux horaires pour ce spot",
+    es: "Mejores bloques horarios para este spot",
+  },
+  "surfWindows.none": {
+    en: "No strong surf windows found for now — check back later.",
+    nl: "Geen goede surf windows gevonden — kijk later opnieuw.",
+    de: "Derzeit keine guten Surf-Fenster gefunden — schau später nochmal.",
+    fr: "Aucun créneau surf favorable pour l'instant — revenez plus tard.",
+    es: "No se encontraron ventanas de surf favorables — vuelve más tarde.",
+  },
+  "surfWindows.peak": {
+    en: "peak",
+    nl: "piek",
+    de: "Spitze",
+    fr: "pic",
+    es: "pico",
+  },
+  "surfWindows.condClean": {
+    en: "Clean",
+    nl: "Clean",
+    de: "Sauber",
+    fr: "Propre",
+    es: "Limpio",
+  },
+  "surfWindows.condMixed": {
+    en: "Mixed",
+    nl: "Gemengd",
+    de: "Gemischt",
+    fr: "Mixte",
+    es: "Mixto",
+  },
+  "surfWindows.condChoppy": {
+    en: "Choppy",
+    nl: "Choppy",
+    de: "Kabbelig",
+    fr: "Agité",
+    es: "Picado",
+  },
+
   // ── Browse / filter ───────────────────────
   "browse.show": {
     en: "Browse spots by country & filter",

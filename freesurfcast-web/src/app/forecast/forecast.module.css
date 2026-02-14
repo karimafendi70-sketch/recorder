@@ -307,6 +307,79 @@
   padding: 0.12rem 0.42rem;
 }
 
+/* ── Surf Windows ────────────────────────────── */
+
+.windowsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.8rem;
+}
+
+.windowCard {
+  border-radius: 14px;
+  border: 1.5px solid #d7e6eb;
+  padding: 0.85rem 0.9rem;
+  background: #fafdfe;
+  display: grid;
+  gap: 0.45rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.windowCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(13, 54, 66, 0.08);
+}
+
+.windowTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.windowTime {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.windowScore {
+  font-size: 1.15rem;
+  font-weight: 750;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.windowPeak {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted, #5d7178);
+  text-transform: lowercase;
+}
+
+.windowMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.windowChip {
+  font-size: 0.72rem;
+  font-weight: 650;
+  padding: 0.18rem 0.48rem;
+  border-radius: 999px;
+  background: rgba(21, 111, 120, 0.08);
+  color: #1a5359;
+}
+
+.noWindows {
+  color: var(--muted, #5d7178);
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
 @media (max-width: 640px) {
   .headerCard {
     padding: 1rem 1.05rem;
@@ -342,10 +415,19 @@
     grid-template-columns: 1fr 1fr;
     gap: 0.6rem;
   }
+
+  .windowsGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
 }
 
 @media (max-width: 400px) {
   .slotGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .windowsGrid {
     grid-template-columns: 1fr;
   }
 }
