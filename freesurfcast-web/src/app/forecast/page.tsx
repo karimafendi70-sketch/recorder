@@ -31,6 +31,8 @@ import {
   getUiScoreClass,
   getWindRelativeToCoast,
 } from "./scoringHelpers";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { usePageView, trackSpotSelected } from "@/lib/trackClient";
 
 export default function ForecastPage() {
   return (
@@ -43,7 +45,8 @@ export default function ForecastPage() {
 function ForecastContent() {
   const { preferences: prefs, isUsingDefaults } = usePreferences();
   const { addRecent } = useFavorites();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  usePageView();
   const dayKey = "today";
   const dayLabel = useMemo(
     () =>
@@ -92,8 +95,9 @@ function ForecastContent() {
     (spotId: string) => {
       setActiveSpotIdRaw(spotId);
       addRecent(spotId);
+      trackSpotSelected(spotId, "/forecast", lang);
     },
-    [addRecent]
+    [addRecent, lang]
   );
 
   const resolvedSpotId = useMemo(() => {
@@ -258,6 +262,8 @@ function ForecastContent() {
         <SlotCards slots={slotCards} />
 
         <DaypartOverview items={overviewData} />
+
+        <FeedbackWidget spotId={resolvedSpotId} />
       </section>
     </ProtectedRoute>
   );

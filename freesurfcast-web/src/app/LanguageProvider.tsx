@@ -16,6 +16,7 @@ import {
 
 import { dict, SUPPORTED_LANGS, LANG_LABELS } from "./translations";
 import type { Lang, TranslationKey } from "./translations";
+import { trackLanguageChanged } from "@/lib/trackClient";
 
 export type { Lang, TranslationKey };
 export { SUPPORTED_LANGS, LANG_LABELS };
@@ -43,7 +44,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangRaw] = useState<Lang>(loadLang);
 
   const setLang = useCallback((l: Lang) => {
-    setLangRaw(l);
+    setLangRaw((prev) => {
+      if (prev !== l) trackLanguageChanged(prev, l);
+      return l;
+    });
     localStorage.setItem(STORAGE_KEY, l);
   }, []);
 

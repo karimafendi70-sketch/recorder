@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { useLanguage } from "./LanguageProvider";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { usePageView } from "@/lib/trackClient";
 
 export default function Home() {
   const { t } = useLanguage();
+  usePageView();
 
   return (
     <section className="stack-lg">
@@ -68,22 +71,7 @@ export default function Home() {
       <div className="feedback-card">
         <h2>{t("home.feedbackTitle")}</h2>
         <p>{t("home.feedbackBody")}</p>
-        <div className="feedback-actions">
-          <a
-            href="mailto:you@example.com?subject=FreeSurfCast%20feedback"
-            className="btn btn-primary"
-          >
-            {t("home.sendFeedback")}
-          </a>
-          <a
-            href="https://github.com/karimafendi70-sketch/recorder/issues"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-ghost"
-          >
-            {t("home.githubIssue")}
-          </a>
-        </div>
+        <FeedbackWidget />
       </div>
     </section>
   );

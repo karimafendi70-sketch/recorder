@@ -805,6 +805,78 @@ const dict = {
     fr: "Basé sur le profil",
     es: "Basado en perfil",
   },
+
+  // ── Feedback widget ───────────────────────
+  "feedback.title": {
+    en: "Send us feedback",
+    nl: "Stuur ons feedback",
+    de: "Feedback senden",
+    fr: "Envoyez-nous vos retours",
+    es: "Envíanos tu opinión",
+  },
+  "feedback.type.idea": {
+    en: "Idea",
+    nl: "Idee",
+    de: "Idee",
+    fr: "Idée",
+    es: "Idea",
+  },
+  "feedback.type.bug": {
+    en: "Bug",
+    nl: "Bug",
+    de: "Fehler",
+    fr: "Bug",
+    es: "Error",
+  },
+  "feedback.type.question": {
+    en: "Question",
+    nl: "Vraag",
+    de: "Frage",
+    fr: "Question",
+    es: "Pregunta",
+  },
+  "feedback.messageLabel": {
+    en: "Your message",
+    nl: "Je bericht",
+    de: "Deine Nachricht",
+    fr: "Votre message",
+    es: "Tu mensaje",
+  },
+  "feedback.emailLabel": {
+    en: "Contact email",
+    nl: "Contact e-mail",
+    de: "Kontakt-E-Mail",
+    fr: "E-mail de contact",
+    es: "Correo de contacto",
+  },
+  "feedback.optional": {
+    en: "optional",
+    nl: "optioneel",
+    de: "optional",
+    fr: "facultatif",
+    es: "opcional",
+  },
+  "feedback.submit": {
+    en: "Send feedback",
+    nl: "Verstuur feedback",
+    de: "Feedback senden",
+    fr: "Envoyer",
+    es: "Enviar",
+  },
+  "feedback.success": {
+    en: "Thanks for your feedback! We'll use it to improve FreeSurfCast.",
+    nl: "Bedankt voor je feedback! We gebruiken het om FreeSurfCast te verbeteren.",
+    de: "Danke für dein Feedback! Wir nutzen es, um FreeSurfCast zu verbessern.",
+    fr: "Merci pour votre retour ! Nous l'utiliserons pour améliorer FreeSurfCast.",
+    es: "¡Gracias por tu opinión! La usaremos para mejorar FreeSurfCast.",
+  },
+  "feedback.error": {
+    en: "Something went wrong — please try again.",
+    nl: "Er ging iets mis — probeer het opnieuw.",
+    de: "Etwas ist schiefgelaufen — bitte versuche es erneut.",
+    fr: "Quelque chose s'est mal passé — veuillez réessayer.",
+    es: "Algo salió mal — por favor inténtalo de nuevo.",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

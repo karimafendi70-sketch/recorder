@@ -24,6 +24,8 @@ import {
 import { MultiSpotRanking } from "./components/MultiSpotRanking";
 import { DaypartHeatmap } from "./components/DaypartHeatmap";
 import { TimelinePreview } from "./components/TimelinePreview";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { usePageView } from "@/lib/trackClient";
 import styles from "./insights.module.css";
 
 const DAY_PARTS = ["morning", "afternoon", "evening"] as const;
@@ -31,6 +33,7 @@ const DAY_PARTS = ["morning", "afternoon", "evening"] as const;
 export default function InsightsPage() {
   const { preferences: prefs, isUsingDefaults } = usePreferences();
   const { t } = useLanguage();
+  usePageView();
   const dayKey = "today";
   const { spots, status } = useLiveForecast(dayKey);
 
@@ -248,6 +251,8 @@ export default function InsightsPage() {
         <DaypartHeatmap rows={heatmapItems} dayParts={[...DAY_PARTS]} />
 
         <TimelinePreview spotName={bestSpot.name} entries={timelineEntries} />
+
+        <FeedbackWidget />
       </section>
     </ProtectedRoute>
   );

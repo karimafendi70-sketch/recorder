@@ -10,6 +10,8 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useLanguage } from "../LanguageProvider";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { usePageView } from "@/lib/trackClient";
 import styles from "./map.module.css";
 
 /* Lazy-load SpotMap with SSR disabled (Leaflet needs window) */
@@ -32,6 +34,7 @@ const SpotMap = dynamic(() => import("./SpotMap").then((m) => m.SpotMap), {
 
 export function MapPageClient() {
   const { t } = useLanguage();
+  usePageView();
 
   return (
     <section className={styles.mapPage}>
@@ -52,6 +55,8 @@ export function MapPageClient() {
       <div className={styles.mapContainer}>
         <SpotMap />
       </div>
+
+      <FeedbackWidget />
     </section>
   );
 }
