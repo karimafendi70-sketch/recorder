@@ -8,28 +8,30 @@ import {
   type UserPreferences,
 } from "@/lib/preferences";
 import { usePreferences } from "../../PreferencesProvider";
+import { useLanguage, type TranslationKey } from "../../LanguageProvider";
 import styles from "../profile.module.css";
 
-const SKILL_OPTIONS: { value: SkillLevel; label: string }[] = [
-  { value: "beginner", label: "Beginner" },
-  { value: "intermediate", label: "Intermediate" },
-  { value: "advanced", label: "Advanced" },
+const SKILL_OPTIONS: { value: SkillLevel; labelKey: TranslationKey }[] = [
+  { value: "beginner", labelKey: "profile.beginner" },
+  { value: "intermediate", labelKey: "profile.intermediate" },
+  { value: "advanced", labelKey: "profile.advanced" },
 ];
 
-const WAVE_PRESETS: { value: string; label: string; hint: string }[] = [
-  { value: "small", label: "Smaller waves", hint: "0.6 – 1.6 m" },
-  { value: "medium", label: "Medium range", hint: "0.8 – 2.2 m" },
-  { value: "big", label: "Bigger waves", hint: "1.2 – 3.0 m" },
+const WAVE_PRESETS: { value: string; labelKey: TranslationKey; hint: string }[] = [
+  { value: "small", labelKey: "profile.small", hint: "0.6 – 1.6 m" },
+  { value: "medium", labelKey: "profile.medium", hint: "0.8 – 2.2 m" },
+  { value: "big", labelKey: "profile.big", hint: "1.2 – 3.0 m" },
 ];
 
-const CONDITION_TOGGLES: { key: keyof Pick<UserPreferences, "likesClean" | "canHandleChallenging" | "autoBeginnerFilter">; label: string; hint: string }[] = [
-  { key: "likesClean", label: "Prefer clean conditions", hint: "Score lower when conditions are choppy or messy" },
-  { key: "canHandleChallenging", label: "Comfortable with challenging conditions", hint: "Don't penalise strong currents or offshore wind" },
-  { key: "autoBeginnerFilter", label: "Auto-balance for beginner safety", hint: "Filter out spots that exceed safe thresholds" },
+const CONDITION_TOGGLES: { key: keyof Pick<UserPreferences, "likesClean" | "canHandleChallenging" | "autoBeginnerFilter">; labelKey: TranslationKey; hintKey: TranslationKey }[] = [
+  { key: "likesClean", labelKey: "profile.likesClean", hintKey: "profile.likesCleanHint" },
+  { key: "canHandleChallenging", labelKey: "profile.challenging", hintKey: "profile.challengingHint" },
+  { key: "autoBeginnerFilter", labelKey: "profile.beginnerFilter", hintKey: "profile.beginnerFilterHint" },
 ];
 
 export function ProfileForm() {
   const { preferences, setPreferences } = usePreferences();
+  const { t } = useLanguage();
   const [prefs, setPrefs] = useState<UserPreferences>(preferences);
   const [saved, setSaved] = useState(false);
 
@@ -70,8 +72,8 @@ export function ProfileForm() {
     <>
       {/* ── Skill level ────────────────────── */}
       <section className={styles.sectionCard}>
-        <h2 className={styles.sectionTitle}>Skill level</h2>
-        <p className={styles.sectionDesc}>Affects default wave range and safety filters.</p>
+        <h2 className={styles.sectionTitle}>{t("profile.skill")}</h2>
+        <p className={styles.sectionDesc}>{t("profile.skillDesc")}</p>
 
         <div className={styles.radioGroup}>
           {SKILL_OPTIONS.map((opt) => (
@@ -86,7 +88,7 @@ export function ProfileForm() {
                 checked={prefs.skillLevel === opt.value}
                 onChange={() => handleSkillChange(opt.value)}
               />
-              {opt.label}
+              {t(opt.labelKey)}
             </label>
           ))}
         </div>
@@ -94,8 +96,8 @@ export function ProfileForm() {
 
       {/* ── Wave preferences ───────────────── */}
       <section className={styles.sectionCard}>
-        <h2 className={styles.sectionTitle}>Wave preferences</h2>
-        <p className={styles.sectionDesc}>Choose the wave height range you&apos;re most comfortable with.</p>
+        <h2 className={styles.sectionTitle}>{t("profile.waveTitle")}</h2>
+        <p className={styles.sectionDesc}>{t("profile.waveDesc")}</p>
 
         <div className={styles.pillGroup}>
           {WAVE_PRESETS.map((preset) => (
@@ -105,7 +107,7 @@ export function ProfileForm() {
               className={`${styles.pill} ${wavePreset === preset.value ? styles.pillActive : ""}`}
               onClick={() => handleWavePreset(preset.value)}
             >
-              {preset.label}
+              {t(preset.labelKey)}
               <span className={styles.pillHint}>{preset.hint}</span>
             </button>
           ))}
@@ -114,15 +116,15 @@ export function ProfileForm() {
 
       {/* ── Condition toggles ──────────────── */}
       <section className={styles.sectionCard}>
-        <h2 className={styles.sectionTitle}>Conditions</h2>
-        <p className={styles.sectionDesc}>Fine-tune how the scoring engine evaluates surf conditions.</p>
+        <h2 className={styles.sectionTitle}>{t("profile.condTitle")}</h2>
+        <p className={styles.sectionDesc}>{t("profile.condDesc")}</p>
 
         <div className={styles.toggleList}>
           {CONDITION_TOGGLES.map((toggle) => (
             <div key={toggle.key} className={styles.toggleRow}>
               <div className={styles.toggleText}>
-                <span className={styles.toggleLabel}>{toggle.label}</span>
-                <span className={styles.toggleHint}>{toggle.hint}</span>
+                <span className={styles.toggleLabel}>{t(toggle.labelKey)}</span>
+                <span className={styles.toggleHint}>{t(toggle.hintKey)}</span>
               </div>
               <label className={styles.toggle}>
                 <input
@@ -140,9 +142,9 @@ export function ProfileForm() {
       {/* ── Save bar ───────────────────────── */}
       <div className={styles.saveBar}>
         <button type="button" className="btn btn-primary" onClick={handleSave}>
-          Save preferences
+          {t("profile.save")}
         </button>
-        {saved && <span className={styles.savedBadge}>✓ Preferences saved</span>}
+        {saved && <span className={styles.savedBadge}>{t("profile.saved")}</span>}
       </div>
     </>
   );

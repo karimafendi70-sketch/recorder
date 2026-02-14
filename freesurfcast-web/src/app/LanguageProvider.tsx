@@ -31,35 +31,35 @@ const dict = {
   "nav.loggedInAs": { en: "Logged in as", nl: "Ingelogd als" },
 
   // Home
-  "home.eyebrow": { en: "2026 Coastal Forecasting", nl: "2026 Kustweervoorspelling" },
+  "home.eyebrow": { en: "Coastal Forecasting 2026", nl: "Kustvoorspelling 2026" },
   "home.title": { en: "FreeSurfCast", nl: "FreeSurfCast" },
   "home.subtitle": {
-    en: "Personal surf guidance built around your profile, conditions, and smart daypart scoring. Start with a quick forecast view and grow into deeper insights.",
-    nl: "Persoonlijke surfgids op basis van je profiel, condities en slimme dagdeelscores. Begin met een snelle voorspelling en ontdek diepere inzichten.",
+    en: "Personal surf scores based on your profile, real-time conditions and smart daypart analysis.",
+    nl: "Persoonlijke surfscores op basis van je profiel, actuele condities en slimme dagdeelanalyse.",
   },
   "home.openForecast": { en: "Open Forecast →", nl: "Open Voorspelling →" },
-  "home.setupProfile": { en: "Set up your surf profile", nl: "Stel je surfprofiel in" },
+  "home.setupProfile": { en: "Set up profile", nl: "Profiel instellen" },
   "home.profileHint": {
-    en: "Your profile will personalise all scores and insights.",
+    en: "Your profile personalises all scores and insights.",
     nl: "Je profiel personaliseert alle scores en inzichten.",
   },
   "home.aboutTitle": { en: "About FreeSurfCast", nl: "Over FreeSurfCast" },
   "home.aboutP1": {
-    en: "FreeSurfCast is a profile-driven coastal surf forecasting tool. It takes your skill level, wave preferences and condition weights and translates raw forecast data into personalised scores — so you instantly know when and where to paddle out.",
-    nl: "FreeSurfCast is een profielgestuurd kustsurfvoorspellingstool. Het neemt je surfniveau, golfvoorkeuren en conditiegewichten en vertaalt ruwe voorspellingsdata naar gepersonaliseerde scores — zodat je direct weet wanneer en waar je het water in kunt.",
+    en: "FreeSurfCast turns raw forecast data into personalised surf scores. Set your skill level, wave preferences and condition weights — then instantly see when and where to paddle out.",
+    nl: "FreeSurfCast vertaalt ruwe voorspellingsdata naar persoonlijke surfscores. Stel je niveau, golfvoorkeuren en conditiegewichten in — en zie direct wanneer en waar je het water in kunt.",
   },
-  "home.aboutP2En": {
-    en: "Use Forecast to see time-slot scores for a single spot, Insights to compare multiple spots side-by-side with heatmaps and timelines, and Profile to fine-tune how conditions are weighted.",
-    nl: "Gebruik Voorspelling om tijdslot-scores per spot te zien, Inzichten om meerdere spots naast elkaar te vergelijken met heatmaps en tijdlijnen, en Profiel om de conditiegewichten te verfijnen.",
+  "home.aboutP2": {
+    en: "Use Forecast for time-slot scores per spot, Insights to compare spots side-by-side, and Profile to fine-tune your condition weights.",
+    nl: "Gebruik Voorspelling voor tijdslot-scores per spot, Inzichten om spots naast elkaar te vergelijken, en Profiel om je conditiegewichten af te stemmen.",
   },
   "home.aboutMock": {
-    en: "The app currently runs on mock forecast data — but the scoring engine, daypart logic and multi-spot comparison are fully functional.",
-    nl: "De app draait momenteel op mock-voorspellingsdata — maar de scoring-engine, dagdeellogica en multi-spotvergelijking zijn volledig functioneel.",
+    en: "Currently running on mock data — scoring engine, daypart logic and multi-spot comparison are fully functional.",
+    nl: "Draait momenteel op mockdata — scoring-engine, dagdeellogica en multi-spotvergelijking zijn volledig functioneel.",
   },
   "home.keyIdeas": { en: "Key ideas", nl: "Kernpunten" },
   "home.idea1": {
-    en: "Profile-driven scoring — conditions are weighted to your personal preferences.",
-    nl: "Profielgestuurde scoring — condities worden gewogen op basis van je persoonlijke voorkeuren.",
+    en: "Profile-driven scoring — conditions weighted to your preferences.",
+    nl: "Profielgestuurde scoring — condities gewogen op jouw voorkeuren.",
   },
   "home.idea2": {
     en: "Daypart intelligence — morning, midday, afternoon and evening scored separately.",
@@ -67,20 +67,20 @@ const dict = {
   },
   "home.idea3": {
     en: "Multi-spot comparison — rank and compare your favourite breaks at a glance.",
-    nl: "Multi-spotvergelijking — rangschik en vergelijk je favoriete surfplekken in één oogopslag.",
+    nl: "Multi-spotvergelijking — rangschik en vergelijk je favoriete spots in één oogopslag.",
   },
   "home.feedbackTitle": { en: "Help improve FreeSurfCast", nl: "Help FreeSurfCast verbeteren" },
   "home.feedbackBody": {
-    en: "This project is actively evolving. Spotted a bug, have a feature idea, or just want to share your thoughts? Your feedback makes a real difference.",
-    nl: "Dit project evolueert continu. Fout gevonden, feature-idee, of gewoon je mening delen? Jouw feedback maakt echt verschil.",
+    en: "Spotted a bug, have a feature idea, or want to share your thoughts? Your feedback makes a real difference.",
+    nl: "Bug gevonden, feature-idee, of wil je je mening delen? Jouw feedback maakt echt verschil.",
   },
   "home.sendFeedback": { en: "Send feedback ✉", nl: "Stuur feedback ✉" },
-  "home.githubIssue": { en: "Open a GitHub issue →", nl: "Open een GitHub issue →" },
+  "home.githubIssue": { en: "Open GitHub issue →", nl: "Open GitHub issue →" },
 
   // Forecast
   "forecast.title": { en: "Today's forecast", nl: "Voorspelling vandaag" },
   "forecast.spotLabel": { en: "Spot", nl: "Spot" },
-  "forecast.spotHint": { en: "Pick a spot to update forecast cards", nl: "Kies een spot om de voorspellingskaarten bij te werken" },
+  "forecast.spotHint": { en: "Pick a spot to update the forecast cards", nl: "Kies een spot om de voorspellingskaarten bij te werken" },
   "forecast.searchPlaceholder": { en: "Search a surf spot…", nl: "Zoek een surfspot…" },
   "forecast.favorites": { en: "Favorites", nl: "Favorieten" },
   "forecast.recent": { en: "Recent", nl: "Recent" },
@@ -93,23 +93,50 @@ const dict = {
     nl: "Je gebruikt standaardvoorkeuren.",
   },
   "forecast.editProfile": { en: "Edit profile", nl: "Profiel bewerken" },
+  "forecast.noResults": { en: "No spots found", nl: "Geen spots gevonden" },
+  "forecast.searchHint": { en: "Search a spot and tap ★ to save it", nl: "Zoek een spot en tik op ★ om te bewaren" },
 
   // Insights
   "insights.eyebrow": { en: "Insights", nl: "Inzichten" },
   "insights.title": { en: "Multi-spot overview", nl: "Multi-spot overzicht" },
   "insights.subtitle": {
-    en: "Rankings, daypart heatmap and timeline — powered by your profile preferences.",
-    nl: "Rankings, dagdeel-heatmap en tijdlijn — op basis van je profielvoorkeuren.",
+    en: "Rankings, heatmap and timeline — powered by your profile.",
+    nl: "Rankings, heatmap en tijdlijn — op basis van je profiel.",
   },
   "insights.bestSpot": { en: "👑 Best spot right now", nl: "👑 Beste spot nu" },
   "insights.viewForecast": { en: "View forecast →", nl: "Bekijk voorspelling →" },
   "insights.whyBest": { en: "Why this spot is best", nl: "Waarom deze spot het beste is" },
 
+  // Login
+  "login.heading": { en: "Sign in to FreeSurfCast", nl: "Log in bij FreeSurfCast" },
+  "login.subtitle": { en: "Access your personalised surf forecast dashboard.", nl: "Toegang tot je persoonlijke surfvoorspellingen." },
+  "login.email": { en: "Email", nl: "E-mail" },
+  "login.password": { en: "Password", nl: "Wachtwoord" },
+  "login.submit": { en: "Sign in", nl: "Inloggen" },
+  "login.guest": { en: "Continue as guest", nl: "Ga door als gast" },
+
   // Profile
   "profile.title": { en: "Your Surf Profile", nl: "Jouw Surfprofiel" },
-
-  // Login
-  "login.title": { en: "Log in", nl: "Inloggen" },
+  "profile.skill": { en: "Skill level", nl: "Surfniveau" },
+  "profile.skillDesc": { en: "Affects default wave range and safety filters.", nl: "Bepaalt standaard golfbereik en veiligheidsfilters." },
+  "profile.beginner": { en: "Beginner", nl: "Beginner" },
+  "profile.intermediate": { en: "Intermediate", nl: "Gevorderd" },
+  "profile.advanced": { en: "Advanced", nl: "Expert" },
+  "profile.waveTitle": { en: "Wave preferences", nl: "Golfvoorkeuren" },
+  "profile.waveDesc": { en: "Choose the wave range you're most comfortable with.", nl: "Kies het golfbereik dat bij je past." },
+  "profile.small": { en: "Smaller waves", nl: "Kleinere golven" },
+  "profile.medium": { en: "Medium range", nl: "Gemiddeld bereik" },
+  "profile.big": { en: "Bigger waves", nl: "Grotere golven" },
+  "profile.condTitle": { en: "Conditions", nl: "Condities" },
+  "profile.condDesc": { en: "Fine-tune how the scoring engine rates conditions.", nl: "Stel in hoe de scoring-engine condities beoordeelt." },
+  "profile.likesClean": { en: "Prefer clean conditions", nl: "Liever schone condities" },
+  "profile.likesCleanHint": { en: "Lower score when conditions are choppy", nl: "Lagere score bij rommige condities" },
+  "profile.challenging": { en: "Comfortable with challenging conditions", nl: "Comfortabel met uitdagende condities" },
+  "profile.challengingHint": { en: "Don't penalise strong currents or offshore wind", nl: "Geen straf voor sterke stroming of offshore wind" },
+  "profile.beginnerFilter": { en: "Beginner safety auto-balance", nl: "Automatische beginnersveiligheid" },
+  "profile.beginnerFilterHint": { en: "Filter spots that exceed safe thresholds", nl: "Filter spots boven veilige drempelwaarden" },
+  "profile.save": { en: "Save preferences", nl: "Voorkeuren opslaan" },
+  "profile.saved": { en: "✓ Preferences saved", nl: "✓ Voorkeuren opgeslagen" },
 
   // General
   "general.score": { en: "Score", nl: "Score" },

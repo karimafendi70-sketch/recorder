@@ -98,7 +98,15 @@ export function SpotSearchBar({ activeSpotId, scoreBySpotId, onSelect }: SpotSea
             ))}
           </ul>
         )}
+        {open && query.trim().length > 0 && results.length === 0 && (
+          <div className={styles.searchEmpty}>{t("forecast.noResults")}</div>
+        )}
       </div>
+
+      {/* Hint when no favorites or recent */}
+      {favoriteSpots.length === 0 && recentSpots.length === 0 && (
+        <p className={styles.searchHint}>{t("forecast.searchHint")}</p>
+      )}
 
       {/* Favorite pills */}
       {favoriteSpots.length > 0 && (

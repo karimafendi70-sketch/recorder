@@ -38,7 +38,7 @@ export default function Home() {
 
         <div className="about-body">
           <p>{t("home.aboutP1")}</p>
-          <p>{t("home.aboutP2En")}</p>
+          <p>{t("home.aboutP2")}</p>
           <p className="muted" style={{ fontSize: "0.84rem" }}>
             {t("home.aboutMock")}
           </p>

@@ -3,10 +3,12 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../AuthProvider";
+import { useLanguage } from "../LanguageProvider";
 
 export default function LoginPage() {
   const router = useRouter();
   const { user, isReady, login } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState("guest@freesurfcast.app");
   const [password, setPassword] = useState("");
 
@@ -37,12 +39,12 @@ export default function LoginPage() {
         <div className="login-logo" aria-hidden>
           FS
         </div>
-        <h1>Sign in to FreeSurfCast</h1>
-        <p className="muted">Access your profile-based surf forecasting dashboard.</p>
+        <h1>{t("login.heading")}</h1>
+        <p className="muted">{t("login.subtitle")}</p>
 
         <form onSubmit={onSubmit} className="stack-md">
           <label className="field">
-            <span>Email</span>
+            <span>{t("login.email")}</span>
             <input
               type="email"
               value={email}
@@ -53,7 +55,7 @@ export default function LoginPage() {
           </label>
 
           <label className="field">
-            <span>Password</span>
+            <span>{t("login.password")}</span>
             <input
               type="password"
               value={password}
@@ -63,12 +65,12 @@ export default function LoginPage() {
           </label>
 
           <button type="submit" className="btn btn-primary full-width">
-            Sign in
+            {t("login.submit")}
           </button>
         </form>
 
         <button type="button" className="btn btn-ghost full-width" onClick={onContinueAsGuest}>
-          Continue as guest
+          {t("login.guest")}
         </button>
       </article>
     </section>

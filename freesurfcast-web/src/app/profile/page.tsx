@@ -6,7 +6,7 @@ import styles from "./profile.module.css";
 export const metadata: Metadata = {
   title: "Profile",
   description:
-    "Customise your skill level, wave preferences and condition weights to personalise your forecasts.",
+    "Set your skill level, wave preferences and condition weights to personalise surf scores.",
 };
 
 export default function ProfilePage() {
@@ -15,9 +15,9 @@ export default function ProfilePage() {
       <section className="stack-lg">
         <header className={styles.heroCard}>
           <p className={styles.heroEyebrow}>Profile</p>
-          <h1 className={styles.heroTitle}>Your preferences</h1>
+          <h1 className={styles.heroTitle}>Your surf profile</h1>
           <p className={styles.heroSubtitle}>
-            Customise how FreeSurfCast scores and ranks surf conditions for you.
+            Set your skill level, wave preferences and condition weights to personalise scores.
           </p>
         </header>
 

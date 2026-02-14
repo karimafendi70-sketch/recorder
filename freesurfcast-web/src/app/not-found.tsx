@@ -7,7 +7,7 @@ export default function NotFound() {
         <p className="eyebrow">404</p>
         <h1 style={{ fontSize: "1.6rem" }}>Page not found</h1>
         <p className="muted" style={{ lineHeight: 1.6 }}>
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
+          This page doesn&apos;t exist or has been moved.
         </p>
         <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "0.4rem" }}>
           <Link href="/" className="btn btn-ghost">
