@@ -114,6 +114,15 @@ const dict = {
   "filter.point": { en: "Point break", nl: "Pointbreak" },
   "filter.mixedType": { en: "Mixed", nl: "Gemengd" },
 
+  // Map
+  "nav.map": { en: "Map", nl: "Kaart" },
+  "map.title": { en: "Spot Map", nl: "Spotkaart" },
+  "map.subtitle": {
+    en: "Browse all surf spots on an interactive map — click a pin to jump to the forecast.",
+    nl: "Bekijk alle surfspots op een interactieve kaart — klik op een pin om de voorspelling te openen.",
+  },
+  "map.openForecast": { en: "Open forecast →", nl: "Open voorspelling →" },
+
   // Insights
   "insights.eyebrow": { en: "Insights", nl: "Inzichten" },
   "insights.title": { en: "Multi-spot overview", nl: "Multi-spot overzicht" },

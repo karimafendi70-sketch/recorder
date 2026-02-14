@@ -8,6 +8,7 @@ import { useLanguage, type TranslationKey } from "./LanguageProvider";
 const NAV_ITEMS: { href: string; labelKey: TranslationKey }[] = [
   { href: "/", labelKey: "nav.home" },
   { href: "/forecast", labelKey: "nav.forecast" },
+  { href: "/map", labelKey: "nav.map" },
   { href: "/insights", labelKey: "nav.insights" },
   { href: "/profile", labelKey: "nav.profile" },
 ];

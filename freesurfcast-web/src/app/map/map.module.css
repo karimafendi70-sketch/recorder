@@ -1,0 +1,152 @@
+/* ── Map page layout ─────────────────────────── */
+
+.mapPage {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.mapHero {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.mapEyebrow {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 750;
+  color: var(--accent);
+  margin: 0;
+}
+
+.mapTitle {
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.mapSubtitle {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 0;
+  max-width: 42ch;
+}
+
+.mapLinks {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.15rem;
+}
+
+.mapLink {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(21, 111, 120, 0.25);
+  text-underline-offset: 2px;
+  transition: text-decoration-color var(--transition);
+}
+
+.mapLink:hover {
+  text-decoration-color: var(--accent);
+}
+
+/* ── Map container ───────────────────────────── */
+
+.mapContainer {
+  position: relative;
+  width: 100%;
+  height: 65vh;
+  min-height: 360px;
+  max-height: 700px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1.5px solid var(--panel-border);
+  box-shadow: var(--shadow);
+  background: var(--panel);
+}
+
+/* ── Leaflet overrides inside our container ──── */
+
+.leafletMap {
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+/* ── Popup styling ───────────────────────────── */
+
+.popupContent {
+  display: grid;
+  gap: 0.35rem;
+  font-family: inherit;
+  min-width: 160px;
+}
+
+.popupName {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.popupMeta {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.popupTags {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.popupTag {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 650;
+  border-radius: var(--radius-full);
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid rgba(21, 111, 120, 0.15);
+}
+
+.popupBtn {
+  margin-top: 0.2rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: #ffffff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+  text-align: center;
+}
+
+.popupBtn:hover {
+  background: var(--accent-strong);
+  transform: translateY(-1px);
+}
+
+/* ── Mobile tweaks ───────────────────────────── */
+
+@media (max-width: 480px) {
+  .mapContainer {
+    height: 55vh;
+    min-height: 280px;
+    border-radius: var(--radius-md);
+  }
+
+  .mapTitle {
+    font-size: 1.25rem;
+  }
+
+  .mapSubtitle {
+    font-size: 0.82rem;
+  }
+}

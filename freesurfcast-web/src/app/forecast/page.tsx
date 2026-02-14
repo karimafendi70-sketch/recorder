@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { getSpotById } from "@/lib/spots/catalog";
 import { buildDaypartHeatmapData } from "@/lib/heatmap";
 import { buildMultiSpotOverview } from "@/lib/spots";
 import {
@@ -31,6 +33,14 @@ import {
 } from "./scoringHelpers";
 
 export default function ForecastPage() {
+  return (
+    <Suspense>
+      <ForecastContent />
+    </Suspense>
+  );
+}
+
+function ForecastContent() {
   const { preferences: prefs, isUsingDefaults } = usePreferences();
   const { addRecent } = useFavorites();
   const { t } = useLanguage();
@@ -70,6 +80,10 @@ export default function ForecastPage() {
     [dayKey, spots, qualityForSlot]
   );
 
+  const searchParams = useSearchParams();
+  const urlSpotId = searchParams.get("spotId");
+  const validUrlSpot = urlSpotId && getSpotById(urlSpotId) ? urlSpotId : null;
+
   const defaultSpotId = spotRankings[0]?.spotId ?? spots[0]?.id ?? "";
 
   const [activeSpotId, setActiveSpotIdRaw] = useState(defaultSpotId);
@@ -82,10 +96,11 @@ export default function ForecastPage() {
     [addRecent]
   );
 
-  const resolvedSpotId = useMemo(
-    () => (spots.some((spot) => spot.id === activeSpotId) ? activeSpotId : defaultSpotId),
-    [spots, activeSpotId, defaultSpotId]
-  );
+  const resolvedSpotId = useMemo(() => {
+    // URL query param takes priority (coming from /map)
+    if (validUrlSpot) return validUrlSpot;
+    return spots.some((spot) => spot.id === activeSpotId) ? activeSpotId : defaultSpotId;
+  }, [validUrlSpot, spots, activeSpotId, defaultSpotId]);
 
   const activeSpot = spots.find((spot) => spot.id === resolvedSpotId) ?? spots[0];
 
