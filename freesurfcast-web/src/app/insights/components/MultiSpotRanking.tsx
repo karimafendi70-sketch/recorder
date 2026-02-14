@@ -28,10 +28,15 @@ export function MultiSpotRanking({ spots }: MultiSpotRankingProps) {
             key={spot.spotId}
             className={`${styles.rankingRow} ${styles[`row${capitalize(spot.scoreClass)}`]}`}
           >
-            <span className={styles.rankBadge}>#{spot.rank}</span>
+            <span className={styles.rankBadge}>
+              {spot.rank === 1 ? "👑" : `#${spot.rank}`}
+            </span>
 
             <div className={styles.rankingInfo}>
-              <p className={styles.spotName}>{spot.spotName}</p>
+              <p className={styles.spotName}>
+                {spot.spotName}
+                {spot.rank === 1 && <span className={styles.bestNowTag}>Best now</span>}
+              </p>
               <p className={styles.spotHint}>
                 Best slot: <strong>{spot.bestSlotLabel}</strong>
               </p>

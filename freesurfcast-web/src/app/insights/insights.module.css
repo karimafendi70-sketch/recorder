@@ -201,6 +201,98 @@
   background: rgba(17, 58, 68, 0.13);
 }
 
+/* ── Best-now tag in ranking ──────────────────── */
+.bestNowTag {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.12rem 0.42rem;
+  border-radius: 999px;
+  background: rgba(21, 111, 120, 0.12);
+  color: #156f78;
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+/* ── Best spot right now card ─────────────────── */
+.bestSpotCard {
+  background: linear-gradient(160deg, #e0f2f4, #f6fcfd 70%);
+  border: 1.5px solid rgba(21, 111, 120, 0.22);
+  border-radius: 18px;
+  padding: 1.15rem 1.3rem;
+  display: grid;
+  gap: 0.35rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(13, 54, 66, 0.07);
+  transition: box-shadow 0.2s ease;
+}
+
+.bestSpotCard:hover {
+  box-shadow: 0 14px 36px rgba(13, 54, 66, 0.1);
+}
+
+.bestSpotCard::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(21, 111, 120, 0.07), transparent 70%);
+  pointer-events: none;
+}
+
+.bestSpotHigh  { border-color: #7dd4a8; }
+.bestSpotMedium { border-color: #cdd89e; }
+.bestSpotLow   { border-color: #e0b8be; }
+
+.bestSpotEyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 750;
+  color: #156f78;
+}
+
+.bestSpotName {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: #1b2f35;
+}
+
+.bestSpotMeta {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #4b666e;
+  line-height: 1.5;
+}
+
+.bestSpotLink {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #156f78;
+  text-decoration: underline;
+  text-decoration-color: rgba(21, 111, 120, 0.25);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.bestSpotLink:hover {
+  text-decoration-color: #156f78;
+}
+
 /* ── Daypart heatmap ──────────────────────────── */
 .heatmapWrap {
   overflow-x: auto;

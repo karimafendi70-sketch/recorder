@@ -133,6 +133,8 @@ export default function InsightsPage() {
     [timelineRows]
   );
 
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
   return (
     <ProtectedRoute>
       <section className="stack-lg">
@@ -153,6 +155,20 @@ export default function InsightsPage() {
             Rankings, daypart heatmap and timeline — powered by your profile preferences.
           </p>
         </header>
+
+        {rankedSpots.length > 0 && (
+          <div className={`${styles.bestSpotCard} ${styles[`bestSpot${capitalize(rankedSpots[0].scoreClass)}`]}`}>
+            <p className={styles.bestSpotEyebrow}>👑 Best spot right now</p>
+            <p className={styles.bestSpotName}>{rankedSpots[0].spotName}</p>
+            <p className={styles.bestSpotMeta}>
+              Score: <strong>{rankedSpots[0].score.toFixed(1)}</strong>
+              {rankedSpots[0].reasons.length > 0 && (
+                <> — {rankedSpots[0].reasons.join(", ")}</>
+              )}
+            </p>
+            <a href="/forecast" className={styles.bestSpotLink}>View forecast →</a>
+          </div>
+        )}
 
         <MultiSpotRanking spots={rankedSpots} />
 
