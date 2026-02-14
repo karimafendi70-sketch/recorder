@@ -346,6 +346,41 @@ h2 {
   color: #1a4a52;
 }
 
+/* ── How-it-works steps ──────────────────────── */
+
+.steps-list {
+  list-style: none;
+  counter-reset: step;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #1a4a52;
+}
+
+.steps-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.step-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* ── Lead paragraph (reusable) ───────────────── */
+
+.page-lead {
+  font-size: 0.88rem;
+  color: var(--muted);
+  max-width: 52ch;
+  line-height: 1.55;
+  margin: 0;
+}
+
 /* ── Feedback card ───────────────────────────── */
 
 .feedback-card {

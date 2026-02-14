@@ -44,6 +44,16 @@ export default function Home() {
           </p>
         </div>
 
+        {/* 3-step quick-start */}
+        <div className="about-ideas">
+          <h3>{t("home.stepsTitle")}</h3>
+          <ol className="steps-list">
+            <li><span className="step-icon">📍</span> {t("home.step1")}</li>
+            <li><span className="step-icon">⚙️</span> {t("home.step2")}</li>
+            <li><span className="step-icon">📊</span> {t("home.step3")}</li>
+          </ol>
+        </div>
+
         <div className="about-ideas">
           <h3>{t("home.keyIdeas")}</h3>
           <ul>

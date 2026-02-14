@@ -27,6 +27,7 @@ export function ScoreExplainer({
   return (
     <div className={`${styles.explainerCard} ${styles[`explainer${capitalize(scoreClass)}`]}`}>
       <h3 className={styles.explainerTitle}>{t("forecast.whyTitle")}</h3>
+      <p className={styles.explainerLead}>{t("forecast.whyLead")}</p>
       <p className={styles.explainerSpot}>
         <strong>{spotName}</strong> — {score.toFixed(1)} / 10
       </p>

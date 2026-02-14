@@ -529,6 +529,13 @@
   color: var(--muted);
 }
 
+.explainerLead {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
 .explainerSpot {
   font-size: 1rem;
   color: var(--foreground);

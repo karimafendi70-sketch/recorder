@@ -201,6 +201,8 @@ function ForecastContent() {
       <section className="stack-lg">
         <DataSourceBadge source={source} fetchedAt={fetchedAt} />
 
+        <p className="page-lead">{t("forecast.lead")}</p>
+
         {isUsingDefaults && (
           <div className="defaults-banner">
             <span>{"\ud83e\udded"}</span>
