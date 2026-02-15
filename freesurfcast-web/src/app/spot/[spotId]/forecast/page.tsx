@@ -152,24 +152,27 @@ export default function SpotForecastPage() {
         scoreFn={qualityForSlot}
       />
 
-      {/* ── All surf windows (full 16-day overview) ── */}
-      <SurfWindowsPanel windows={surfWindows} />
+      {/* ── Extra sections (below day detail) ── */}
+      <section className={styles.moreSection}>
+        {/* All surf windows (full 16-day overview) */}
+        <SurfWindowsPanel windows={surfWindows} />
 
-      {/* ── Score explainer ── */}
-      {explainerData && (
-        <ScoreExplainer
-          spotName={explainerData.spotName}
-          score={explainerData.score}
-          scoreClass={explainerData.scoreClass}
-          reasons={explainerData.reasons}
-          waveHeight={explainerData.waveHeight}
-          wavePeriod={explainerData.wavePeriod}
-          windDirection={explainerData.windDirection}
-          windKey={explainerData.windKey}
-          sizeKey={explainerData.sizeKey}
-          surfaceKey={explainerData.surfaceKey}
-        />
-      )}
+        {/* Score explainer */}
+        {explainerData && (
+          <ScoreExplainer
+            spotName={explainerData.spotName}
+            score={explainerData.score}
+            scoreClass={explainerData.scoreClass}
+            reasons={explainerData.reasons}
+            waveHeight={explainerData.waveHeight}
+            wavePeriod={explainerData.wavePeriod}
+            windDirection={explainerData.windDirection}
+            windKey={explainerData.windKey}
+            sizeKey={explainerData.sizeKey}
+            surfaceKey={explainerData.surfaceKey}
+          />
+        )}
+      </section>
     </>
   );
 }

@@ -190,12 +190,24 @@
   background: #2d9e6a;
 }
 
+.dayBarRatingGoodToEpic {
+  background: #4db87a;
+}
+
 .dayBarRatingGood {
   background: #7ac068;
 }
 
+.dayBarRatingFairToGood {
+  background: #9cba54;
+}
+
 .dayBarRatingFair {
   background: #d4b44a;
+}
+
+.dayBarRatingPoorToFair {
+  background: #d49055;
 }
 
 .dayBarRatingPoor {
@@ -222,25 +234,24 @@
   gap: 0.85rem;
 }
 
-.dayDetailHeader {
+/* ── Day header (label + date + score) ────────── */
+
+.dayHeader {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  padding: 0.5rem 0;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
 }
 
-.dayDetailTitle {
-  margin: 0;
+.dayHeaderLabel {
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--foreground, #1a3a40);
+  color: var(--accent, #156f78);
 }
 
-.dayDetailDate {
-  margin: 0;
-  font-size: 0.82rem;
-  color: var(--muted, #5d7178);
+.dayHeaderDate {
+  font-size: 0.85rem;
+  color: var(--foreground, #1a3a40);
 }
 
 .dayDetailScore {
@@ -251,6 +262,7 @@
   font-size: 0.88rem;
   font-weight: 800;
   letter-spacing: 0.02em;
+  margin-left: auto;
 }
 
 /* ── Best-time hero strip ────────────────────── */
@@ -304,24 +316,24 @@
   flex-shrink: 0;
 }
 
-/* ── Condition blocks grid ───────────────────── */
+/* ── Pro blocks grid (Surf / Swell / Wind / Surface) ── */
 
-.condBlocks {
+.proBlocks {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.65rem;
 }
 
-.condBlock {
-  padding: 0.7rem 0.8rem;
+.proCard {
+  padding: 0.75rem 0.85rem;
   border-radius: 14px;
   border: 1.5px solid var(--panel-border, #d6e5ea);
   background: #fafdfe;
   display: grid;
-  gap: 0.3rem;
+  gap: 0.25rem;
 }
 
-.condBlockLabel {
+.proCardLabel {
   margin: 0;
   font-size: 0.68rem;
   font-weight: 700;
@@ -330,26 +342,26 @@
   color: var(--muted, #5d7178);
 }
 
-.condBlockValue {
+.proCardValue {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 750;
   color: var(--foreground, #1a3a40);
 }
 
-.condBlockSub {
-  margin: 0;
-  font-size: 0.74rem;
-  color: var(--muted, #5d7178);
-}
-
-.condBlockInline {
+.proCardInline {
   font-size: 0.88rem;
   font-weight: 650;
   color: var(--muted, #5d7178);
 }
 
-.condBlockTag {
+.proCardSub {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--muted, #5d7178);
+}
+
+.proCardTag {
   font-weight: 650;
   color: var(--accent, #156f78);
 }
@@ -380,25 +392,55 @@
 
 .timelineWrap {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.3rem;
+}
+
+.timelineCaption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.timelineCaptionTime {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--foreground, #1a3a40);
+}
+
+.timelineCaptionRating {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .timelineTrack {
   position: relative;
-  height: 14px;
-  border-radius: 7px;
+  height: 16px;
+  border-radius: 8px;
   background: #e6ecee;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .timelineSegment {
   position: absolute;
   top: 0;
   height: 100%;
-  border-radius: 7px;
-  background: linear-gradient(90deg, var(--accent, #156f78), #2aa68e);
-  opacity: 0.85;
+  border-radius: 8px;
+  opacity: 0.80;
   transition: all var(--transition, 0.25s ease);
+}
+
+.timelineMarker {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  z-index: 2;
 }
 
 .timelineTick {
@@ -419,6 +461,16 @@
   font-size: 0.62rem;
   color: var(--muted, #5d7178);
   font-weight: 600;
+}
+
+/* ── More / lower sections ───────────────────── */
+
+.moreSection {
+  display: grid;
+  gap: 1.2rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--panel-border, #d6e5ea);
 }
 
 /* ── Section card (reuse pattern) ────────────── */
@@ -542,7 +594,8 @@
     padding: 0.35rem 0.25rem;
   }
 
-  .condBlocks {
+  .condBlocks,
+  .proBlocks {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -553,7 +606,8 @@
 }
 
 @media (max-width: 400px) {
-  .condBlocks {
+  .condBlocks,
+  .proBlocks {
     grid-template-columns: 1fr;
   }
 }

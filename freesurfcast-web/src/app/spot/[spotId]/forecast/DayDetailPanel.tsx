@@ -6,6 +6,7 @@ import type { SlotQuality, SlotContext } from "@/lib/scores";
 import {
   summarizeConditions,
   getWindComfort,
+  getSizeBand,
 } from "@/lib/forecast/conditions";
 import { useLanguage, type TranslationKey } from "@/app/LanguageProvider";
 import type { SurfWindow } from "@/lib/forecast/surfWindows";
@@ -15,8 +16,8 @@ import styles from "../../spot.module.css";
 
 type Props = {
   dateKey: string;
-  dayLabel: string;
-  fullDate: string;
+  dayLabel: string;        // "Today" / "di 17"
+  fullDate: string;        // "dinsdag 17 februari"
   daySlots: ForecastSlot[];
   bestWindow: DayBestWindow;
   avgScore: number;
@@ -45,14 +46,18 @@ function ratingBand(score: number): RatingBand {
 }
 
 const RATING_COLORS: Record<RatingBand, string> = {
-  epic: "#2d9e6a",
-  goodToEpic: "#4db87a",
-  good: "#7ac068",
-  fairToGood: "#9cba54",
-  fair: "#d4b44a",
-  poorToFair: "#d49055",
-  poor: "#c06060",
+  epic:        "#2d9e6a",
+  goodToEpic:  "#4db87a",
+  good:        "#7ac068",
+  fairToGood:  "#9cba54",
+  fair:        "#d4b44a",
+  poorToFair:  "#d49055",
+  poor:        "#c06060",
 };
+
+function capitalise(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 function scoreClass(score: number): "high" | "medium" | "low" {
   if (score >= 7) return "high";
@@ -60,42 +65,91 @@ function scoreClass(score: number): "high" | "medium" | "low" {
   return "low";
 }
 
-function capitalise(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-/** Compass arrow from degrees (meteorological convention). */
+/** Compass arrow for wind. */
 function windArrow(deg: number): string {
-  const arrows = ["↓", "↙", "←", "↖", "↑", "↗", "→", "↘"];
-  return arrows[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
+  const arr = ["↓", "↙", "←", "↖", "↑", "↗", "→", "↘"];
+  return arr[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
 }
-
-/** Compass cardinal from degrees. */
+/** Compass cardinal. */
 function windCardinal(deg: number): string {
-  const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  return dirs[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
+  const d = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  return d[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
 }
 
-/* ── 24 h Timeline Bar ──────────────────────── */
+/** Format hour (0-24) as locale time string e.g. "3:00 PM". */
+function formatHour(h: number): string {
+  const clamped = ((h % 24) + 24) % 24;
+  const ampm = clamped >= 12 ? "PM" : "AM";
+  const h12 = clamped === 0 ? 12 : clamped > 12 ? clamped - 12 : clamped;
+  return `${h12}:00 ${ampm}`;
+}
 
-function TimelineBar({ window }: { window: SurfWindow | null }) {
+/* ── Day-level aggregates (min / max heights) ── */
+
+function dayHeightRange(slots: ForecastSlot[]): { min: number; max: number } {
+  const heights: number[] = [];
+  for (const s of slots) {
+    const m = (s.mergedSpot ?? {}) as Record<string, unknown>;
+    const h = m.golfHoogteMeter as number | undefined;
+    if (h != null) heights.push(h);
+  }
+  return {
+    min: heights.length > 0 ? Math.min(...heights) : 0,
+    max: heights.length > 0 ? Math.max(...heights) : 0,
+  };
+}
+
+/* ── 24h Timeline Bar with best-hour marker ── */
+
+function TimelineBar({
+  window,
+  bestHour,
+  ratingColor,
+  ratingLabel,
+}: {
+  window: SurfWindow | null;
+  bestHour: number | null;
+  ratingColor: string;
+  ratingLabel: string;
+}) {
+  // Window segment
   const startPct = window ? Math.max(0, (window.startHour % 24) / 24) * 100 : 0;
-  const endH = window ? window.endHour % 24 || 24 : 0;
-  const endPct = window ? Math.min(100, endH / 24 * 100) : 0;
+  const endH     = window ? (window.endHour % 24 || 24) : 0;
+  const endPct   = window ? Math.min(100, (endH / 24) * 100) : 0;
   const widthPct = endPct - startPct;
+
+  // Best-hour marker
+  const markerPct = bestHour != null ? ((bestHour % 24) / 24) * 100 : null;
 
   return (
     <div className={styles.timelineWrap}>
+      {/* Caption: best hour + rating word */}
+      {bestHour != null && (
+        <div className={styles.timelineCaption}>
+          <span className={styles.timelineCaptionTime}>{formatHour(bestHour)}</span>
+          <span className={styles.timelineCaptionRating} style={{ color: ratingColor }}>
+            {ratingLabel}
+          </span>
+        </div>
+      )}
+
+      {/* Track */}
       <div className={styles.timelineTrack}>
-        {/* highlighted window */}
+        {/* Highlighted window segment */}
         {window && widthPct > 0 && (
           <div
             className={styles.timelineSegment}
-            style={{ left: `${startPct}%`, width: `${widthPct}%` }}
-            title={`${window.startLabel} – ${window.endLabel}`}
+            style={{ left: `${startPct}%`, width: `${widthPct}%`, background: ratingColor }}
           />
         )}
-        {/* hour ticks */}
+        {/* Best-hour dot */}
+        {markerPct != null && (
+          <span
+            className={styles.timelineMarker}
+            style={{ left: `${markerPct}%`, background: ratingColor }}
+          />
+        )}
+        {/* Hour ticks: 0, 6, 12, 18, 24 */}
         {[0, 6, 12, 18, 24].map((h) => (
           <span
             key={h}
@@ -104,6 +158,8 @@ function TimelineBar({ window }: { window: SurfWindow | null }) {
           />
         ))}
       </div>
+
+      {/* Labels */}
       <div className={styles.timelineLabels}>
         {["12am", "6am", "12pm", "6pm", "12am"].map((l, i) => (
           <span key={i} className={styles.timelineLabel}>{l}</span>
@@ -125,12 +181,12 @@ export function DayDetailPanel({
   scoreFn,
 }: Props) {
   const { t } = useLanguage();
-  const sc = scoreClass(avgScore);
   const band = ratingBand(avgScore);
   const ratingColor = RATING_COLORS[band];
   const ratingKey = `rating.${band}` as TranslationKey;
+  const sc = scoreClass(avgScore);
 
-  // Representative slot: highest scoring
+  // Score every slot — find best slot
   const scoredSlots = daySlots.map((s) => ({
     slot: s,
     quality: scoreFn(s),
@@ -139,24 +195,45 @@ export function DayDetailPanel({
     ? scoredSlots.reduce((a, b) => (b.quality.score > a.quality.score ? b : a)).slot
     : null;
 
-  const cond = bestSlot ? summarizeConditions(bestSlot) : null;
-  const merged = bestSlot?.mergedSpot as Record<string, unknown> | undefined;
-  const windComfort = bestSlot ? getWindComfort(bestSlot) : null;
+  // Best hour = offsetHours of the best-scoring slot within the window
+  const bestHour: number | null = (() => {
+    if (!bestWindow.window) return null;
+    const winStart = bestWindow.window.startHour;
+    const winEnd   = bestWindow.window.endHour;
+    const windowSlots = scoredSlots.filter(({ slot }) => {
+      const oh = slot.offsetHours ?? 0;
+      return slot.dayKey === dateKey && oh >= winStart && oh <= winEnd;
+    });
+    if (windowSlots.length === 0) {
+      return bestSlot ? (bestSlot.offsetHours ?? 0) % 24 : null;
+    }
+    const best = windowSlots.reduce((a, b) =>
+      b.quality.score > a.quality.score ? b : a,
+    );
+    return (best.slot.offsetHours ?? 0) % 24;
+  })();
+
+  // Conditions from best slot
+  const cond       = bestSlot ? summarizeConditions(bestSlot) : null;
+  const merged     = bestSlot?.mergedSpot as Record<string, unknown> | undefined;
+  const windComf   = bestSlot ? getWindComfort(bestSlot) : null;
+  const sizeBand   = bestSlot ? getSizeBand(bestSlot) : null;
+
+  // Day-level height range across ALL day slots
+  const { min: dayMinH, max: dayMaxH } = dayHeightRange(daySlots);
 
   return (
     <div className={styles.dayDetail}>
-      {/* ── Header row ── */}
-      <div className={styles.dayDetailHeader}>
-        <div>
-          <h2 className={styles.dayDetailTitle}>{dayLabel}</h2>
-          <p className={styles.dayDetailDate}>{fullDate}</p>
-        </div>
+      {/* ── Day header ────────────────────── */}
+      <div className={styles.dayHeader}>
+        <span className={styles.dayHeaderLabel}>{dayLabel}</span>
+        <span className={styles.dayHeaderDate}>{fullDate}</span>
         <span className={`${styles.dayDetailScore} ${styles[`score${capitalise(sc)}`]}`}>
           {avgScore.toFixed(1)}
         </span>
       </div>
 
-      {/* ── Rating text ── */}
+      {/* ── Rating row ────────────────────── */}
       <div className={styles.ratingRow}>
         <span className={styles.ratingDot} style={{ background: ratingColor }} />
         <span className={styles.ratingText} style={{ color: ratingColor }}>
@@ -164,102 +241,82 @@ export function DayDetailPanel({
         </span>
       </div>
 
-      {/* ── Best-time hero strip ── */}
-      {bestWindow.window ? (
-        <div className={styles.bestTimeStrip}>
-          <span className={styles.bestTimeIcon}>🏄</span>
-          <div className={styles.bestTimeBody}>
-            <p className={styles.bestTimeLabel}>{t("spot.detail.bestMoment")}</p>
-            <p className={styles.bestTimeValue}>
-              {bestWindow.window.startLabel} – {bestWindow.window.endLabel}
+      {/* ── 24h timeline with best hour ── */}
+      <TimelineBar
+        window={bestWindow.window}
+        bestHour={bestHour}
+        ratingColor={ratingColor}
+        ratingLabel={t(ratingKey)}
+      />
+
+      {/* ── Pro blocks (Surf / Swell / Wind / Surface) ── */}
+      <section className={styles.proBlocks}>
+        {/* Surf height */}
+        <div className={styles.proCard}>
+          <p className={styles.proCardLabel}>{t("spot.detail.surfHeight")}</p>
+          <p className={styles.proCardValue}>
+            🌊 {dayMinH.toFixed(1)}–{dayMaxH.toFixed(1)} m
+          </p>
+          {sizeBand && (
+            <p className={styles.proCardSub}>
+              {t(cond!.sizeKey as TranslationKey)}
             </p>
-            <p className={styles.bestTimeMeta}>
-              {bestWindow.window.waveHeight != null && `${bestWindow.window.waveHeight.toFixed(1)}m · `}
-              {t("surfWindows.peak")} {bestWindow.window.peakScore.toFixed(1)}
-            </p>
-          </div>
-          <span className={styles.bestTimeScore}>
-            {bestWindow.window.averageScore.toFixed(1)}
-          </span>
+          )}
         </div>
-      ) : (
-        <p style={{ color: "var(--muted)", fontStyle: "italic", fontSize: "0.85rem" }}>
-          {t("dayView.bestTime.none")}
-        </p>
-      )}
 
-      {/* ── 24h timeline bar ── */}
-      <TimelineBar window={bestWindow.window} />
-
-      {/* ── Pro condition blocks ── */}
-      {bestSlot && cond && (
-        <div className={styles.condBlocks}>
-          {/* Surf height */}
-          <div className={styles.condBlock}>
-            <p className={styles.condBlockLabel}>{t("spot.detail.surfHeight")}</p>
-            <p className={styles.condBlockValue}>
-              🌊 {merged?.golfHoogteMeter != null
-                ? `${(merged.golfHoogteMeter as number).toFixed(1)}m`
-                : "—"}
-            </p>
-            <p className={styles.condBlockSub}>
-              {t(cond.sizeKey as TranslationKey)}
-            </p>
-          </div>
-
-          {/* Swell */}
-          <div className={styles.condBlock}>
-            <p className={styles.condBlockLabel}>{t("spot.detail.swell")}</p>
-            <p className={styles.condBlockValue}>
-              🌊 {merged?.golfHoogteMeter != null
-                ? `${(merged.golfHoogteMeter as number).toFixed(1)}m`
-                : "—"}
-              {merged?.golfPeriodeSeconden != null && (
-                <span className={styles.condBlockInline}>
-                  {" "}@ {merged.golfPeriodeSeconden as number}s
-                </span>
-              )}
-            </p>
-            <p className={styles.condBlockSub}>
-              {merged?.windDirectionDeg != null && (
-                <>
-                  {windArrow(merged.windDirectionDeg as number)}{" "}
-                  {windCardinal(merged.windDirectionDeg as number)}
-                </>
-              )}
-            </p>
-          </div>
-
-          {/* Wind */}
-          <div className={styles.condBlock}>
-            <p className={styles.condBlockLabel}>{t("cond.label.wind")}</p>
-            <p className={styles.condBlockValue}>
-              💨 {merged?.windSpeedKnots != null
-                ? `${Math.round(merged.windSpeedKnots as number)} kn`
-                : "—"}
-            </p>
-            <p className={styles.condBlockSub}>
-              {merged?.windDirectionDeg != null && (
-                <>
-                  {windArrow(merged.windDirectionDeg as number)}{" "}
-                  {windCardinal(merged.windDirectionDeg as number)}
-                </>
-              )}
-              {windComfort && (
-                <span className={styles.condBlockTag}>
-                  {" · "}{t(cond.windKey as TranslationKey)}
-                </span>
-              )}
-            </p>
-          </div>
-
-          {/* Surface */}
-          <div className={styles.condBlock}>
-            <p className={styles.condBlockLabel}>{t("cond.label.surface")}</p>
-            <p className={styles.condBlockValue}>🪟 {t(cond.surfaceKey as TranslationKey)}</p>
-          </div>
+        {/* Swell */}
+        <div className={styles.proCard}>
+          <p className={styles.proCardLabel}>{t("spot.detail.swell")}</p>
+          <p className={styles.proCardValue}>
+            🌊{" "}
+            {merged?.golfHoogteMeter != null
+              ? `${(merged.golfHoogteMeter as number).toFixed(1)} m`
+              : "—"}
+            {merged?.golfPeriodeSeconden != null && (
+              <span className={styles.proCardInline}>
+                {" · "}{merged.golfPeriodeSeconden as number}s
+              </span>
+            )}
+          </p>
+          <p className={styles.proCardSub}>
+            {merged?.windDirectionDeg != null
+              ? `${t("spot.detail.swellFrom")} ${Math.round(merged.windDirectionDeg as number)}°`
+              : "—"}
+          </p>
         </div>
-      )}
+
+        {/* Wind */}
+        <div className={styles.proCard}>
+          <p className={styles.proCardLabel}>{t("cond.label.wind")}</p>
+          <p className={styles.proCardValue}>
+            💨{" "}
+            {merged?.windSpeedKnots != null
+              ? `${Math.round(merged.windSpeedKnots as number)} kn`
+              : "—"}
+          </p>
+          <p className={styles.proCardSub}>
+            {merged?.windDirectionDeg != null && (
+              <>
+                {windArrow(merged.windDirectionDeg as number)}{" "}
+                {windCardinal(merged.windDirectionDeg as number)}
+              </>
+            )}
+            {windComf && cond && (
+              <span className={styles.proCardTag}>
+                {" · "}{t(cond.windKey as TranslationKey)}
+              </span>
+            )}
+          </p>
+        </div>
+
+        {/* Surface */}
+        <div className={styles.proCard}>
+          <p className={styles.proCardLabel}>{t("cond.label.surface")}</p>
+          <p className={styles.proCardValue}>
+            🪟 {cond ? t(cond.surfaceKey as TranslationKey) : "—"}
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

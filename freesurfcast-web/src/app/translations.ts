@@ -1373,6 +1373,13 @@ const dict = {
     fr: "Houle",
     es: "Oleaje",
   },
+  "spot.detail.swellFrom": {
+    en: "Primary swell from",
+    nl: "Primaire deining uit",
+    de: "Primärer Swell aus",
+    fr: "Houle principale de",
+    es: "Oleaje primario de",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

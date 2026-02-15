@@ -9,11 +9,15 @@ type Props = {
   onSelect: (dateKey: string) => void;
 };
 
+/** Maps the 7-band rating to CSS class names for the stripe colour. */
 const RATING_CLASS: Record<RatingColor, string> = {
-  epic: styles.dayBarRatingEpic,
-  good: styles.dayBarRatingGood,
-  fair: styles.dayBarRatingFair,
-  poor: styles.dayBarRatingPoor,
+  epic:        styles.dayBarRatingEpic,
+  goodToEpic:  styles.dayBarRatingGoodToEpic,
+  good:        styles.dayBarRatingGood,
+  fairToGood:  styles.dayBarRatingFairToGood,
+  fair:        styles.dayBarRatingFair,
+  poorToFair:  styles.dayBarRatingPoorToFair,
+  poor:        styles.dayBarRatingPoor,
 };
 
 /** Rough cardinal arrow from wind degrees. */

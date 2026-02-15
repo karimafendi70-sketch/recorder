@@ -173,7 +173,14 @@ export function getUpcomingDaysSummary(
 
 /* ── DaySummary — compact per-day card data ── */
 
-export type RatingColor = "poor" | "fair" | "good" | "epic";
+export type RatingColor =
+  | "poor"
+  | "poorToFair"
+  | "fair"
+  | "fairToGood"
+  | "good"
+  | "goodToEpic"
+  | "epic";
 
 export interface DaySummary {
   dateKey: string;
@@ -187,9 +194,12 @@ export interface DaySummary {
 }
 
 function toRatingColor(avgScore: number): RatingColor {
-  if (avgScore >= 7.5) return "epic";
-  if (avgScore >= 5.5) return "good";
-  if (avgScore >= 3.5) return "fair";
+  if (avgScore >= 8)   return "epic";
+  if (avgScore >= 7)   return "goodToEpic";
+  if (avgScore >= 6)   return "good";
+  if (avgScore >= 5)   return "fairToGood";
+  if (avgScore >= 4)   return "fair";
+  if (avgScore >= 3)   return "poorToFair";
   return "poor";
 }
 
