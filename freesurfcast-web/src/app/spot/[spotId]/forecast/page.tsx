@@ -17,7 +17,9 @@ import {
   getBestWindowForDay,
 } from "@/lib/forecast/dayWindows";
 import { DayBar } from "./DayBar";
+import { DayBarSkeleton } from "./DayBarSkeleton";
 import { DayDetailPanel } from "./DayDetailPanel";
+import { DayDetailSkeleton } from "./DayDetailSkeleton";
 import { DataSourceBadge } from "@/app/forecast/components/DataSourceBadge";
 import { SurfWindowsPanel } from "@/app/forecast/components/SurfWindowsPanel";
 import { ScoreExplainer } from "@/app/forecast/components/ScoreExplainer";
@@ -34,6 +36,7 @@ export default function SpotForecastPage() {
   const { t, lang } = useLanguage();
 
   const { spots, status, isLive, fetchedAt, errorMessage } = useLiveForecast("today");
+  const isLoading = status === "idle" || status === "loading";
 
   const qualityOptions = useMemo(() => buildQualityOptions(prefs), [prefs]);
   const qualityForSlot = useCallback(
@@ -128,55 +131,74 @@ export default function SpotForecastPage() {
     <>
       <DataSourceBadge status={status} isLive={isLive} fetchedAt={fetchedAt} />
 
-      {status === "error" && errorMessage && (
-        <div className="fallback-banner">
-          <span>⚠️</span>
-          <p>{t("forecast.fallbackBanner")}</p>
+      {/* ── Error banner ── */}
+      {status === "error" && (
+        <div className={styles.errorBanner}>
+          <span className={styles.errorBannerIcon}>⚠️</span>
+          <p className={styles.errorBannerText}>
+            {t("forecast.error.loadFailed")}
+          </p>
+          <button
+            className={styles.errorBannerRetry}
+            onClick={() => window.location.reload()}
+          >
+            {t("forecast.error.retry")}
+          </button>
         </div>
       )}
 
       {/* ── 16-day DayBar ── */}
-      <DayBar
-        days={daySummaries}
-        activeDateKey={activeDateKey}
-        onSelect={setSelectedDay}
-      />
+      {isLoading ? (
+        <DayBarSkeleton />
+      ) : (
+        <DayBar
+          days={daySummaries}
+          activeDateKey={activeDateKey}
+          onSelect={setSelectedDay}
+        />
+      )}
 
       {/* ── Day detail ── */}
-      <DayDetailPanel
-        dateKey={activeDateKey}
-        dayLabel={dayLabel}
-        fullDate={fullDate}
-        daySlots={daySlots}
-        bestWindow={dayBest}
-        avgScore={dayAvgScore}
-        scoreFn={qualityForSlot}
-      />
-
-      {/* ── Extra sections (below day detail) ── */}
-      <section className={styles.moreSection}>
-        {/* Pro graphs for selected day */}
-        <ProGraphsSection daySlots={daySlots} locale={lang} />
-
-        {/* All surf windows (full 16-day overview) */}
-        <SurfWindowsPanel windows={surfWindows} />
-
-        {/* Score explainer */}
-        {explainerData && (
-          <ScoreExplainer
-            spotName={explainerData.spotName}
-            score={explainerData.score}
-            scoreClass={explainerData.scoreClass}
-            reasons={explainerData.reasons}
-            waveHeight={explainerData.waveHeight}
-            wavePeriod={explainerData.wavePeriod}
-            windDirection={explainerData.windDirection}
-            windKey={explainerData.windKey}
-            sizeKey={explainerData.sizeKey}
-            surfaceKey={explainerData.surfaceKey}
+      {isLoading ? (
+        <DayDetailSkeleton />
+      ) : (
+        <>
+          <DayDetailPanel
+            dateKey={activeDateKey}
+            dayLabel={dayLabel}
+            fullDate={fullDate}
+            daySlots={daySlots}
+            bestWindow={dayBest}
+            avgScore={dayAvgScore}
+            scoreFn={qualityForSlot}
           />
-        )}
-      </section>
+
+          {/* ── Extra sections (below day detail) ── */}
+          <section className={styles.moreSection}>
+            {/* Pro graphs for selected day */}
+            <ProGraphsSection daySlots={daySlots} locale={lang} />
+
+            {/* All surf windows (full 16-day overview) */}
+            <SurfWindowsPanel windows={surfWindows} />
+
+            {/* Score explainer */}
+            {explainerData && (
+              <ScoreExplainer
+                spotName={explainerData.spotName}
+                score={explainerData.score}
+                scoreClass={explainerData.scoreClass}
+                reasons={explainerData.reasons}
+                waveHeight={explainerData.waveHeight}
+                wavePeriod={explainerData.wavePeriod}
+                windDirection={explainerData.windDirection}
+                windKey={explainerData.windKey}
+                sizeKey={explainerData.sizeKey}
+                surfaceKey={explainerData.surfaceKey}
+              />
+            )}
+          </section>
+        </>
+      )}
     </>
   );
 }

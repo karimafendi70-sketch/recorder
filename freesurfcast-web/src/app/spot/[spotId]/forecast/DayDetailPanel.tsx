@@ -181,6 +181,28 @@ export function DayDetailPanel({
   scoreFn,
 }: Props) {
   const { t } = useLanguage();
+
+  /* ── Empty state: no slots for this day ── */
+  if (daySlots.length === 0) {
+    return (
+      <div className={styles.dayDetail}>
+        <div className={styles.dayHeader}>
+          <span className={styles.dayHeaderLabel}>{dayLabel}</span>
+          <span className={styles.dayHeaderDate}>{fullDate}</span>
+        </div>
+        <div className={styles.emptyState}>
+          <span className={styles.emptyStateIcon}>🌊</span>
+          <p className={styles.emptyStateText}>
+            {t("forecast.empty.dayNoData")}
+          </p>
+          <p className={styles.emptyStateHint}>
+            {t("forecast.empty.dayNoDataHint")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const band = ratingBand(avgScore);
   const ratingColor = RATING_COLORS[band];
   const ratingKey = `rating.${band}` as TranslationKey;
@@ -232,6 +254,9 @@ export function DayDetailPanel({
           {avgScore.toFixed(1)}
         </span>
       </div>
+
+      {/* Animated content — re-plays on dateKey change */}
+      <div key={dateKey} className={styles.dayDetailAnimated}>
 
       {/* ── Rating row ────────────────────── */}
       <div className={styles.ratingRow}>
@@ -322,6 +347,7 @@ export function DayDetailPanel({
           </p>
         </div>
       </section>
+      </div>{/* end dayDetailAnimated */}
     </div>
   );
 }

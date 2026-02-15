@@ -1447,6 +1447,57 @@ const dict = {
     fr: "Météo",
     es: "Tiempo",
   },
+
+  // ── Empty / loading states ────────────────
+  "forecast.empty.dayNoData": {
+    en: "No forecast data available for this day.",
+    nl: "Geen forecastgegevens beschikbaar voor deze dag.",
+    de: "Keine Vorhersagedaten für diesen Tag verfügbar.",
+    fr: "Aucune donnée de prévision disponible pour ce jour.",
+    es: "No hay datos de pronóstico disponibles para este día.",
+  },
+  "forecast.empty.dayNoDataHint": {
+    en: "Try selecting a different day from the bar above.",
+    nl: "Probeer een andere dag te selecteren in de balk hierboven.",
+    de: "Versuche einen anderen Tag in der Leiste oben auszuwählen.",
+    fr: "Essayez de sélectionner un autre jour dans la barre ci-dessus.",
+    es: "Intenta seleccionar otro día en la barra de arriba.",
+  },
+  "proGraph.empty.notEnoughData": {
+    en: "Not enough data to draw graphs for this day.",
+    nl: "Niet genoeg data om grafieken te tonen voor deze dag.",
+    de: "Nicht genügend Daten, um Diagramme für diesen Tag zu zeichnen.",
+    fr: "Pas assez de données pour afficher les graphiques de ce jour.",
+    es: "No hay suficientes datos para dibujar gráficos para este día.",
+  },
+  "forecast.error.loadFailed": {
+    en: "We couldn't load the forecast. Please check your connection and try again.",
+    nl: "We konden de forecast niet laden. Controleer je verbinding en probeer het opnieuw.",
+    de: "Wir konnten die Vorhersage nicht laden. Bitte überprüfe deine Verbindung und versuche es erneut.",
+    fr: "Impossible de charger la prévision. Vérifie ta connexion et réessaie.",
+    es: "No pudimos cargar el pronóstico. Comprueba tu conexión e inténtalo de nuevo.",
+  },
+  "forecast.error.retry": {
+    en: "Retry",
+    nl: "Opnieuw proberen",
+    de: "Erneut versuchen",
+    fr: "Réessayer",
+    es: "Reintentar",
+  },
+  "forecast.empty.noSpotSelected": {
+    en: "Search or pick a spot to see its 16-day forecast.",
+    nl: "Zoek of kies een spot om de 16-daagse forecast te zien.",
+    de: "Suche oder wähle einen Spot, um die 16-Tage-Vorhersage zu sehen.",
+    fr: "Cherche ou choisis un spot pour voir sa prévision sur 16 jours.",
+    es: "Busca o elige un spot para ver su pronóstico de 16 días.",
+  },
+  "favorites.empty.noSpots": {
+    en: "You don't have any favorite spots yet.",
+    nl: "Je hebt nog geen favoriete spots.",
+    de: "Du hast noch keine Lieblings-Spots.",
+    fr: "Tu n'as pas encore de spots favoris.",
+    es: "Aún no tienes spots favoritos.",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

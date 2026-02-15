@@ -726,6 +726,205 @@
   color: var(--rating-poor, #e53935);
 }
 
+/* ── Skeleton / shimmer loading ──────────────── */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  pointer-events: none;
+}
+
+.skeleton * {
+  color: transparent !important;
+}
+
+.skeletonLine {
+  display: block;
+  height: 0.7rem;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #e4edf0 25%,
+    #f0f6f8 50%,
+    #e4edf0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skeletonShort {
+  width: 40%;
+}
+
+.skeletonMedium {
+  width: 60%;
+}
+
+.skeletonWide {
+  width: 85%;
+}
+
+.skeletonStripe {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  margin-top: auto;
+  background: linear-gradient(
+    90deg,
+    #e4edf0 25%,
+    #f0f6f8 50%,
+    #e4edf0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skeletonPill {
+  display: block;
+  width: 2.5rem;
+  height: 1.3rem;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    #e4edf0 25%,
+    #f0f6f8 50%,
+    #e4edf0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skeletonDot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    #e4edf0 25%,
+    #f0f6f8 50%,
+    #e4edf0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skeletonBlock {
+  display: block;
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    #e4edf0 25%,
+    #f0f6f8 50%,
+    #e4edf0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Empty state cards ───────────────────────── */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1.2rem;
+  text-align: center;
+  border-radius: 18px;
+  border: 1.5px dashed var(--panel-border, #d6e5ea);
+  background: #f8fcfd;
+}
+
+.emptyStateIcon {
+  font-size: 2rem;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.emptyStateText {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--foreground, #1b2f35);
+}
+
+.emptyStateHint {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--muted, #5d7178);
+}
+
+/* ── Error banner ────────────────────────────── */
+
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  border: 1.5px solid #f5c6cb;
+  background: linear-gradient(170deg, #fef2f2, #fff8f8);
+  color: #842029;
+}
+
+.errorBannerIcon {
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.errorBannerText {
+  flex: 1;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.errorBannerRetry {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1.5px solid #842029;
+  background: transparent;
+  color: #842029;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.errorBannerRetry:hover {
+  background: #842029;
+  color: #fff;
+}
+
+/* ── Day-switch animation ────────────────────── */
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dayDetailAnimated {
+  animation: fadeSlideIn 0.22s ease-out both;
+}
+
 /* ── Dark-mode overrides ─────────────────────── */
 
 @media (prefers-color-scheme: dark) {
@@ -759,6 +958,41 @@
   .proGraphCard {
     background: linear-gradient(175deg, #1e2c30, #22333a 60%);
     border-color: rgba(21, 111, 120, 0.25);
+  }
+
+  .skeletonLine,
+  .skeletonStripe,
+  .skeletonPill,
+  .skeletonDot,
+  .skeletonBlock {
+    background: linear-gradient(
+      90deg,
+      #1e2c30 25%,
+      #2a383d 50%,
+      #1e2c30 75%
+    );
+    background-size: 200% 100%;
+  }
+
+  .emptyState {
+    background: #1a2529;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .errorBanner {
+    background: linear-gradient(170deg, #2a1a1a, #221818);
+    border-color: #5a2028;
+    color: #f5c6cb;
+  }
+
+  .errorBannerRetry {
+    border-color: #f5c6cb;
+    color: #f5c6cb;
+  }
+
+  .errorBannerRetry:hover {
+    background: #f5c6cb;
+    color: #2a1a1a;
   }
 }
 

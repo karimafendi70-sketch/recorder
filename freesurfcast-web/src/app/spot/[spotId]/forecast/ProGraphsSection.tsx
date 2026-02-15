@@ -214,6 +214,23 @@ export function ProGraphsSection({ daySlots, locale }: ProGraphsSectionProps) {
 
   if (!daySlots.length) return null;
 
+  // Not enough data for meaningful graphs
+  if (daySlots.length < 2) {
+    return (
+      <section className={styles.proGraphsSection}>
+        <h3 className={styles.proGraphsSectionTitle}>
+          {t("proGraph.title" as TranslationKey)}
+        </h3>
+        <div className={styles.emptyState}>
+          <span className={styles.emptyStateIcon}>📊</span>
+          <p className={styles.emptyStateText}>
+            {t("proGraph.empty.notEnoughData" as TranslationKey)}
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={styles.proGraphsSection}>
       <h3 className={styles.proGraphsSectionTitle}>
