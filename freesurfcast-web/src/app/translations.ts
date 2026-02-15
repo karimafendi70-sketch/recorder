@@ -1105,6 +1105,15 @@ const dict = {
     fr: "Surface",
     es: "Superficie",
   },
+
+  // ── Week summary ──────────────────────────
+  "weekSummary.bestDay": {
+    en: "Best day in the forecast",
+    nl: "Beste dag in de voorspelling",
+    de: "Bester Tag in der Vorhersage",
+    fr: "Meilleur jour de la prévision",
+    es: "Mejor día en el pronóstico",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

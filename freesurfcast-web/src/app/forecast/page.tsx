@@ -35,7 +35,9 @@ import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { usePageView, trackSpotSelected } from "@/lib/trackClient";
 import { buildSurfWindows } from "@/lib/forecast/surfWindows";
 import { summarizeConditions } from "@/lib/forecast/conditions";
+import { buildWeekSummary } from "@/lib/forecast/weekOverview";
 import { SurfWindowsPanel } from "./components/SurfWindowsPanel";
+import { WeekSummaryCard } from "./components/WeekSummaryCard";
 import styles from "./forecast.module.css";
 
 /* ── Day-tab helpers ─────────────────────────── */
@@ -217,6 +219,12 @@ function ForecastContent() {
     [timelineRows, activeSpot, daySlots]
   );
 
+  /* ── Week summary (best day across all 16 days) ── */
+  const weekSummary = useMemo(
+    () => buildWeekSummary(activeSpot.slots, qualityForSlot),
+    [activeSpot, qualityForSlot]
+  );
+
   /* ── Surf Windows (all 16 days, premium only) ── */
   const surfWindows = useMemo(
     () =>
@@ -340,6 +348,13 @@ function ForecastContent() {
           skillLevel={prefs.skillLevel}
           preferredRange={`${prefs.preferredMinHeight}m \u2013 ${prefs.preferredMaxHeight}m`}
           cleanPreference={prefs.likesClean ? t("forecast.prefersClean") : t("forecast.mixedOk")}
+        />
+
+        {/* ── Week summary (best day) ── */}
+        <WeekSummaryCard
+          summary={weekSummary}
+          locale={lang}
+          onDayClick={(dateKey) => setSelectedDay(dateKey)}
         />
 
         {/* ── Day tabs (up to 16 days) ── */}

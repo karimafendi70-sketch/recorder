@@ -1,3 +1,70 @@
+/* ── Week summary card ────────────────────────── */
+
+.weekSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 1rem;
+  border: 1.5px solid var(--accent, #156f78);
+  border-radius: var(--radius-md, 14px);
+  background: linear-gradient(135deg, var(--accent-light, #e0f2f4) 0%, #f6fbfc 100%);
+  cursor: pointer;
+  transition: box-shadow var(--transition, 0.15s ease), transform 0.1s ease;
+  user-select: none;
+}
+
+.weekSummary:hover {
+  box-shadow: 0 2px 8px rgba(21, 111, 120, 0.18);
+  transform: translateY(-1px);
+}
+
+.weekSummaryIcon {
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.weekSummaryBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.weekSummaryTitle {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent, #156f78);
+}
+
+.weekSummaryDay {
+  margin: 0.1rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a3a40;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.weekSummaryScore {
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--accent, #156f78);
+}
+
+.weekSummaryConditions {
+  margin: 0.15rem 0 0;
+  font-size: 0.76rem;
+  color: var(--muted, #5d7178);
+}
+
+.weekSummaryArrow {
+  font-size: 1.1rem;
+  color: var(--accent, #156f78);
+  flex-shrink: 0;
+}
+
 /* ── Day tabs (16-day horizon) ────────────────── */
 
 .forecastDayTabs {
