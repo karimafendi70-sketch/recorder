@@ -1930,3 +1930,173 @@
   color: #fff;
   border-color: var(--accent, #156f78);
 }
+
+/* ── P9: 24h Strip ───────────────────────────── */
+
+.strip24 {
+  padding: 0.75rem 0;
+  animation: strip24FadeIn 0.3s ease;
+}
+
+@keyframes strip24FadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.strip24Title {
+  margin: 0 0 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #5d7178);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.strip24Grid {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  padding-bottom: 4px;
+}
+
+.strip24Col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 32px;
+  flex: 1;
+}
+
+.strip24BarWrap {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.strip24Bar {
+  width: 70%;
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  transition: height 0.3s ease;
+}
+
+.strip24WaveWrap {
+  width: 100%;
+  height: 22px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.strip24Wave {
+  width: 70%;
+  background: var(--accent, #156f78);
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+  opacity: 0.55;
+  transition: height 0.3s ease;
+}
+
+.strip24Wind {
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--text-secondary, #5d7178);
+}
+
+.strip24Hour {
+  font-size: 0.58rem;
+  color: var(--text-secondary, #5d7178);
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.strip24Legend {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.strip24LegendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  color: var(--text-secondary, #5d7178);
+}
+
+.strip24LegendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ── P9: Trend badges ────────────────────────── */
+
+.trendRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 0.25rem 0;
+}
+
+.trendBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--border, #d6e5ea);
+  background: var(--surface-raised, #fff);
+  transition: background 0.15s ease;
+}
+
+.trendIcon {
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+.trendLabel {
+  font-weight: 600;
+}
+
+.trendValue {
+  font-weight: 400;
+  color: var(--text-secondary, #5d7178);
+}
+
+.trendRising .trendIcon {
+  color: #43a047;
+}
+.trendFalling .trendIcon {
+  color: #e53935;
+}
+.trendSteady .trendIcon {
+  color: var(--text-secondary, #5d7178);
+  font-size: 0.5rem;
+}
+
+/* ── P9: Day summary line ────────────────────── */
+
+.daySummaryLine {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary, #0d3642);
+  font-style: italic;
+  line-height: 1.45;
+  animation: sumLineFadeIn 0.25s ease;
+}
+
+@keyframes sumLineFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

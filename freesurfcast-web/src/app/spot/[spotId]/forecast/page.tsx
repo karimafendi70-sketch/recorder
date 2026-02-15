@@ -29,6 +29,11 @@ import { AlertConfigPanel } from "./AlertConfigPanel";
 import { ForecastTldrCard } from "./ForecastTldrCard";
 import { ForecastDetailsSection } from "./ForecastDetailsSection";
 import { ForecastActionsRow } from "./ForecastActionsRow";
+import { DayStrip24h } from "./DayStrip24h";
+import { TrendBadges } from "./TrendBadges";
+import { DaySummaryLine } from "./DaySummaryLine";
+import { getSlotsForDay } from "@/lib/forecast/daySlots";
+import { analyseDayTrends } from "@/lib/forecast/dayTrends";
 import { summarizeConditions } from "@/lib/forecast/conditions";
 import { useAlertProfile } from "@/lib/alerts/useAlertProfile";
 import { buildAlertMap } from "@/lib/alerts/matchDayAlert";
@@ -145,10 +150,16 @@ export default function SpotForecastPage() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [selectPreviousDay, selectNextDay, selectToday, router, spotId]);
 
-  // Day slots
+  // Day slots — canonical sorted subset via helper
   const daySlots = useMemo(
-    () => activeSpot.slots.filter((s) => s.dayKey === activeDateKey),
+    () => getSlotsForDay(activeSpot.slots, activeDateKey),
     [activeSpot.slots, activeDateKey],
+  );
+
+  // Day-level trend analysis
+  const dayTrends = useMemo(
+    () => analyseDayTrends(daySlots),
+    [daySlots],
   );
 
   // Surf windows (full 16 days)
@@ -329,6 +340,23 @@ export default function SpotForecastPage() {
           windLabel={tldrData.windLabel}
           surfaceLabel={tldrData.surfaceLabel}
         />
+      )}
+
+      {/* ── 24h strip + trends + dynamic summary ── */}
+      {!isLoading && daySlots.length > 0 && (
+        <>
+          <DayStrip24h
+            dateKey={activeDateKey}
+            daySlots={daySlots}
+            scoreFn={qualityForSlot}
+          />
+          <TrendBadges trends={dayTrends} />
+          <DaySummaryLine
+            daySlots={daySlots}
+            avgScore={dayAvgScore}
+            scoreFn={qualityForSlot}
+          />
+        </>
       )}
 
       {/* ── Day detail — timeline & conditions ── */}
