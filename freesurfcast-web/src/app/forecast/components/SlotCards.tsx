@@ -1,3 +1,4 @@
+import { useLanguage, type TranslationKey } from "../../LanguageProvider";
 import styles from "../forecast.module.css";
 
 type SlotCardItem = {
@@ -8,6 +9,10 @@ type SlotCardItem = {
   scoreClass: "high" | "medium" | "low";
   condition: string;
   reasons: string[];
+  /** Condition indicator i18n keys (optional – gracefully hidden when absent) */
+  windKey?: TranslationKey;
+  sizeKey?: TranslationKey;
+  surfaceKey?: TranslationKey;
 };
 
 type SlotCardsProps = {
@@ -15,6 +20,8 @@ type SlotCardsProps = {
 };
 
 export function SlotCards({ slots }: SlotCardsProps) {
+  const { t } = useLanguage();
+
   return (
     <section className={styles.sectionCard}>
       <div className={styles.sectionHeader}>
@@ -37,6 +44,27 @@ export function SlotCards({ slots }: SlotCardsProps) {
 
             <p className={styles.scoreValue}>{slot.score.toFixed(1)} / 10</p>
             <p className={styles.slotMeta}>{slot.condition}</p>
+
+            {/* Condition indicator chips */}
+            {(slot.windKey || slot.sizeKey || slot.surfaceKey) && (
+              <div className={styles.conditionRow}>
+                {slot.sizeKey && (
+                  <span className={`${styles.condChip} ${styles.condChipSize}`}>
+                    🌊 {t(slot.sizeKey)}
+                  </span>
+                )}
+                {slot.windKey && (
+                  <span className={`${styles.condChip} ${styles.condChipWind}`}>
+                    💨 {t(slot.windKey)}
+                  </span>
+                )}
+                {slot.surfaceKey && (
+                  <span className={`${styles.condChip} ${styles.condChipSurface}`}>
+                    {t(slot.surfaceKey)}
+                  </span>
+                )}
+              </div>
+            )}
 
             <div className={styles.reasonRow}>
               {slot.reasons.map((reason) => (

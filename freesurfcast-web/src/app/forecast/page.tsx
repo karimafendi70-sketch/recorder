@@ -34,6 +34,7 @@ import {
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { usePageView, trackSpotSelected } from "@/lib/trackClient";
 import { buildSurfWindows } from "@/lib/forecast/surfWindows";
+import { summarizeConditions } from "@/lib/forecast/conditions";
 import { SurfWindowsPanel } from "./components/SurfWindowsPanel";
 import styles from "./forecast.module.css";
 
@@ -198,6 +199,7 @@ function ForecastContent() {
     () =>
       timelineRows.map((row) => {
         const slot = daySlots.find((item) => item.id === row.slotKey);
+        const cond = slot ? summarizeConditions(slot) : undefined;
 
         return {
           id: row.slotKey ?? `${activeSpot.id}-${row.slotOffset}`,
@@ -207,6 +209,9 @@ function ForecastContent() {
           scoreClass: getUiScoreClass(row.score),
           condition: row.dayPart ?? "daypart",
           reasons: row.quality.reasons.slice(0, 2),
+          windKey: cond?.windKey,
+          sizeKey: cond?.sizeKey,
+          surfaceKey: cond?.surfaceKey,
         };
       }),
     [timelineRows, activeSpot, daySlots]
@@ -274,6 +279,8 @@ function ForecastContent() {
         ? getWindRelativeToCoast(coastDeg, windDeg)
         : undefined;
 
+    const cond = bestSlot ? summarizeConditions(bestSlot) : undefined;
+
     return {
       score: ranking?.score ?? 0,
       scoreClass: getUiScoreClass(ranking?.score ?? 0),
@@ -281,6 +288,9 @@ function ForecastContent() {
       waveHeight: merged?.golfHoogteMeter as number | undefined,
       wavePeriod: merged?.golfPeriodeSeconden as number | undefined,
       windDirection: windLabel,
+      windKey: cond?.windKey,
+      sizeKey: cond?.sizeKey,
+      surfaceKey: cond?.surfaceKey,
     };
   }, [spotRankings, activeSpot, daySlots]);
 
@@ -359,6 +369,9 @@ function ForecastContent() {
           waveHeight={explainerData.waveHeight}
           wavePeriod={explainerData.wavePeriod}
           windDirection={explainerData.windDirection}
+          windKey={explainerData.windKey}
+          sizeKey={explainerData.sizeKey}
+          surfaceKey={explainerData.surfaceKey}
         />
 
         <SurfWindowsPanel windows={surfWindows} />

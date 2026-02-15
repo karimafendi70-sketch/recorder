@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguage } from "../../LanguageProvider";
+import { useLanguage, type TranslationKey } from "../../LanguageProvider";
 import styles from "../forecast.module.css";
 
 type ScoreExplainerProps = {
@@ -11,6 +11,10 @@ type ScoreExplainerProps = {
   waveHeight?: number;
   wavePeriod?: number;
   windDirection?: string;
+  /** Condition indicator i18n keys (optional) */
+  windKey?: TranslationKey;
+  sizeKey?: TranslationKey;
+  surfaceKey?: TranslationKey;
 };
 
 export function ScoreExplainer({
@@ -21,6 +25,9 @@ export function ScoreExplainer({
   waveHeight,
   wavePeriod,
   windDirection,
+  windKey,
+  sizeKey,
+  surfaceKey,
 }: ScoreExplainerProps) {
   const { t } = useLanguage();
 
@@ -42,6 +49,27 @@ export function ScoreExplainer({
           )}
           {windDirection != null && (
             <span className={styles.explainerStat}>💨 {windDirection}</span>
+          )}
+        </div>
+      )}
+
+      {/* Pro condition indicators */}
+      {(windKey || sizeKey || surfaceKey) && (
+        <div className={styles.conditionRow} style={{ marginTop: "0.5rem" }}>
+          {sizeKey && (
+            <span className={`${styles.condChip} ${styles.condChipSize}`}>
+              {t("cond.label.size")}: {t(sizeKey)}
+            </span>
+          )}
+          {windKey && (
+            <span className={`${styles.condChip} ${styles.condChipWind}`}>
+              {t("cond.label.wind")}: {t(windKey)}
+            </span>
+          )}
+          {surfaceKey && (
+            <span className={`${styles.condChip} ${styles.condChipSurface}`}>
+              {t("cond.label.surface")}: {t(surfaceKey)}
+            </span>
           )}
         </div>
       )}

@@ -970,6 +970,141 @@ const dict = {
     fr: "Quelque chose s'est mal passé — veuillez réessayer.",
     es: "Algo salió mal — por favor inténtalo de nuevo.",
   },
+
+  // ── Condition indicators ──────────────────
+  // Wind comfort
+  "cond.wind.offshore": {
+    en: "Offshore",
+    nl: "Offshore",
+    de: "Ablandig",
+    fr: "Offshore",
+    es: "Offshore",
+  },
+  "cond.wind.cross-off": {
+    en: "Cross-off",
+    nl: "Cross-offshore",
+    de: "Seitlich-ablandig",
+    fr: "Cross-off",
+    es: "Cross-off",
+  },
+  "cond.wind.cross-shore": {
+    en: "Cross-shore",
+    nl: "Zijwaarts",
+    de: "Seitlich",
+    fr: "Cross-shore",
+    es: "Lateral",
+  },
+  "cond.wind.onshore": {
+    en: "Onshore",
+    nl: "Onshore",
+    de: "Auflandig",
+    fr: "Onshore",
+    es: "Onshore",
+  },
+  "cond.wind.light-variable": {
+    en: "Light / variable",
+    nl: "Licht / variabel",
+    de: "Leicht / wechselnd",
+    fr: "Léger / variable",
+    es: "Ligero / variable",
+  },
+
+  // Size band
+  "cond.size.tiny": {
+    en: "Tiny",
+    nl: "Mini",
+    de: "Winzig",
+    fr: "Minuscule",
+    es: "Pequeñísimo",
+  },
+  "cond.size.knee": {
+    en: "Knee-high",
+    nl: "Kniehoogte",
+    de: "Kniehoch",
+    fr: "Genou",
+    es: "Rodilla",
+  },
+  "cond.size.waist": {
+    en: "Waist-high",
+    nl: "Heup­hoogte",
+    de: "Hüfthoch",
+    fr: "Taille",
+    es: "Cintura",
+  },
+  "cond.size.shoulder": {
+    en: "Shoulder",
+    nl: "Schouderhoogte",
+    de: "Schulterhoch",
+    fr: "Épaule",
+    es: "Hombro",
+  },
+  "cond.size.head": {
+    en: "Head-high",
+    nl: "Hoofdhoogte",
+    de: "Kopfhoch",
+    fr: "Tête",
+    es: "Cabeza",
+  },
+  "cond.size.overhead": {
+    en: "Overhead+",
+    nl: "Overhead+",
+    de: "Überkopf+",
+    fr: "Overhead+",
+    es: "Overhead+",
+  },
+
+  // Surface quality
+  "cond.surface.glassy": {
+    en: "Glassy",
+    nl: "Glasvlak",
+    de: "Glasig",
+    fr: "Lisse",
+    es: "Cristalino",
+  },
+  "cond.surface.clean": {
+    en: "Clean",
+    nl: "Clean",
+    de: "Sauber",
+    fr: "Propre",
+    es: "Limpio",
+  },
+  "cond.surface.bumpy": {
+    en: "Bumpy",
+    nl: "Hobbelig",
+    de: "Wellig",
+    fr: "Bosselé",
+    es: "Irregular",
+  },
+  "cond.surface.messy": {
+    en: "Messy",
+    nl: "Rommelig",
+    de: "Unruhig",
+    fr: "Agité",
+    es: "Desorden",
+  },
+
+  // Condition labels (section headers/tooltips)
+  "cond.label.wind": {
+    en: "Wind",
+    nl: "Wind",
+    de: "Wind",
+    fr: "Vent",
+    es: "Viento",
+  },
+  "cond.label.size": {
+    en: "Size",
+    nl: "Grootte",
+    de: "Größe",
+    fr: "Taille",
+    es: "Tamaño",
+  },
+  "cond.label.surface": {
+    en: "Surface",
+    nl: "Oppervlak",
+    de: "Oberfläche",
+    fr: "Surface",
+    es: "Superficie",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

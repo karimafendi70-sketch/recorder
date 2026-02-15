@@ -2,6 +2,8 @@
 
 import { useMemo } from "react";
 import type { SurfWindow } from "@/lib/forecast/surfWindows";
+import { getSizeBand, getWindComfort, getSurfaceQuality } from "@/lib/forecast/conditions";
+import type { SlotContext } from "@/lib/scores";
 import { useLanguage, type TranslationKey } from "../../LanguageProvider";
 import styles from "../forecast.module.css";
 
@@ -17,6 +19,19 @@ const CONDITION_KEY: Record<string, TranslationKey> = {
 
 function capitalize(value: "high" | "medium" | "low") {
   return `${value[0].toUpperCase()}${value.slice(1)}`;
+}
+
+/** Build a synthetic SlotContext from a SurfWindow's aggregated data. */
+function windowToSlotContext(win: SurfWindow): SlotContext {
+  return {
+    conditionTag: win.condition,
+    mergedSpot: {
+      golfHoogteMeter: win.waveHeight ?? 0,
+      windDirectionDeg: win.windDirection ?? 0,
+      coastOrientationDeg: 0, // not available on window; wind comfort will fall back gracefully
+      windSpeedKnots: 0,
+    },
+  };
 }
 
 /** Format a dateKey (YYYY-MM-DD) into a human-readable day label. */
@@ -69,6 +84,11 @@ export function SurfWindowsPanel({ windows }: Props) {
             ? formatWindowDate(win.dateKey, todayStr, tomStr, lang, todayLabel, tomLabel)
             : "";
 
+          const ctx = windowToSlotContext(win);
+          const sizeBand = getSizeBand(ctx);
+          const windComfort = getWindComfort(ctx);
+          const surface = getSurfaceQuality(ctx);
+
           return (
             <article
               key={`${win.spotId}-${win.startHour}-${i}`}
@@ -104,6 +124,19 @@ export function SurfWindowsPanel({ windows }: Props) {
                 </span>
                 <span className={styles.windowChip}>
                   {win.slotCount} {win.slotCount === 1 ? "slot" : "slots"}
+                </span>
+              </div>
+
+              {/* Pro condition indicators */}
+              <div className={styles.conditionRow}>
+                <span className={`${styles.condChip} ${styles.condChipSize}`}>
+                  🌊 {t(`cond.size.${sizeBand}`)}
+                </span>
+                <span className={`${styles.condChip} ${styles.condChipWind}`}>
+                  💨 {t(`cond.wind.${windComfort}`)}
+                </span>
+                <span className={`${styles.condChip} ${styles.condChipSurface}`}>
+                  {t(`cond.surface.${surface}`)}
                 </span>
               </div>
             </article>
