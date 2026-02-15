@@ -96,24 +96,49 @@ export function getSizeBand(slot: SlotContext): SizeBand {
 
 /* ── Surface quality ─────────────────────────── */
 
+/**
+ * Derive surface quality from wind comfort + wind speed.
+ *
+ * Thresholds (knots) — tune these constants to adjust:
+ *   GLASSY_MAX    =  4 kn  (near-calm cutoff for any direction)
+ *   GLASSY_OFF    =  8 kn  (offshore-only glassy ceiling)
+ *   CLEAN_OFF_MAX = 14 kn  (offshore / cross-off stays clean)
+ *   CLEAN_GEN_MAX = 10 kn  (general "clean" ceiling when tag = clean)
+ *   BUMPY_MAX     = 18 kn  (cross-shore / light-onshore upper bound)
+ *   > BUMPY_MAX + onshore  → messy
+ *
+ * TODO: consider swell period as an extra input — long-period
+ * swell can keep a surface cleaner even in moderate wind.
+ */
 export function getSurfaceQuality(slot: SlotContext): SurfaceQuality {
   const merged = getMerged(slot);
   const windSpd = num(merged.windSpeedKnots, 0);
   const condition = slot.conditionTag ?? "mixed";
   const wind = getWindComfort(slot);
 
-  // Glassy: very light wind or perfect offshore + low wind
-  if (windSpd < 4) return "glassy";
-  if (wind === "offshore" && windSpd < 10) return "glassy";
+  /* ── Thresholds (knots) ── */
+  const GLASSY_MAX    =  4;  // any direction: near-calm
+  const GLASSY_OFF    =  8;  // offshore only: still glassy
+  const CLEAN_OFF_MAX = 14;  // offshore / cross-off: clean ceiling
+  const CLEAN_GEN_MAX = 10;  // general clean (when conditionTag = clean)
+  const BUMPY_MAX     = 18;  // hard ceiling before messy (onshore)
 
-  // Clean: offshore/cross-off with moderate wind
-  if ((wind === "offshore" || wind === "cross-off") && windSpd < 18) return "clean";
-  if (condition === "clean" && windSpd < 14) return "clean";
+  // ── Glassy: very light wind, or light offshore ──
+  if (windSpd < GLASSY_MAX) return "glassy";
+  if ((wind === "offshore" || wind === "light-variable") && windSpd < GLASSY_OFF) return "glassy";
 
-  // Bumpy: moderate onshore or cross-shore
-  if (windSpd < 20) return "bumpy";
+  // ── Clean: offshore / cross-off with low-to-moderate wind ──
+  if ((wind === "offshore" || wind === "cross-off") && windSpd < CLEAN_OFF_MAX) return "clean";
+  if (condition === "clean" && windSpd < CLEAN_GEN_MAX) return "clean";
 
-  // Messy: strong wind or explicitly choppy
+  // ── Bumpy: cross-shore at moderate wind, or onshore below threshold ──
+  if (wind === "cross-shore" && windSpd < BUMPY_MAX) return "bumpy";
+  if (wind === "cross-off"   && windSpd < BUMPY_MAX) return "bumpy";
+  if (wind === "onshore"     && windSpd < BUMPY_MAX) return "bumpy";
+  if (wind === "light-variable") return "bumpy";           // light but mixed direction
+  if (wind === "offshore" && windSpd < BUMPY_MAX) return "bumpy";
+
+  // ── Messy: only when clearly onshore + strong wind ──
   return "messy";
 }
 
