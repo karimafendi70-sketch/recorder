@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   getSlotQualityScore,
   type SlotContext,
@@ -93,6 +93,53 @@ export default function SpotForecastPage() {
     ? selectedDay
     : daySummaries[0]?.dateKey ?? "";
 
+  // Ref for smooth scroll on mobile
+  const detailRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
+
+  // Today key for back-to-today
+  const todayKey = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const isToday = activeDateKey === todayKey;
+  const hasTodayInRange = daySummaries.some((d) => d.dateKey === todayKey);
+
+  // Day select handler with smooth scroll on mobile
+  const handleSelectDay = useCallback((dayKey: string) => {
+    setSelectedDay(dayKey);
+    if (window.innerWidth < 768 && detailRef.current) {
+      const top = detailRef.current.getBoundingClientRect().top + window.scrollY - 88;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  }, []);
+
+  // Keyboard shortcuts
+  const selectPreviousDay = useCallback(() => {
+    const idx = daySummaries.findIndex((d) => d.dateKey === activeDateKey);
+    if (idx > 0) handleSelectDay(daySummaries[idx - 1].dateKey);
+  }, [daySummaries, activeDateKey, handleSelectDay]);
+
+  const selectNextDay = useCallback(() => {
+    const idx = daySummaries.findIndex((d) => d.dateKey === activeDateKey);
+    if (idx >= 0 && idx < daySummaries.length - 1) handleSelectDay(daySummaries[idx + 1].dateKey);
+  }, [daySummaries, activeDateKey, handleSelectDay]);
+
+  const selectToday = useCallback(() => {
+    if (hasTodayInRange) handleSelectDay(todayKey);
+  }, [hasTodayInRange, todayKey, handleSelectDay]);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag && ["INPUT", "TEXTAREA", "SELECT"].includes(tag)) return;
+
+      if (e.key === "ArrowLeft") { e.preventDefault(); selectPreviousDay(); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); selectNextDay(); }
+      else if (e.key.toLowerCase() === "t") { e.preventDefault(); selectToday(); }
+      else if (e.key.toLowerCase() === "s") { e.preventDefault(); router.push(`/spot/${spotId}/sessions`); }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectPreviousDay, selectNextDay, selectToday, router, spotId]);
+
   // Day slots
   const daySlots = useMemo(
     () => activeSpot.slots.filter((s) => s.dayKey === activeDateKey),
@@ -178,12 +225,24 @@ export default function SpotForecastPage() {
       {isLoading ? (
         <DayBarSkeleton />
       ) : (
-        <DayBar
-          days={daySummaries}
-          activeDateKey={activeDateKey}
-          onSelect={setSelectedDay}
-          alertDays={alertDays}
-        />
+        <>
+          <DayBar
+            days={daySummaries}
+            activeDateKey={activeDateKey}
+            onSelect={handleSelectDay}
+            alertDays={alertDays}
+          />
+          <div className={styles.dayBarExtras}>
+            {!isToday && hasTodayInRange && (
+              <button className={styles.backToTodayBtn} onClick={selectToday}>
+                ← {t("forecast.actions.backToToday" as TranslationKey)}
+              </button>
+            )}
+            <span className={styles.shortcutHint}>
+              {t("forecast.shortcuts.hint" as TranslationKey)}
+            </span>
+          </div>
+        </>
       )}
 
       {/* ── Day detail ── */}
@@ -191,15 +250,17 @@ export default function SpotForecastPage() {
         <DayDetailSkeleton />
       ) : (
         <>
-          <DayDetailPanel
-            dateKey={activeDateKey}
-            dayLabel={dayLabel}
-            fullDate={fullDate}
-            daySlots={daySlots}
-            bestWindow={dayBest}
-            avgScore={dayAvgScore}
-            scoreFn={qualityForSlot}
-          />
+          <div ref={detailRef}>
+            <DayDetailPanel
+              dateKey={activeDateKey}
+              dayLabel={dayLabel}
+              fullDate={fullDate}
+              daySlots={daySlots}
+              bestWindow={dayBest}
+              avgScore={dayAvgScore}
+              scoreFn={qualityForSlot}
+            />
+          </div>
 
           {/* ── Extra sections (below day detail) ── */}
           <section className={styles.moreSection}>

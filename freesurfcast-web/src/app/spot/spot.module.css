@@ -1623,3 +1623,43 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── P3: Forecast UX extras ──────────── */
+
+.dayBarExtras {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  flex-wrap: wrap;
+}
+
+.backToTodayBtn {
+  all: unset;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--accent);
+  transition: background var(--transition), color var(--transition);
+}
+.backToTodayBtn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.shortcutHint {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .shortcutHint {
+    display: none;
+  }
+}

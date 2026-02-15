@@ -1801,11 +1801,11 @@ const dict = {
     es: "Comparar spots",
   },
   "compare.subtitle": {
-    en: "Side by side for the same day",
-    nl: "Naast elkaar voor dezelfde dag",
-    de: "Nebeneinander für denselben Tag",
-    fr: "Côte à côte pour le même jour",
-    es: "Lado a lado para el mismo día",
+    en: "Compare today or any day for two spots side by side.",
+    nl: "Vergelijk vandaag of een andere dag voor twee spots naast elkaar.",
+    de: "Vergleiche heute oder einen anderen Tag für zwei Spots nebeneinander.",
+    fr: "Comparez aujourd\u2019hui ou un autre jour pour deux spots côte à côte.",
+    es: "Compara hoy o cualquier día para dos spots lado a lado.",
   },
   "compare.selectSpot": {
     en: "Choose a spot…",
@@ -1887,11 +1887,11 @@ const dict = {
     es: "Planificador de viaje",
   },
   "trip.subtitle": {
-    en: "Best spot + day combos in your date range",
-    nl: "Beste spot + dag combo\u2019s in je datumrange",
-    de: "Beste Spot + Tag Kombos in deinem Zeitraum",
-    fr: "Meilleures combinaisons spot + jour dans votre p\u00e9riode",
-    es: "Mejores combinaciones spot + d\u00eda en tu rango de fechas",
+    en: "Pick a date range and we\u2019ll suggest the best spot + day combos.",
+    nl: "Kies een datumbereik en wij stellen de beste spot+dag-combo\u2019s voor.",
+    de: "W\u00e4hle einen Zeitraum und wir schlagen die besten Spot+Tag-Kombos vor.",
+    fr: "Choisissez une p\u00e9riode et nous vous sugg\u00e9rerons les meilleures combinaisons.",
+    es: "Elige un rango de fechas y te sugeriremos las mejores combinaciones.",
   },
   "trip.from": {
     en: "From",
@@ -1997,6 +1997,57 @@ const dict = {
     de: "Anst\u00e4ndige Bedingungen erwartet",
     fr: "Conditions correctes attendues",
     es: "Se esperan condiciones decentes",
+  },
+
+  /* \u2500\u2500 P3: UX Micro \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+  "forecast.shortcuts.hint": {
+    en: "\u2190/\u2192 change day \u00b7 T = today \u00b7 S = sessions",
+    nl: "\u2190/\u2192 dag wisselen \u00b7 T = vandaag \u00b7 S = sessies",
+    de: "\u2190/\u2192 Tag wechseln \u00b7 T = heute \u00b7 S = Sessions",
+    fr: "\u2190/\u2192 changer jour \u00b7 T = aujourd\u2019hui \u00b7 S = sessions",
+    es: "\u2190/\u2192 cambiar d\u00eda \u00b7 T = hoy \u00b7 S = sesiones",
+  },
+  "forecast.actions.backToToday": {
+    en: "Back to today",
+    nl: "Terug naar vandaag",
+    de: "Zur\u00fcck zu heute",
+    fr: "Retour \u00e0 aujourd\u2019hui",
+    es: "Volver a hoy",
+  },
+  "compare.actions.today": {
+    en: "Today",
+    nl: "Vandaag",
+    de: "Heute",
+    fr: "Aujourd\u2019hui",
+    es: "Hoy",
+  },
+  "compare.warning.sameSpot": {
+    en: "You\u2019re comparing the same spot twice.",
+    nl: "Je vergelijkt dezelfde spot twee keer.",
+    de: "Du vergleichst denselben Spot zweimal.",
+    fr: "Vous comparez le m\u00eame spot deux fois.",
+    es: "Est\u00e1s comparando el mismo spot dos veces.",
+  },
+  "compare.shortcuts.hint": {
+    en: "\u2190/\u2192 change day \u00b7 T = today",
+    nl: "\u2190/\u2192 dag wisselen \u00b7 T = vandaag",
+    de: "\u2190/\u2192 Tag wechseln \u00b7 T = heute",
+    fr: "\u2190/\u2192 changer jour \u00b7 T = aujourd\u2019hui",
+    es: "\u2190/\u2192 cambiar d\u00eda \u00b7 T = hoy",
+  },
+  "trip.actions.thisWeek": {
+    en: "This week",
+    nl: "Deze week",
+    de: "Diese Woche",
+    fr: "Cette semaine",
+    es: "Esta semana",
+  },
+  "trip.scoreHint": {
+    en: "Score based on size, period, wind and consistency.",
+    nl: "Score gebaseerd op grootte, periode, wind en consistentie.",
+    de: "Bewertung basierend auf Gr\u00f6\u00dfe, Periode, Wind und Konsistenz.",
+    fr: "Score bas\u00e9 sur la taille, la p\u00e9riode, le vent et la consistance.",
+    es: "Puntuaci\u00f3n basada en tama\u00f1o, per\u00edodo, viento y consistencia.",
   },
 } satisfies Record<string, Record<Lang, string>>;
 

@@ -63,11 +63,12 @@ const REGION_LABELS: Record<Region, string> = {
 function ComboCard({ combo, rank, lang }: { combo: TripCombo; rank: number; lang: string }) {
   const { t } = useLanguage();
   const rColor = RATING_COLOR[combo.ratingBucket] ?? RATING_COLOR.poor;
+  const isEpic = combo.ratingBucket === "epic" || combo.ratingBucket === "goodToEpic";
 
   return (
     <Link
       href={`/spot/${combo.spotId}/forecast`}
-      className={styles.comboCard}
+      className={`${styles.comboCard} ${isEpic ? styles.comboCardEpic : ""}`}
       style={{ animationDelay: `${rank * 0.04}s` }}
     >
       {/* Rank badge */}
@@ -230,6 +231,17 @@ function TripPlannerInner() {
     pushQuery(startDate, endDate, regionFilter, v);
   }, [startDate, endDate, regionFilter, pushQuery]);
 
+  // "This week" quick-set
+  const handleThisWeek = useCallback(() => {
+    const t = todayKey();
+    const end7 = addDays(t, 7);
+    const mx = maxForecastDate();
+    const clamped = end7 > mx ? mx : end7;
+    setStartDate(t);
+    setEndDate(clamped);
+    pushQuery(t, clamped, regionFilter, countryFilter);
+  }, [regionFilter, countryFilter, pushQuery]);
+
   // Trip data
   const { combos, isLoading } = useTripPlanner(startDate, endDate, spotIds);
 
@@ -279,6 +291,11 @@ function TripPlannerInner() {
             />
           </div>
         </div>
+
+        {/* Quick date button */}
+        <button className={styles.thisWeekBtn} onClick={handleThisWeek}>
+          📅 {t("trip.actions.thisWeek" as TranslationKey)}
+        </button>
 
         {/* Spot filters */}
         <div className={styles.controlRow}>
@@ -344,6 +361,9 @@ function TripPlannerInner() {
               lang={lang}
             />
           ))}
+          <p className={styles.scoreHint}>
+            {t("trip.scoreHint" as TranslationKey)}
+          </p>
         </div>
       )}
     </section>

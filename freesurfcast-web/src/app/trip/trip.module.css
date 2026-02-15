@@ -316,3 +316,35 @@
     background: rgba(255, 255, 255, 0.08);
   }
 }
+
+/* ── P3: Trip UX extras ───────────────── */
+
+.thisWeekBtn {
+  all: unset;
+  cursor: pointer;
+  align-self: flex-start;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--accent);
+  transition: background var(--transition), color var(--transition);
+}
+.thisWeekBtn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.comboCardEpic {
+  box-shadow: 0 0 0 2px var(--rating-goodToEpic, #22c55e), var(--shadow-sm);
+}
+
+.scoreHint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  opacity: 0.65;
+  padding: 8px 0 0;
+  margin: 0;
+}

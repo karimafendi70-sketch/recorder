@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage, type TranslationKey } from "@/app/LanguageProvider";
 import { SPOT_CATALOG } from "@/lib/spots/catalog";
@@ -204,6 +204,36 @@ function ComparePageInner() {
   const handleSpotB = useCallback((id: string) => { setSpotB(id); pushQuery(spotA, id, dayKey); }, [spotA, dayKey, pushQuery]);
   const handleDay = useCallback((d: string) => { setDayKey(d); pushQuery(spotA, spotB, d); }, [spotA, spotB, pushQuery]);
 
+  // Today helpers
+  const todayKey = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const isToday = dayKey === todayKey;
+
+  // Same-spot warning
+  const sameSpot = spotA !== "" && spotA === spotB;
+
+  // Keyboard shortcuts: ← → switch day, T = today
+  const selectPrevDay = useCallback(() => {
+    const idx = dayOptions.findIndex((o) => o.key === dayKey);
+    if (idx > 0) handleDay(dayOptions[idx - 1].key);
+  }, [dayOptions, dayKey, handleDay]);
+
+  const selectNextDay = useCallback(() => {
+    const idx = dayOptions.findIndex((o) => o.key === dayKey);
+    if (idx >= 0 && idx < dayOptions.length - 1) handleDay(dayOptions[idx + 1].key);
+  }, [dayOptions, dayKey, handleDay]);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag && ["INPUT", "TEXTAREA", "SELECT"].includes(tag)) return;
+      if (e.key === "ArrowLeft") { e.preventDefault(); selectPrevDay(); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); selectNextDay(); }
+      else if (e.key.toLowerCase() === "t") { e.preventDefault(); handleDay(todayKey); }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectPrevDay, selectNextDay, handleDay, todayKey]);
+
   // Data
   const activeIds = useMemo(() => [spotA, spotB].filter(Boolean), [spotA, spotB]);
   const { columns, isLoading } = useCompareForecast(activeIds, dayKey);
@@ -276,6 +306,25 @@ function ComparePageInner() {
             ))}
           </select>
         </div>
+      </div>
+
+      {/* Same-spot warning */}
+      {sameSpot && (
+        <p className={styles.sameSpotWarning}>
+          ⚠️ {t("compare.warning.sameSpot" as TranslationKey)}
+        </p>
+      )}
+
+      {/* Today + shortcut hint row */}
+      <div className={styles.compareExtras}>
+        {!isToday && (
+          <button className={styles.todayBtn} onClick={() => handleDay(todayKey)}>
+            ← {t("compare.actions.today" as TranslationKey)}
+          </button>
+        )}
+        <span className={styles.shortcutHint}>
+          {t("compare.shortcuts.hint" as TranslationKey)}
+        </span>
       </div>
 
       {/* Columns */}

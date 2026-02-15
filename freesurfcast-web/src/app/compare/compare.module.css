@@ -220,6 +220,9 @@
   .columnsWrap {
     grid-template-columns: 1fr;
   }
+  .shortcutHint {
+    display: none;
+  }
 }
 
 /* ── Dark mode ────────────────────────── */
@@ -227,4 +230,48 @@
   .colBlock {
     background: rgba(255, 255, 255, 0.06);
   }
+}
+
+/* ── P3: Compare UX extras ────────────── */
+
+.sameSpotWarning {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--rating-poorToFair, #d97706);
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(217, 119, 6, 0.08);
+  margin: 0;
+}
+
+.compareExtras {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.todayBtn {
+  all: unset;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--accent);
+  transition: background var(--transition), color var(--transition);
+}
+.todayBtn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.shortcutHint {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+  white-space: nowrap;
 }
