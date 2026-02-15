@@ -487,3 +487,223 @@
     height: 16px;
   }
 }
+
+/* ── P5: Profile Insights ─────────────────────── */
+
+.profileEmpty {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+.profileEmptyIcon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.profileEmptyText {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1b3a42;
+}
+.profileEmptyHint {
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+  color: #5c737b;
+}
+
+/* Stats grid */
+.profileStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.6rem;
+}
+.profileStat {
+  background: #fafdfe;
+  border: 1.5px solid #d7e6eb;
+  border-radius: 14px;
+  padding: 0.9rem 0.8rem;
+  display: grid;
+  gap: 0.2rem;
+  text-align: center;
+}
+.profileStatValue {
+  font-size: 1.35rem;
+  font-weight: 750;
+  color: #156f78;
+}
+.profileStatLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5c737b;
+}
+
+/* Top spots list */
+.profileTopList {
+  display: grid;
+  gap: 0.4rem;
+}
+.profileTopRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  background: #f5fafc;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+.profileTopRow:hover {
+  background: #e8f4f7;
+}
+.profileTopRank {
+  font-weight: 750;
+  font-size: 0.82rem;
+  color: #156f78;
+  min-width: 28px;
+}
+.profileTopName {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.profileTopMeta {
+  font-size: 0.78rem;
+  color: #5c737b;
+  white-space: nowrap;
+}
+
+/* Mini bar chart */
+.miniBarRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.miniBarLabel {
+  min-width: 90px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #3b5c64;
+}
+.miniBarTrack {
+  flex: 1;
+  height: 16px;
+  background: #eaf3f6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.miniBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #72d4a0, #4dbe80);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.miniBarValue {
+  min-width: 36px;
+  text-align: right;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #3b5c64;
+}
+
+/* Wind preference */
+.profileWindRow {
+  display: flex;
+  gap: 1.5rem;
+}
+.profileWindItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.profileWindLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #5c737b;
+}
+.profileWindScore {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1b3a42;
+}
+
+/* Suggestions */
+.profileSuggestList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.profileSuggestItem {
+  padding: 0.5rem 0.7rem;
+  background: rgba(21, 111, 120, 0.06);
+  border-radius: 8px;
+  font-size: 0.84rem;
+  color: #1b3a42;
+  line-height: 1.45;
+}
+.profileSuggestItem::before {
+  content: "💡 ";
+}
+
+/* Alert suggestion cards */
+.suggestionCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.7rem 0.8rem;
+  background: #fafdfe;
+  border: 1.5px solid #d7e6eb;
+  border-radius: 12px;
+}
+.suggestionBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+.suggestionIcon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.suggestionText {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #1b3a42;
+  line-height: 1.4;
+}
+.suggestionMeta {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+  color: #5c737b;
+}
+.suggestionBtn {
+  background: var(--accent, #156f78);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.suggestionBtn:hover {
+  background: #0f5960;
+  transform: scale(1.02);
+}
+.suggestionBtnDone {
+  background: #22c55e;
+  cursor: default;
+}
+.suggestionBtnDone:hover {
+  background: #22c55e;
+  transform: none;
+}

@@ -12,7 +12,7 @@ import {
 import { buildTimelineDataForDay } from "@/lib/timeline";
 import { ProtectedRoute } from "../ProtectedRoute";
 import { usePreferences } from "../PreferencesProvider";
-import { useLanguage } from "../LanguageProvider";
+import { useLanguage, type TranslationKey } from "../LanguageProvider";
 import { type ForecastSlot } from "../forecast/mockData";
 import { useLiveForecast } from "../forecast/useLiveForecast";
 import {
@@ -24,6 +24,7 @@ import {
 import { MultiSpotRanking } from "./components/MultiSpotRanking";
 import { DaypartHeatmap } from "./components/DaypartHeatmap";
 import { TimelinePreview } from "./components/TimelinePreview";
+import { ProfileInsightsPanel } from "./components/ProfileInsightsPanel";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { usePageView } from "@/lib/trackClient";
 import styles from "./insights.module.css";
@@ -251,6 +252,15 @@ export default function InsightsPage() {
         <DaypartHeatmap rows={heatmapItems} dayParts={[...DAY_PARTS]} />
 
         <TimelinePreview spotName={bestSpot.name} entries={timelineEntries} />
+
+        {/* ── P5: Profile Insights (session-based ML-light) ── */}
+        <div className={styles.sectionCard}>
+          <div className={styles.sectionHeader}>
+            <h2>🧬 {t("profile.insights.title" as TranslationKey)}</h2>
+            <p>{t("profile.insights.subtitle" as TranslationKey)}</p>
+          </div>
+        </div>
+        <ProfileInsightsPanel />
 
         <FeedbackWidget />
       </section>
