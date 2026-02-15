@@ -1306,6 +1306,73 @@ const dict = {
     fr: "Ouvrir le détail du spot",
     es: "Abrir detalle del spot",
   },
+
+  // ── Rating bands ──────────────────────────
+  "rating.epic": {
+    en: "Epic",
+    nl: "Episch",
+    de: "Episch",
+    fr: "Épique",
+    es: "Épico",
+  },
+  "rating.goodToEpic": {
+    en: "Good to Epic",
+    nl: "Goed tot episch",
+    de: "Gut bis episch",
+    fr: "Bon à épique",
+    es: "Bueno a épico",
+  },
+  "rating.good": {
+    en: "Good",
+    nl: "Goed",
+    de: "Gut",
+    fr: "Bon",
+    es: "Bueno",
+  },
+  "rating.fairToGood": {
+    en: "Fair to Good",
+    nl: "Redelijk tot goed",
+    de: "Mässig bis gut",
+    fr: "Correct à bon",
+    es: "Regular a bueno",
+  },
+  "rating.fair": {
+    en: "Fair",
+    nl: "Redelijk",
+    de: "Mässig",
+    fr: "Correct",
+    es: "Regular",
+  },
+  "rating.poorToFair": {
+    en: "Poor to Fair",
+    nl: "Matig tot redelijk",
+    de: "Schlecht bis mässig",
+    fr: "Médiocre à correct",
+    es: "Malo a regular",
+  },
+  "rating.poor": {
+    en: "Poor",
+    nl: "Matig",
+    de: "Schlecht",
+    fr: "Médiocre",
+    es: "Malo",
+  },
+
+  // ── Spot detail extra labels ──────────────
+  "spot.detail.surfHeight": {
+    en: "Surf height",
+    nl: "Golfhoogte",
+    de: "Wellenhöhe",
+    fr: "Hauteur des vagues",
+    es: "Altura del oleaje",
+  },
+  "spot.detail.swell": {
+    en: "Swell",
+    nl: "Deining",
+    de: "Dünung",
+    fr: "Houle",
+    es: "Oleaje",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

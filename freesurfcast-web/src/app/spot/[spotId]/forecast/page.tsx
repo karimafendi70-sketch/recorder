@@ -20,6 +20,9 @@ import { DayBar } from "./DayBar";
 import { DayDetailPanel } from "./DayDetailPanel";
 import { DataSourceBadge } from "@/app/forecast/components/DataSourceBadge";
 import { SurfWindowsPanel } from "@/app/forecast/components/SurfWindowsPanel";
+import { ScoreExplainer } from "@/app/forecast/components/ScoreExplainer";
+import { summarizeConditions } from "@/lib/forecast/conditions";
+import type { TranslationKey } from "@/app/LanguageProvider";
 import styles from "../../spot.module.css";
 
 export default function SpotForecastPage() {
@@ -97,6 +100,29 @@ export default function SpotForecastPage() {
     return d.toLocaleDateString(lang, { weekday: "long", day: "numeric", month: "long" });
   }, [activeDateKey, lang]);
 
+  // ScoreExplainer data — from best slot of active day
+  const explainerData = useMemo(() => {
+    const scored = daySlots.map((s) => ({ s, q: qualityForSlot(s) }));
+    if (scored.length === 0) return null;
+    const best = scored.reduce((a, b) => (b.q.score > a.q.score ? b : a));
+    const slot = best.s;
+    const quality = best.q;
+    const merged = (slot.mergedSpot ?? {}) as Record<string, unknown>;
+    const cond = summarizeConditions(slot);
+    return {
+      spotName: activeSpot.name,
+      score: quality.score,
+      scoreClass: (quality.score >= 7 ? "high" : quality.score >= 4.5 ? "medium" : "low") as "high" | "medium" | "low",
+      reasons: quality.reasons ?? [],
+      waveHeight: merged.golfHoogteMeter as number | undefined,
+      wavePeriod: merged.golfPeriodeSeconden as number | undefined,
+      windDirection: merged.windDirectionDeg != null ? `${Math.round(merged.windDirectionDeg as number)}°` : undefined,
+      windKey: cond.windKey as TranslationKey,
+      sizeKey: cond.sizeKey as TranslationKey,
+      surfaceKey: cond.surfaceKey as TranslationKey,
+    };
+  }, [daySlots, qualityForSlot, activeSpot.name]);
+
   return (
     <>
       <DataSourceBadge status={status} isLive={isLive} fetchedAt={fetchedAt} />
@@ -128,6 +154,22 @@ export default function SpotForecastPage() {
 
       {/* ── All surf windows (full 16-day overview) ── */}
       <SurfWindowsPanel windows={surfWindows} />
+
+      {/* ── Score explainer ── */}
+      {explainerData && (
+        <ScoreExplainer
+          spotName={explainerData.spotName}
+          score={explainerData.score}
+          scoreClass={explainerData.scoreClass}
+          reasons={explainerData.reasons}
+          waveHeight={explainerData.waveHeight}
+          wavePeriod={explainerData.wavePeriod}
+          windDirection={explainerData.windDirection}
+          windKey={explainerData.windKey}
+          sizeKey={explainerData.sizeKey}
+          surfaceKey={explainerData.surfaceKey}
+        />
+      )}
     </>
   );
 }
