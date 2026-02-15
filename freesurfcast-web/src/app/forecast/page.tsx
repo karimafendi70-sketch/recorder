@@ -217,14 +217,13 @@ function ForecastContent() {
     [timelineRows, activeSpot, daySlots]
   );
 
-  /* ── Surf Windows (all 16 days, max 10) ── */
+  /* ── Surf Windows (all 16 days, premium only) ── */
   const surfWindows = useMemo(
     () =>
       buildSurfWindows(
         activeSpot.slots,
         activeSpot.id,
         qualityForSlot,
-        { minScore: 5, maxWindows: 10 },
       ),
     [activeSpot, qualityForSlot]
   );

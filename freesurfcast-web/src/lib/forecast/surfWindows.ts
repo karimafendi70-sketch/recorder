@@ -36,22 +36,33 @@ export interface SurfWindow {
 }
 
 export interface BuildSurfWindowsOptions {
-  /** Minimum score (0-10) for a slot to be considered "good". Default 5. */
+  /** Minimum score (0-10) for a slot to be considered "good". */
   minScore: number;
-  /** Minimum number of slots to form a window. Default 1. */
+  /** Minimum number of slots to form a window. */
   minSlots: number;
-  /** Max gap in hours between slots to merge into one window. Default 6.
-   *  Set slightly higher for 16-day horizon to merge same-day windows. */
+  /** Max gap in hours between slots to merge into one window. */
   maxGapHours: number;
-  /** Maximum windows to return. Default 10 (tuned for 16-day horizon). */
+  /** Maximum windows to return. */
   maxWindows: number;
 }
 
+/**
+ * Defaults tuned for a 16-day forecast horizon.
+ *
+ * Goal: surface only 3–6 genuinely premium surf windows instead
+ * of a long list of mediocre blocks.  The higher minScore (6.5)
+ * eliminates "ok-ish" slots, tighter maxGapHours (4) prevents
+ * merging across large lulls, and maxWindows (6) caps the list
+ * so the user immediately sees "these are THE moments".
+ *
+ * TODO: consider making minScore user-adjustable (e.g. via
+ * preferences) so advanced surfers can lower the bar.
+ */
 const DEFAULTS: BuildSurfWindowsOptions = {
-  minScore: 5,
-  minSlots: 1,
-  maxGapHours: 6,
-  maxWindows: 10,
+  minScore: 6.5,
+  minSlots: 2,
+  maxGapHours: 4,
+  maxWindows: 6,
 };
 
 /* ── Slot scoring interface ──────────────────── */
@@ -185,7 +196,11 @@ export function buildSurfWindows(
     };
   });
 
-  // Sort by averageScore descending, take top N
-  windows.sort((a, b) => b.averageScore - a.averageScore);
+  // Sort by averageScore descending; break ties by earliest start time
+  windows.sort((a, b) => {
+    const scoreDiff = b.averageScore - a.averageScore;
+    if (scoreDiff !== 0) return scoreDiff;
+    return a.startHour - b.startHour;
+  });
   return windows.slice(0, opts.maxWindows);
 }
