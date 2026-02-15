@@ -25,9 +25,11 @@ export type SizeBand =
   | "tiny"
   | "knee"
   | "waist"
+  | "chest"
   | "shoulder"
   | "head"
-  | "overhead";
+  | "overhead"
+  | "doubleOverhead";
 
 export type SurfaceQuality =
   | "glassy"
@@ -88,10 +90,12 @@ export function getSizeBand(slot: SlotContext): SizeBand {
 
   if (height < 0.3) return "tiny";
   if (height < 0.6) return "knee";
-  if (height < 1.0) return "waist";
+  if (height < 0.9) return "waist";
+  if (height < 1.2) return "chest";
   if (height < 1.5) return "shoulder";
   if (height < 2.0) return "head";
-  return "overhead";
+  if (height < 3.0) return "overhead";
+  return "doubleOverhead";
 }
 
 /* ── Surface quality ─────────────────────────── */

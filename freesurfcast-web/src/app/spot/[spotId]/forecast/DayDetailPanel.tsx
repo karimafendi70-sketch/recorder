@@ -248,7 +248,11 @@ export function DayDetailPanel({
         ratingColor={ratingColor}
         ratingLabel={t(ratingKey)}
       />
-      <p className={styles.timelineHint}>{t("forecast.bestTime.caption")}</p>
+      <p className={styles.timelineHint}>
+        {bestWindow.window
+          ? t("forecast.bestTime.caption")
+          : t("forecast.bestTime.noBest")}
+      </p>
 
       {/* ── Pro blocks (Surf / Swell / Wind / Surface) ── */}
       <section className={styles.proBlocks}>
