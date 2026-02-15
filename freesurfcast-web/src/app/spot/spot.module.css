@@ -1,0 +1,481 @@
+/* ──────────────────────────────────────────────
+ *  Spot-detail view  — Surfline-style layout
+ *  /spot/[spotId]/…
+ * ────────────────────────────────────────────── */
+
+/* ── Spot header ─────────────────────────────── */
+
+.spotHeader {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem 1.2rem;
+  background: linear-gradient(165deg, #e2eff3, #f8fcfd 68%);
+  border: 1px solid #cfe2e8;
+  border-radius: 22px;
+  box-shadow: 0 16px 32px rgba(13, 54, 66, 0.07);
+  position: relative;
+  overflow: hidden;
+}
+
+.spotHeader::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -50px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(21, 111, 120, 0.06), transparent 70%);
+  pointer-events: none;
+}
+
+.spotHeaderTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.spotName {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--foreground, #1a3a40);
+}
+
+.spotCountry {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted, #5d7178);
+}
+
+.spotTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.spotTag {
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 650;
+  border-radius: 999px;
+  border: 1px solid rgba(21, 111, 120, 0.18);
+  background: rgba(21, 111, 120, 0.06);
+  color: #1a5158;
+}
+
+.spotFavBtn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.15rem;
+  line-height: 1;
+  color: #c9a53e;
+  transition: transform var(--transition, 0.15s ease);
+  flex-shrink: 0;
+}
+
+.spotFavBtn:hover {
+  transform: scale(1.2);
+}
+
+/* ── Sub-tab bar ─────────────────────────────── */
+
+.subTabBar {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--panel-border, #d6e5ea);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.subTabBar::-webkit-scrollbar {
+  display: none;
+}
+
+.subTab {
+  flex-shrink: 0;
+  padding: 0.6rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--muted, #5d7178);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition, 0.15s ease);
+  white-space: nowrap;
+  margin-bottom: -2px;
+}
+
+.subTab:hover {
+  color: var(--accent, #156f78);
+}
+
+.subTabActive {
+  color: var(--accent, #156f78);
+  border-bottom-color: var(--accent, #156f78);
+}
+
+.subTabDisabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ── 16-day daybar ───────────────────────────── */
+
+.dayBar {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  padding: 0.4rem 0;
+}
+
+.dayBarCard {
+  flex-shrink: 0;
+  width: 72px;
+  padding: 0.45rem 0.35rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--panel-border, #d6e5ea);
+  background: #f9fcfd;
+  display: grid;
+  gap: 0.2rem;
+  justify-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition, 0.15s ease);
+  font: inherit;
+}
+
+.dayBarCard:hover {
+  border-color: var(--accent, #156f78);
+  background: var(--accent-light, #e0f2f4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 54, 66, 0.08);
+}
+
+.dayBarCardActive {
+  border-color: var(--accent, #156f78);
+  background: var(--accent, #156f78);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(21, 111, 120, 0.25);
+}
+
+.dayBarCardActive .dayBarLabel,
+.dayBarCardActive .dayBarHeight,
+.dayBarCardActive .dayBarWind {
+  color: #fff;
+}
+
+.dayBarLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--foreground, #1a3a40);
+  line-height: 1.2;
+}
+
+.dayBarRating {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.dayBarRatingEpic {
+  background: #2d9e6a;
+}
+
+.dayBarRatingGood {
+  background: #7ac068;
+}
+
+.dayBarRatingFair {
+  background: #d4b44a;
+}
+
+.dayBarRatingPoor {
+  background: #c06060;
+}
+
+.dayBarHeight {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--foreground, #1a3a40);
+  line-height: 1.2;
+}
+
+.dayBarWind {
+  font-size: 0.62rem;
+  color: var(--muted, #5d7178);
+  line-height: 1;
+}
+
+/* ── Day detail panel ────────────────────────── */
+
+.dayDetail {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.dayDetailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+}
+
+.dayDetailTitle {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--foreground, #1a3a40);
+}
+
+.dayDetailDate {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted, #5d7178);
+}
+
+.dayDetailScore {
+  display: inline-flex;
+  border: 2px solid currentcolor;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* ── Best-time hero strip ────────────────────── */
+
+.bestTimeStrip {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  border: 2px solid var(--accent, #156f78);
+  background: linear-gradient(135deg, var(--accent-light, #e0f2f4) 0%, #f1f9fa 100%);
+}
+
+.bestTimeIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.bestTimeBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.bestTimeLabel {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent, #156f78);
+}
+
+.bestTimeValue {
+  margin: 0.1rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--foreground, #1a3a40);
+}
+
+.bestTimeMeta {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted, #5d7178);
+}
+
+.bestTimeScore {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent, #156f78);
+  flex-shrink: 0;
+}
+
+/* ── Condition blocks grid ───────────────────── */
+
+.condBlocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 0.65rem;
+}
+
+.condBlock {
+  padding: 0.7rem 0.8rem;
+  border-radius: 14px;
+  border: 1.5px solid var(--panel-border, #d6e5ea);
+  background: #fafdfe;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.condBlockLabel {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted, #5d7178);
+}
+
+.condBlockValue {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+  color: var(--foreground, #1a3a40);
+}
+
+.condBlockSub {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--muted, #5d7178);
+}
+
+/* ── Section card (reuse pattern) ────────────── */
+
+.sectionCard {
+  background: #ffffff;
+  border: 1px solid #d6e5ea;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(13, 54, 66, 0.06);
+  padding: 1.15rem 1.2rem;
+  display: grid;
+  gap: 0.85rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.sectionCard:hover {
+  box-shadow: 0 16px 36px rgba(13, 54, 66, 0.09);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.sectionHeader p {
+  color: #5f767d;
+  font-size: 0.83rem;
+  margin: 0;
+}
+
+/* ── Slot time bar (horizontal time blocks) ──── */
+
+.slotTimeBar {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.2rem 0;
+}
+
+.timeBlock {
+  flex-shrink: 0;
+  padding: 0.4rem 0.65rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--panel-border, #d6e5ea);
+  background: #fafdfe;
+  display: grid;
+  gap: 0.15rem;
+  text-align: center;
+  min-width: 68px;
+  transition: all var(--transition, 0.15s ease);
+}
+
+.timeBlockHigh {
+  border-color: #7dd4a8;
+  background: linear-gradient(170deg, #edf9f2, #f5fcf7);
+}
+
+.timeBlockMedium {
+  border-color: #cdd89e;
+  background: linear-gradient(170deg, #f5f8e9, #fafcf1);
+}
+
+.timeBlockLow {
+  border-color: #e0b8be;
+  background: linear-gradient(170deg, #fdf2f3, #fef8f8);
+}
+
+.timeBlockTime {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--foreground, #1a3a40);
+}
+
+.timeBlockScore {
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.timeBlockLabel {
+  font-size: 0.62rem;
+  color: var(--muted, #5d7178);
+  text-transform: capitalize;
+}
+
+/* ── Score color helpers ─────────────────────── */
+
+.scoreHigh {
+  color: #1a6e3e;
+}
+
+.scoreMedium {
+  color: #6e6a1a;
+}
+
+.scoreLow {
+  color: #7f3232;
+}
+
+/* ── Responsive ──────────────────────────────── */
+
+@media (max-width: 640px) {
+  .spotHeader {
+    padding: 0.85rem 1rem;
+    border-radius: 16px;
+  }
+
+  .spotName {
+    font-size: 1.2rem;
+  }
+
+  .dayBarCard {
+    width: 62px;
+    padding: 0.35rem 0.25rem;
+  }
+
+  .condBlocks {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .bestTimeStrip {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .condBlocks {
+    grid-template-columns: 1fr;
+  }
+}

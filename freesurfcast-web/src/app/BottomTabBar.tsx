@@ -30,7 +30,10 @@ export function BottomTabBar() {
     <nav className="bottom-tabs" aria-label="Main navigation">
       {TABS.map((tab) => {
         const isActive =
-          tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
+          tab.href === "/"
+            ? pathname === "/"
+            : pathname.startsWith(tab.href) ||
+              (tab.href === "/forecast" && pathname.startsWith("/spot/"));
 
         return (
           <Link

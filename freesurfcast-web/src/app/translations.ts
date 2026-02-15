@@ -1189,6 +1189,123 @@ const dict = {
     fr: "Meilleur jour de la prévision",
     es: "Mejor día en el pronóstico",
   },
+
+  // ── Day View — Best Window Card ───────────
+  "dayView.bestTime.title": {
+    en: "Best times to surf",
+    nl: "Beste tijden om te surfen",
+    de: "Beste Surf-Zeiten",
+    fr: "Meilleurs moments pour surfer",
+    es: "Mejores momentos para surfear",
+  },
+  "dayView.bestTime.badge": {
+    en: "Best moment",
+    nl: "Beste moment",
+    de: "Bester Moment",
+    fr: "Meilleur moment",
+    es: "Mejor momento",
+  },
+  "dayView.bestTime.none": {
+    en: "No good surf windows for this day — try another day.",
+    nl: "Geen goede surf windows voor deze dag — probeer een andere dag.",
+    de: "Keine guten Surf-Fenster für diesen Tag — versuche einen anderen Tag.",
+    fr: "Pas de bons créneaux surf pour ce jour — essayez un autre jour.",
+    es: "No hay buenas ventanas de surf para este día — prueba otro día.",
+  },
+
+  // ── Day View — Upcoming 2 days ────────────
+  "dayView.upcoming.title": {
+    en: "Coming days",
+    nl: "Komende dagen",
+    de: "Kommende Tage",
+    fr: "Jours à venir",
+    es: "Próximos días",
+  },
+  "dayView.upcoming.subtitle": {
+    en: "Quick look ahead",
+    nl: "Snelle blik vooruit",
+    de: "Schneller Ausblick",
+    fr: "Aperçu rapide",
+    es: "Vistazo rápido",
+  },
+  "dayView.upcoming.bestBlock": {
+    en: "Best block",
+    nl: "Beste blok",
+    de: "Bestes Fenster",
+    fr: "Meilleur créneau",
+    es: "Mejor bloque",
+  },
+  "dayView.upcoming.noWindow": {
+    en: "No strong windows",
+    nl: "Geen goede windows",
+    de: "Keine guten Fenster",
+    fr: "Pas de bons créneaux",
+    es: "Sin ventanas fuertes",
+  },
+
+  // ── Day View — Active day header ──────────
+  "dayView.dateLabel": {
+    en: "Conditions for",
+    nl: "Condities voor",
+    de: "Bedingungen für",
+    fr: "Conditions pour",
+    es: "Condiciones para",
+  },
+
+  // ── Spot sub-tabs ─────────────────────────
+  "spot.tabs.forecast": {
+    en: "Forecast",
+    nl: "Voorspelling",
+    de: "Vorhersage",
+    fr: "Prévision",
+    es: "Pronóstico",
+  },
+  "spot.tabs.live": {
+    en: "Live",
+    nl: "Live",
+    de: "Live",
+    fr: "Live",
+    es: "En vivo",
+  },
+  "spot.tabs.analysis": {
+    en: "Analysis",
+    nl: "Analyse",
+    de: "Analyse",
+    fr: "Analyse",
+    es: "Análisis",
+  },
+  "spot.tabs.charts": {
+    en: "Charts",
+    nl: "Grafieken",
+    de: "Diagramme",
+    fr: "Graphiques",
+    es: "Gráficos",
+  },
+
+  // ── Spot detail ───────────────────────────
+  "spot.detail.bestMoment": {
+    en: "Best moment to surf",
+    nl: "Beste moment om te surfen",
+    de: "Bester Moment zum Surfen",
+    fr: "Meilleur moment pour surfer",
+    es: "Mejor momento para surfear",
+  },
+  "spot.detail.period": {
+    en: "Period",
+    nl: "Periode",
+    de: "Periode",
+    fr: "Période",
+    es: "Período",
+  },
+
+  // ── Forecast overview link ────────────────
+  "forecast.openSpotDetail": {
+    en: "Open spot detail",
+    nl: "Open spotdetail",
+    de: "Spot-Detail öffnen",
+    fr: "Ouvrir le détail du spot",
+    es: "Abrir detalle del spot",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

@@ -2,6 +2,7 @@
 
 import { Suspense, useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { getSpotById } from "@/lib/spots/catalog";
 import { buildDaypartHeatmapData } from "@/lib/heatmap";
 import { buildMultiSpotOverview } from "@/lib/spots";
@@ -23,6 +24,8 @@ import { SlotCards } from "./components/SlotCards";
 import { ScoreExplainer } from "./components/ScoreExplainer";
 import { DataSourceBadge } from "./components/DataSourceBadge";
 import { SpotBrowser } from "./components/SpotBrowser";
+import { BestWindowCard } from "./components/BestWindowCard";
+import { Next2DaysSummary } from "./components/Next2DaysSummary";
 import { type DayPart, type ForecastSlot } from "./mockData";
 import { useLiveForecast } from "./useLiveForecast";
 import {
@@ -36,6 +39,7 @@ import { usePageView, trackSpotSelected } from "@/lib/trackClient";
 import { buildSurfWindows } from "@/lib/forecast/surfWindows";
 import { summarizeConditions } from "@/lib/forecast/conditions";
 import { buildWeekSummary } from "@/lib/forecast/weekOverview";
+import { getBestWindowForDay, getUpcomingDaysSummary } from "@/lib/forecast/dayWindows";
 import { SurfWindowsPanel } from "./components/SurfWindowsPanel";
 import { WeekSummaryCard } from "./components/WeekSummaryCard";
 import styles from "./forecast.module.css";
@@ -236,6 +240,33 @@ function ForecastContent() {
     [activeSpot, qualityForSlot]
   );
 
+  /* ── Best window for the selected day ── */
+  const dayBestWindow = useMemo(
+    () => getBestWindowForDay(surfWindows, activeSpot.slots, activeDayKey),
+    [surfWindows, activeSpot.slots, activeDayKey]
+  );
+
+  /** Second-best window for the selected day (if any) */
+  const dayRunnerUpWindow = useMemo(() => {
+    const dayWins = surfWindows
+      .filter((w) => w.dateKey === activeDayKey)
+      .sort((a, b) => b.averageScore - a.averageScore);
+    return dayWins.length > 1 ? dayWins[1] : null;
+  }, [surfWindows, activeDayKey]);
+
+  /* ── Upcoming 2 days summary ── */
+  const upcomingDays = useMemo(
+    () => getUpcomingDaysSummary(surfWindows, activeSpot.slots, activeDayKey, 2, qualityForSlot),
+    [surfWindows, activeSpot.slots, activeDayKey, qualityForSlot]
+  );
+
+  /* ── Extended day label with full date ── */
+  const dayLabelFull = useMemo(() => {
+    const d = new Date(activeDayKey + "T12:00:00");
+    const formatted = d.toLocaleDateString(lang, { weekday: "long", day: "numeric", month: "long" });
+    return `${dayLabel} — ${formatted}`;
+  }, [activeDayKey, dayLabel, lang]);
+
   /* ── Heatmap / daypart overview (selected day) ── */
   const daySpot = useMemo(
     () => ({ ...activeSpot, slots: daySlots }),
@@ -341,6 +372,7 @@ function ForecastContent() {
           onSelect={handleSpotChange}
         />
 
+        {/* ─── 1. SpotHeader + geselecteerde dag ─── */}
         <ForecastHeader
           title={t("forecast.title")}
           dayLabel={dayLabel}
@@ -349,6 +381,14 @@ function ForecastContent() {
           preferredRange={`${prefs.preferredMinHeight}m \u2013 ${prefs.preferredMaxHeight}m`}
           cleanPreference={prefs.likesClean ? t("forecast.prefersClean") : t("forecast.mixedOk")}
         />
+
+        {/* ── Spot detail link ── */}
+        <Link
+          href={`/spot/${activeSpot.id}/forecast`}
+          className={styles.spotDetailLink}
+        >
+          {t("forecast.openSpotDetail")} →
+        </Link>
 
         {/* ── Week summary (best day) ── */}
         <WeekSummaryCard
@@ -375,6 +415,34 @@ function ForecastContent() {
           </div>
         )}
 
+        {/* ── Active day banner ── */}
+        <div className={styles.activeDayBanner}>
+          <div>
+            <p className={styles.activeDayBannerLabel}>{t("dayView.dateLabel")}</p>
+            <p className={styles.activeDayBannerDate}>{dayLabelFull}</p>
+          </div>
+        </div>
+
+        {/* ─── 2. Beste tijden voor deze dag (top 1-2 windows) ─── */}
+        <BestWindowCard
+          best={dayBestWindow}
+          runnerUp={dayRunnerUpWindow}
+          dayLabel={dayLabel}
+        />
+
+        {/* ─── 3. Aankomende 2 dagen (kort) ─── */}
+        <Next2DaysSummary
+          days={upcomingDays}
+          locale={lang}
+          onDayClick={(dateKey) => setSelectedDay(dateKey)}
+        />
+
+        {/* ─── 4. Slot details (alle tijdblokken van de dag) ─── */}
+        <SlotCards slots={slotCards} />
+
+        <DaypartOverview items={overviewData} />
+
+        {/* ─── 5. Uitgebreide uitleg "waarom deze score" ─── */}
         <ScoreExplainer
           spotName={activeSpot.name}
           score={explainerData.score}
@@ -388,11 +456,8 @@ function ForecastContent() {
           surfaceKey={explainerData.surfaceKey}
         />
 
+        {/* ─── 6. Alle surf windows (16-daags overzicht) ─── */}
         <SurfWindowsPanel windows={surfWindows} />
-
-        <SlotCards slots={slotCards} />
-
-        <DaypartOverview items={overviewData} />
 
         <FeedbackWidget spotId={resolvedSpotId} />
       </section>
