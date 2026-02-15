@@ -13,11 +13,12 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
-  { href: "/",         labelKey: "tab.home",     icon: "🏠" },
-  { href: "/forecast", labelKey: "tab.forecast",  icon: "🌊" },
-  { href: "/map",      labelKey: "tab.map",       icon: "🗺️" },
-  { href: "/insights", labelKey: "tab.insights",  icon: "📊" },
-  { href: "/profile",  labelKey: "tab.account",   icon: "👤" },
+  { href: "/",          labelKey: "tab.home",      icon: "🏠" },
+  { href: "/discover",  labelKey: "tab.discover",   icon: "🔍" },
+  { href: "/forecast",  labelKey: "tab.forecast",   icon: "🌊" },
+  { href: "/map",       labelKey: "tab.map",        icon: "🗺️" },
+  { href: "/insights",  labelKey: "tab.insights",   icon: "📊" },
+  { href: "/profile",   labelKey: "tab.account",    icon: "👤" },
 ];
 
 /* ── Component ───────────────────────────────── */

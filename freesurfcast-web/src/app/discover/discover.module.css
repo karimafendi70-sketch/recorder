@@ -1,0 +1,327 @@
+/* ── Discover page styles ────────────────────── */
+
+.discoverHeader {
+  text-align: center;
+  padding: 1.2rem 0 0.5rem;
+}
+
+.discoverTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--foreground);
+}
+
+.discoverSubtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* ── Section titles ──────────────────────────── */
+
+.sectionTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+/* ── Top Days grid ───────────────────────────── */
+
+.topDayGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.6rem;
+}
+
+.topDayCard {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.topDayCard:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.topDayStripe {
+  flex-shrink: 0;
+  width: 5px;
+}
+
+.topDayAlert {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.topDayBody {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.topDaySpot {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--foreground);
+}
+
+.topDayCountry {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.topDayMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.topDayLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.topDayScore {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.topDayRating {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.topDaySize {
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: var(--background);
+  border-radius: var(--radius-full);
+  padding: 0.1rem 0.45rem;
+  align-self: flex-start;
+}
+
+/* ── Spot Summary grid ───────────────────────── */
+
+.spotGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.55rem;
+}
+
+.spotCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.spotCard:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.spotCardTop {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.spotCardName {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--foreground);
+}
+
+.spotCardCountry {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.spotCardBest {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.spotCardDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.spotCardDay {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.spotCardScore {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.spotCardNoData {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.spotCardAlertBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #c58700;
+  background: rgba(245, 166, 35, 0.1);
+  border-radius: var(--radius-full);
+  padding: 0.15rem 0.5rem;
+  align-self: flex-start;
+}
+
+/* ── Quick links ─────────────────────────────── */
+
+.quickLinks {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.quickLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--accent);
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.quickLink:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Skeleton ────────────────────────────────── */
+
+.skeletonWrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.6rem;
+}
+
+.skeletonCard {
+  height: 80px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--panel-border) 25%,
+    var(--background) 50%,
+    var(--panel-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Empty state ─────────────────────────────── */
+
+.emptyHint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+  padding: 1.5rem 0;
+}
+
+/* ── Dark mode ───────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  .topDayCard {
+    background: #1e2c30;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .spotCard {
+    background: #1e2c30;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .topDaySize {
+    background: #2a363a;
+  }
+
+  .spotCardAlertBadge {
+    background: rgba(245, 166, 35, 0.15);
+    color: #f5c36a;
+  }
+
+  .quickLink {
+    background: rgba(21, 111, 120, 0.15);
+    border-color: rgba(21, 111, 120, 0.5);
+  }
+
+  .quickLink:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .skeletonCard {
+    background: linear-gradient(
+      90deg,
+      #1e2c30 25%,
+      #2a383d 50%,
+      #1e2c30 75%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+/* ── Responsive ──────────────────────────────── */
+
+@media (max-width: 640px) {
+  .topDayGrid,
+  .spotGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .discoverTitle {
+    font-size: 1.3rem;
+  }
+}

@@ -26,6 +26,13 @@ const dict = {
     fr: "Accueil",
     es: "Inicio",
   },
+  "nav.discover": {
+    en: "Discover",
+    nl: "Ontdek",
+    de: "Entdecken",
+    fr: "Découvrir",
+    es: "Descubrir",
+  },
   "nav.forecast": {
     en: "Forecast",
     nl: "Voorspelling",
@@ -157,6 +164,13 @@ const dict = {
     de: "Start",
     fr: "Accueil",
     es: "Inicio",
+  },
+  "tab.discover": {
+    en: "Discover",
+    nl: "Ontdek",
+    de: "Entdecken",
+    fr: "Découvrir",
+    es: "Descubrir",
   },
   "tab.forecast": {
     en: "Forecast",
@@ -1704,6 +1718,64 @@ const dict = {
     de: "Abbrechen",
     fr: "Annuler",
     es: "Cancelar",
+  },
+
+  // ── Discover page ─────────────────────────
+  "discover.title": {
+    en: "Discover",
+    nl: "Ontdek",
+    de: "Entdecken",
+    fr: "Découvrir",
+    es: "Descubrir",
+  },
+  "discover.subtitle": {
+    en: "Best days & spots at a glance",
+    nl: "Beste dagen & spots in één oogopslag",
+    de: "Beste Tage & Spots auf einen Blick",
+    fr: "Meilleurs jours & spots en un coup d'œil",
+    es: "Mejores días y spots de un vistazo",
+  },
+  "discover.topDays": {
+    en: "Top Days",
+    nl: "Topdagen",
+    de: "Top-Tage",
+    fr: "Meilleurs jours",
+    es: "Mejores días",
+  },
+  "discover.yourSpots": {
+    en: "Your Spots",
+    nl: "Jouw Spots",
+    de: "Deine Spots",
+    fr: "Tes Spots",
+    es: "Tus Spots",
+  },
+  "discover.noData": {
+    en: "No forecast data available yet.",
+    nl: "Nog geen forecastdata beschikbaar.",
+    de: "Noch keine Vorhersagedaten verfügbar.",
+    fr: "Pas encore de données de prévision.",
+    es: "Aún no hay datos de pronóstico.",
+  },
+  "discover.alertDays": {
+    en: "alert days",
+    nl: "alertdagen",
+    de: "Alarm-Tage",
+    fr: "jours d'alerte",
+    es: "días de alerta",
+  },
+  "discover.goForecast": {
+    en: "Full forecast",
+    nl: "Volledige forecast",
+    de: "Volle Vorhersage",
+    fr: "Prévisions complètes",
+    es: "Pronóstico completo",
+  },
+  "discover.goMap": {
+    en: "Explore map",
+    nl: "Verken kaart",
+    de: "Karte erkunden",
+    fr: "Explorer la carte",
+    es: "Explorar mapa",
   },
 } satisfies Record<string, Record<Lang, string>>;
 

@@ -7,6 +7,7 @@ import { useLanguage, SUPPORTED_LANGS, LANG_LABELS, type Lang, type TranslationK
 
 const NAV_ITEMS: { href: string; labelKey: TranslationKey }[] = [
   { href: "/", labelKey: "nav.home" },
+  { href: "/discover", labelKey: "nav.discover" },
   { href: "/forecast", labelKey: "nav.forecast" },
   { href: "/map", labelKey: "nav.map" },
   { href: "/insights", labelKey: "nav.insights" },
