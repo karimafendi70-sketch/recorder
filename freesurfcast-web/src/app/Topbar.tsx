@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./AuthProvider";
-import { useLanguage, SUPPORTED_LANGS, LANG_LABELS, type Lang, type TranslationKey } from "./LanguageProvider";
+import { useLanguage, type TranslationKey } from "./LanguageProvider";
+import { SpotSearch } from "./components/SpotSearch";
 
 const NAV_ITEMS: { href: string; labelKey: TranslationKey }[] = [
   { href: "/", labelKey: "nav.home" },
@@ -18,8 +19,8 @@ const NAV_ITEMS: { href: string; labelKey: TranslationKey }[] = [
 
 export function Topbar() {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
-  const { lang, setLang, t } = useLanguage();
+  const { user } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <header className="topbar-wrap">
@@ -28,11 +29,11 @@ export function Topbar() {
           <div className="logo-circle" aria-hidden>
             FS
           </div>
-          <div>
-            <p className="brand-title">FreeSurfCast</p>
-            <p className="brand-subtitle">Coastal forecast intelligence</p>
-          </div>
+          <p className="brand-title">FreeSurfCast</p>
         </div>
+
+        {/* ── Compact spot search ── */}
+        <SpotSearch compact />
 
         <nav className="nav-links" aria-label="Main navigation">
           {NAV_ITEMS.map((item) => {
@@ -47,32 +48,17 @@ export function Topbar() {
         </nav>
 
         <div className="auth-indicator">
-          <select
-            className="lang-select"
-            value={lang}
-            onChange={(e) => setLang(e.target.value as Lang)}
-            aria-label="Select language"
-          >
-            {SUPPORTED_LANGS.map((l) => (
-              <option key={l} value={l}>
-                {LANG_LABELS[l]}
-              </option>
-            ))}
-          </select>
-
-          {!user ? (
-            <Link href="/login" className="btn btn-ghost">
+          <Link href="/settings" className="topbar-settings-btn" aria-label="Settings" title={t("settings.title" as TranslationKey)}>
+            ⚙
+          </Link>
+          {user ? (
+            <span className="avatar-chip" title={user.email}>
+              {user.email.charAt(0).toUpperCase()}
+            </span>
+          ) : (
+            <Link href="/login" className="btn btn-ghost btn-sm">
               {t("nav.login")}
             </Link>
-          ) : (
-            <div className="user-menu">
-              <span className="avatar-chip" title={user.email}>
-                {user.email.charAt(0).toUpperCase()}
-              </span>
-              <button type="button" className="btn btn-ghost" onClick={logout}>
-                {t("nav.logout")}
-              </button>
-            </div>
           )}
         </div>
       </div>

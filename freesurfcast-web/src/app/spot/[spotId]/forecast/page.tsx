@@ -21,7 +21,6 @@ import { DayBar } from "./DayBar";
 import { DayBarSkeleton } from "./DayBarSkeleton";
 import { DayDetailPanel } from "./DayDetailPanel";
 import { DayDetailSkeleton } from "./DayDetailSkeleton";
-import { DataSourceBadge } from "@/app/forecast/components/DataSourceBadge";
 import { SurfWindowsPanel } from "@/app/forecast/components/SurfWindowsPanel";
 import { ScoreExplainer } from "@/app/forecast/components/ScoreExplainer";
 import { ProGraphsSection } from "./ProGraphsSection";
@@ -29,6 +28,7 @@ import { AlertConfigPanel } from "./AlertConfigPanel";
 import { ForecastTldrCard } from "./ForecastTldrCard";
 import { ForecastDetailsSection } from "./ForecastDetailsSection";
 import { ForecastActionsRow } from "./ForecastActionsRow";
+import { ForecastFilterStatusBar } from "./ForecastFilterStatusBar";
 import { DayStrip24h } from "./DayStrip24h";
 import { TrendBadges } from "./TrendBadges";
 import { DaySummaryLine } from "./DaySummaryLine";
@@ -45,7 +45,7 @@ export default function SpotForecastPage() {
   const params = useParams<{ spotId: string }>();
   const spotId = params.spotId;
 
-  const { preferences: prefs } = usePreferences();
+  const { preferences: prefs, isUsingDefaults: prefsDefaults } = usePreferences();
   const { t, lang } = useLanguage();
 
   const { spots, status, isLive, fetchedAt, errorMessage } = useLiveForecast("today");
@@ -295,9 +295,23 @@ export default function SpotForecastPage() {
     });
   }, [activeSpot.name, spotId, dayLabel, activeDateKey, dayAvgScore, dayBest, explainerData, shareUrl, t]);
 
+  // Determine if user has active filters / alerts
+  const hasActiveFilters = !prefsDefaults;
+  const hasAlerts = alertProfile != null;
+
   return (
     <>
-      <DataSourceBadge status={status} isLive={isLive} fetchedAt={fetchedAt} />
+      {/* ── Filter status bar ── */}
+      {!isLoading && (
+        <ForecastFilterStatusBar
+          hasActiveFilters={hasActiveFilters}
+          hasAlerts={hasAlerts}
+          onToggleFilters={() => {
+            // Placeholder — could reset prefs or toggle
+          }}
+          onOpenSettings={() => router.push("/settings")}
+        />
+      )}
 
       {/* ── Error banner ── */}
       {status === "error" && (
