@@ -192,7 +192,18 @@ export function adaptMultiSpot(
   });
 }
 
-/* ── Fallback (replicates old mock behaviour, extended to 16 days) ── */
+/* ── Fallback (replicates old mock behaviour, extended to 16 days) ──
+ *
+ *  When Open-Meteo data is unavailable we generate synthetic slots
+ *  from catalog baselines.  IMPORTANT: each day must be different
+ *  so the UI shows realistic variation across the 16-day horizon.
+ *
+ *  We use the day-index `d` to introduce:
+ *    • sinusoidal wave-height modulation  (±30 %)
+ *    • drifting wind direction            (±20°)
+ *    • varying wind speed factor          (±25 %)
+ *    • changing condition tag & tide
+ * ────────────────────────────────────────────── */
 
 function buildFallbackSpot(spot: SurfSpot, dayKey: string): ForecastSpot {
   const TEMPLATES = [
@@ -212,7 +223,28 @@ function buildFallbackSpot(spot: SurfSpot, dayKey: string): ForecastSpot {
     dayDate.setDate(base.getDate() + d);
     const dateStr = dayDate.toISOString().split("T")[0];
 
+    // ── Day-dependent variation (d = 0..15) ──
+    // Sinusoidal swell cycle: peaks around day 4 and day 12
+    const waveMod   = 1.0 + 0.3 * Math.sin((d / 15) * Math.PI * 2);
+    // Wind drifts over the 16-day horizon
+    const windDrift  = Math.round(20 * Math.sin((d / 15) * Math.PI * 1.5));
+    // Wind speed factor varies day to day
+    const windFactor = 1.0 + 0.25 * Math.cos((d / 15) * Math.PI * 2.5);
+    // Period wobble
+    const periodMod  = Math.round(1.5 * Math.sin((d / 15) * Math.PI * 1.8));
+    // Condition shifts: more days with clean when swell peaks, choppy when wind peaks
+    const dayCondBase: "clean" | "mixed" | "choppy" =
+      waveMod > 1.15 ? "clean" : windFactor > 1.15 ? "choppy" : "mixed";
+    const dayTide: "good" | "less-ideal" = d % 3 === 2 ? "less-ideal" : "good";
+
     for (const tpl of TEMPLATES) {
+      const waveH  = spot.waveHeightM * tpl.waveFactor * waveMod;
+      const waveP  = Math.max(5, spot.wavePeriodS + tpl.periodDelta + periodMod);
+      const windDir = (spot.windDirectionDeg + tpl.windShift + windDrift + 360) % 360;
+      const windSpd = (spot.windSpeedKnots ?? 10) * windFactor;
+      const cond    = tpl.cond === "clean" ? dayCondBase : tpl.cond;
+      const tide    = tpl.tide === "good" ? dayTide : tpl.tide;
+
       slots.push({
         id: `${dateStr}-${spot.id}-${tpl.label.toLowerCase()}`,
         label: tpl.label,
@@ -220,15 +252,16 @@ function buildFallbackSpot(spot: SurfSpot, dayKey: string): ForecastSpot {
         dayPart: tpl.dayPart,
         dayKey: dateStr,
         offsetHours: d * 24 + tpl.hour,
-        conditionTag: tpl.cond,
-        challenging: tpl.challenging || (spot.windSpeedKnots > 14 && tpl.hour >= 14),
-        tideSuitability: tpl.tide,
-        minSurfable: spot.waveHeightM * tpl.waveFactor >= 0.3,
+        conditionTag: cond,
+        challenging: tpl.challenging || (windSpd > 14 && tpl.hour >= 14),
+        tideSuitability: tide,
+        minSurfable: waveH >= 0.3,
         mergedSpot: {
-          golfHoogteMeter: Math.round(spot.waveHeightM * tpl.waveFactor * 10) / 10,
-          golfPeriodeSeconden: Math.max(5, spot.wavePeriodS + tpl.periodDelta),
-          windDirectionDeg: (spot.windDirectionDeg + tpl.windShift + 360) % 360,
+          golfHoogteMeter: Math.round(waveH * 10) / 10,
+          golfPeriodeSeconden: waveP,
+          windDirectionDeg: Math.round(windDir),
           coastOrientationDeg: spot.coastOrientationDeg,
+          windSpeedKnots: Math.round(windSpd * 10) / 10,
         },
       });
     }

@@ -85,7 +85,13 @@ const SLOT_TEMPLATES: SlotTemplate[] = [
   },
 ];
 
-/* ── Generate ForecastSpot[] from the catalog (up to 16 days) ── */
+/* ── Generate ForecastSpot[] from the catalog (up to 16 days) ──
+ *
+ *  Each day uses a day-index `d` to apply sinusoidal variation
+ *  so the 16 days show realistically different conditions.
+ *  Without this, every day would be identical (same catalog
+ *  baselines × same template factors).
+ * ────────────────────────────────────────────────────────────── */
 
 function buildSlots(dayKey: string, spot: SurfSpot): ForecastSlot[] {
   const baseDate = new Date();
@@ -98,7 +104,26 @@ function buildSlots(dayKey: string, spot: SurfSpot): ForecastSlot[] {
     dayDate.setDate(base.getDate() + d);
     const dateStr = dayDate.toISOString().split("T")[0];
 
+    // ── Day-dependent variation (d = 0..15) ──
+    // Each array index corresponds to a unique day;
+    // we use d to modulate wave height, wind, period and conditions.
+    const waveMod   = 1.0 + 0.3 * Math.sin((d / 15) * Math.PI * 2);
+    const windDrift  = Math.round(20 * Math.sin((d / 15) * Math.PI * 1.5));
+    const windFactor = 1.0 + 0.25 * Math.cos((d / 15) * Math.PI * 2.5);
+    const periodMod  = Math.round(1.5 * Math.sin((d / 15) * Math.PI * 1.8));
+    const dayCondBase: NonNullable<SlotContext["conditionTag"]> =
+      waveMod > 1.15 ? "clean" : windFactor > 1.15 ? "choppy" : "mixed";
+    const dayTide: NonNullable<SlotContext["tideSuitability"]> =
+      d % 3 === 2 ? "less-ideal" : "good";
+
     for (const tpl of SLOT_TEMPLATES) {
+      const waveH  = spot.waveHeightM * tpl.waveFactor * waveMod;
+      const waveP  = Math.max(5, spot.wavePeriodS + tpl.periodDelta + periodMod);
+      const windDir = (spot.windDirectionDeg + tpl.windShift + windDrift + 360) % 360;
+      const windSpd = (spot.windSpeedKnots ?? 10) * windFactor;
+      const cond    = tpl.conditionTag === "clean" ? dayCondBase : tpl.conditionTag;
+      const tide    = tpl.tideSuitability === "good" ? dayTide : tpl.tideSuitability;
+
       slots.push({
         id: `${dateStr}-${spot.id}-${tpl.label.toLowerCase()}`,
         label: tpl.label,
@@ -106,15 +131,16 @@ function buildSlots(dayKey: string, spot: SurfSpot): ForecastSlot[] {
         dayPart: tpl.dayPart,
         dayKey: dateStr,
         offsetHours: d * 24 + tpl.offsetHours,
-        conditionTag: tpl.conditionTag,
-        challenging: tpl.challenging || (spot.windSpeedKnots > 14 && tpl.offsetHours >= 14),
-        tideSuitability: tpl.tideSuitability,
-        minSurfable: spot.waveHeightM * tpl.waveFactor >= 0.3,
+        conditionTag: cond,
+        challenging: tpl.challenging || (windSpd > 14 && tpl.offsetHours >= 14),
+        tideSuitability: tide,
+        minSurfable: waveH >= 0.3,
         mergedSpot: {
-          golfHoogteMeter: Math.round(spot.waveHeightM * tpl.waveFactor * 10) / 10,
-          golfPeriodeSeconden: Math.max(5, spot.wavePeriodS + tpl.periodDelta),
-          windDirectionDeg: (spot.windDirectionDeg + tpl.windShift + 360) % 360,
+          golfHoogteMeter: Math.round(waveH * 10) / 10,
+          golfPeriodeSeconden: waveP,
+          windDirectionDeg: Math.round(windDir),
           coastOrientationDeg: spot.coastOrientationDeg,
+          windSpeedKnots: Math.round(windSpd * 10) / 10,
         },
       });
     }
