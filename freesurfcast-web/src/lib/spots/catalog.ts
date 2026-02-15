@@ -1,6 +1,6 @@
 /* ──────────────────────────────────────────────
  *  FreeSurfCast – Surf Spot Catalog
- *  31 spots migrated from the vanilla app (spots.js)
+ *  41 spots (31 original + 10 Morocco additions)
  *  All field names are in English.
  * ────────────────────────────────────────────── */
 

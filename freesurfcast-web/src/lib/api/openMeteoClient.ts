@@ -51,6 +51,14 @@ interface OMResponse {
   reason?: string;
 }
 
+/* ── Forecast horizon ─────────────────────────
+ *  Open-Meteo free tier supports up to 16 days.
+ *  Change FORECAST_DAYS to scale the horizon.
+ * ────────────────────────────────────────────── */
+
+export const FORECAST_DAYS = 16;
+export const FORECAST_HOURS = FORECAST_DAYS * 24;
+
 /* ── Marine API ──────────────────────────────── */
 
 const MARINE_BASE = "https://marine-api.open-meteo.com/v1/marine";
@@ -67,7 +75,7 @@ async function fetchMarine(lat: number, lon: number): Promise<OMResponse> {
   const url =
     `${MARINE_BASE}?latitude=${lat}&longitude=${lon}` +
     `&hourly=${MARINE_HOURLY}` +
-    `&forecast_days=2&timezone=auto`;
+    `&forecast_days=${FORECAST_DAYS}&timezone=auto`;
 
   const res = await fetch(url, { next: { revalidate: 1800 } }); // cache 30 min
   if (!res.ok) throw new Error(`Marine API ${res.status}: ${res.statusText}`);
@@ -88,7 +96,7 @@ async function fetchWeather(lat: number, lon: number): Promise<OMResponse> {
   const url =
     `${WEATHER_BASE}?latitude=${lat}&longitude=${lon}` +
     `&hourly=${WEATHER_HOURLY}` +
-    `&forecast_days=2&timezone=auto` +
+    `&forecast_days=${FORECAST_DAYS}&timezone=auto` +
     `&wind_speed_unit=kn`; // knots to match our catalog convention
 
   const res = await fetch(url, { next: { revalidate: 1800 } });

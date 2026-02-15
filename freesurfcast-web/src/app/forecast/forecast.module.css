@@ -1,3 +1,56 @@
+/* ── Day tabs (16-day horizon) ────────────────── */
+
+.forecastDayTabs {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  padding: 0.35rem 0;
+  margin-bottom: 0.2rem;
+}
+
+.forecastDayTab {
+  flex-shrink: 0;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border: 1px solid var(--panel-border, #d6e5ea);
+  border-radius: var(--radius-full, 999px);
+  background: #f8fcfd;
+  color: var(--muted, #5d7178);
+  cursor: pointer;
+  transition: all var(--transition, 0.15s ease);
+  white-space: nowrap;
+}
+
+.forecastDayTab:hover {
+  background: var(--accent-light, #e0f2f4);
+  border-color: var(--accent, #156f78);
+  color: var(--accent, #156f78);
+}
+
+.forecastDayTabActive {
+  background: var(--accent, #156f78);
+  color: #fff;
+  border-color: var(--accent, #156f78);
+}
+
+.forecastDayTabActive:hover {
+  background: #11606a;
+  border-color: #11606a;
+  color: #fff;
+}
+
+/* ── Window date label ───────────────────────── */
+
+.windowDateLabel {
+  font-weight: 600;
+  color: var(--accent, #156f78);
+}
+
+/* ── Header card ─────────────────────────────── */
+
 .headerCard {
   background: linear-gradient(165deg, #e2eff3, #f8fcfd 68%);
   border: 1px solid #cfe2e8;

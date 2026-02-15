@@ -85,27 +85,42 @@ const SLOT_TEMPLATES: SlotTemplate[] = [
   },
 ];
 
-/* ── Generate ForecastSpot[] from the catalog ───────────── */
+/* ── Generate ForecastSpot[] from the catalog (up to 16 days) ── */
 
 function buildSlots(dayKey: string, spot: SurfSpot): ForecastSlot[] {
-  return SLOT_TEMPLATES.map((tpl) => ({
-    id: `${dayKey}-${spot.id}-${tpl.label.toLowerCase()}`,
-    label: tpl.label,
-    timeLabel: tpl.timeLabel,
-    dayPart: tpl.dayPart,
-    dayKey,
-    offsetHours: tpl.offsetHours,
-    conditionTag: tpl.conditionTag,
-    challenging: tpl.challenging || (spot.windSpeedKnots > 14 && tpl.offsetHours >= 14),
-    tideSuitability: tpl.tideSuitability,
-    minSurfable: spot.waveHeightM * tpl.waveFactor >= 0.3,
-    mergedSpot: {
-      golfHoogteMeter: Math.round(spot.waveHeightM * tpl.waveFactor * 10) / 10,
-      golfPeriodeSeconden: Math.max(5, spot.wavePeriodS + tpl.periodDelta),
-      windDirectionDeg: (spot.windDirectionDeg + tpl.windShift + 360) % 360,
-      coastOrientationDeg: spot.coastOrientationDeg,
-    },
-  }));
+  const baseDate = new Date();
+  const baseDateStr = dayKey !== "today" ? dayKey : baseDate.toISOString().split("T")[0];
+  const base = new Date(baseDateStr);
+
+  const slots: ForecastSlot[] = [];
+  for (let d = 0; d < 16; d++) {
+    const dayDate = new Date(base);
+    dayDate.setDate(base.getDate() + d);
+    const dateStr = dayDate.toISOString().split("T")[0];
+
+    for (const tpl of SLOT_TEMPLATES) {
+      slots.push({
+        id: `${dateStr}-${spot.id}-${tpl.label.toLowerCase()}`,
+        label: tpl.label,
+        timeLabel: tpl.timeLabel,
+        dayPart: tpl.dayPart,
+        dayKey: dateStr,
+        offsetHours: d * 24 + tpl.offsetHours,
+        conditionTag: tpl.conditionTag,
+        challenging: tpl.challenging || (spot.windSpeedKnots > 14 && tpl.offsetHours >= 14),
+        tideSuitability: tpl.tideSuitability,
+        minSurfable: spot.waveHeightM * tpl.waveFactor >= 0.3,
+        mergedSpot: {
+          golfHoogteMeter: Math.round(spot.waveHeightM * tpl.waveFactor * 10) / 10,
+          golfPeriodeSeconden: Math.max(5, spot.wavePeriodS + tpl.periodDelta),
+          windDirectionDeg: (spot.windDirectionDeg + tpl.windShift + 360) % 360,
+          coastOrientationDeg: spot.coastOrientationDeg,
+        },
+      });
+    }
+  }
+
+  return slots;
 }
 
 /**

@@ -15,6 +15,8 @@ import type { SlotContext, SlotQuality } from "@/lib/scores";
 
 export interface SurfWindow {
   spotId: string;
+  /** YYYY-MM-DD date of the window (first slot's dayKey) */
+  dateKey: string;
   /** Window start (Date or ISO string proxy) */
   startHour: number;
   endHour: number;
@@ -38,17 +40,18 @@ export interface BuildSurfWindowsOptions {
   minScore: number;
   /** Minimum number of slots to form a window. Default 1. */
   minSlots: number;
-  /** Max gap in hours between slots to merge into one window. Default 4 (= one slot gap). */
+  /** Max gap in hours between slots to merge into one window. Default 6.
+   *  Set slightly higher for 16-day horizon to merge same-day windows. */
   maxGapHours: number;
-  /** Maximum windows to return. Default 5. */
+  /** Maximum windows to return. Default 10 (tuned for 16-day horizon). */
   maxWindows: number;
 }
 
 const DEFAULTS: BuildSurfWindowsOptions = {
   minScore: 5,
   minSlots: 1,
-  maxGapHours: 4,
-  maxWindows: 5,
+  maxGapHours: 6,
+  maxWindows: 10,
 };
 
 /* ── Slot scoring interface ──────────────────── */
@@ -58,7 +61,7 @@ const DEFAULTS: BuildSurfWindowsOptions = {
  * score information and a time label.
  */
 interface ScoredSlot {
-  slot: SlotContext & { id?: string; timeLabel?: string; offsetHours?: number };
+  slot: SlotContext & { id?: string; timeLabel?: string; offsetHours?: number; dayKey?: string };
   quality: SlotQuality;
 }
 
@@ -128,8 +131,11 @@ export function buildSurfWindows(
     const lastSlot = group[group.length - 1];
     const endHour = (lastSlot.slot.offsetHours ?? 0) + 4; // each slot covers ~4h
 
-    const startLabel = group[0].slot.timeLabel ?? `${String(startHour).padStart(2, "0")}:00`;
-    const endLabel = `${String(endHour).padStart(2, "0")}:00`;
+    const startLabel = group[0].slot.timeLabel ?? `${String(startHour % 24).padStart(2, "0")}:00`;
+    const endLabel = `${String(endHour % 24).padStart(2, "0")}:00`;
+
+    // Use the first slot's dayKey as the dateKey for this window
+    const dateKey = group[0].slot.dayKey ?? "";
 
     // Aggregate wave height and wind direction from mergedSpot
     const waveHeights: number[] = [];
@@ -164,6 +170,7 @@ export function buildSurfWindows(
 
     return {
       spotId,
+      dateKey,
       startHour,
       endHour,
       startLabel,

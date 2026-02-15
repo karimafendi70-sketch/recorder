@@ -1,6 +1,9 @@
 /* ──────────────────────────────────────────────
  *  Forecast Adapter
  *
+ *  Builds ForecastSlot[] for up to 16 days of
+ *  hourly data from Open-Meteo.
+ *
  *  Converts Open-Meteo raw data → ForecastSlot[]
  *  so the existing scoring engine works without
  *  any changes.
@@ -88,61 +91,78 @@ function pickPointForHour(
 /* ── Main adapter ────────────────────────────── */
 
 /**
- * Convert a raw API response into the existing `ForecastSpot` shape
- * so the scoring pipeline stays untouched.
+ * Convert a raw API response into the existing `ForecastSpot` shape.
+ * Produces 4 slots per day for every day present in the raw data
+ * (up to 16 days with the current Open-Meteo configuration).
+ *
+ * The `dayKey` parameter is kept for backwards-compatibility but
+ * each slot's `dayKey` is set to its actual YYYY-MM-DD date so
+ * the UI can group/filter by calendar day.
  */
 export function adaptToForecastSpot(
   raw: RawForecastResponse,
   catalogSpot: SurfSpot,
-  dayKey: string,
+  _dayKey: string,
 ): ForecastSpot {
-  // Derive the date string from the first data point (timezone-aware)
-  const todayDateStr =
-    raw.points.length > 0
-      ? raw.points[0].time.split("T")[0]
-      : new Date().toISOString().split("T")[0];
+  if (raw.points.length === 0) {
+    return buildFallbackSpot(catalogSpot, _dayKey);
+  }
 
-  const slots: ForecastSlot[] = SLOT_DEFS.map((def) => {
-    const point = pickPointForHour(raw.points, todayDateStr, def.targetHour);
+  // Collect unique dates from the raw data
+  const dateSet = new Set<string>();
+  for (const p of raw.points) {
+    dateSet.add(p.time.split("T")[0]);
+  }
+  const dates = [...dateSet].sort();
 
-    const waveH = point?.waveHeight ?? point?.swellHeight ?? catalogSpot.waveHeightM;
-    const waveP = point?.wavePeriod ?? point?.swellPeriod ?? catalogSpot.wavePeriodS;
-    const windDir = point?.windDirection ?? catalogSpot.windDirectionDeg;
-    const windSpd = point?.windSpeed ?? catalogSpot.windSpeedKnots;
+  // Build slots for every day × every slot definition
+  const slots: ForecastSlot[] = [];
+  let globalOffset = 0; // running offset across days
 
-    const conditionTag = point
-      ? deriveConditionTag(point, catalogSpot.coastOrientationDeg)
-      : "mixed";
+  for (const dateStr of dates) {
+    for (const def of SLOT_DEFS) {
+      const point = pickPointForHour(raw.points, dateStr, def.targetHour);
 
-    const challenging = windSpd > 14 && def.targetHour >= 14;
+      const waveH = point?.waveHeight ?? point?.swellHeight ?? catalogSpot.waveHeightM;
+      const waveP = point?.wavePeriod ?? point?.swellPeriod ?? catalogSpot.wavePeriodS;
+      const windDir = point?.windDirection ?? catalogSpot.windDirectionDeg;
+      const windSpd = point?.windSpeed ?? catalogSpot.windSpeedKnots;
 
-    return {
-      id: `${dayKey}-${raw.spotId}-${def.label.toLowerCase()}`,
-      label: def.label,
-      timeLabel: point ? point.time.split("T")[1].slice(0, 5) : def.timeLabel,
-      dayPart: def.dayPart,
-      dayKey,
-      offsetHours: def.targetHour,
-      conditionTag,
-      challenging,
-      tideSuitability: "good" as const,
-      minSurfable: waveH >= 0.3,
-      mergedSpot: {
-        golfHoogteMeter: Math.round(waveH * 10) / 10,
-        golfPeriodeSeconden: Math.max(5, Math.round(waveP)),
-        windDirectionDeg: Math.round(windDir),
-        coastOrientationDeg: catalogSpot.coastOrientationDeg,
-        // Extra fields for future use
-        windSpeedKnots: windSpd != null ? Math.round(windSpd * 10) / 10 : null,
-        temperature: point?.temperature ?? null,
-        cloudCover: point?.cloudCover ?? null,
-        swellHeight: point?.swellHeight ?? null,
-        swellPeriod: point?.swellPeriod ?? null,
-        swellDirection: point?.swellDirection ?? null,
-        waveDirection: point?.waveDirection ?? null,
-      },
-    };
-  });
+      const conditionTag = point
+        ? deriveConditionTag(point, catalogSpot.coastOrientationDeg)
+        : "mixed";
+
+      const challenging = windSpd > 14 && def.targetHour >= 14;
+      const offsetHours = globalOffset + def.targetHour;
+
+      slots.push({
+        id: `${dateStr}-${raw.spotId}-${def.label.toLowerCase()}`,
+        label: def.label,
+        timeLabel: point ? point.time.split("T")[1].slice(0, 5) : def.timeLabel,
+        dayPart: def.dayPart,
+        dayKey: dateStr,
+        offsetHours,
+        conditionTag,
+        challenging,
+        tideSuitability: "good" as const,
+        minSurfable: waveH >= 0.3,
+        mergedSpot: {
+          golfHoogteMeter: Math.round(waveH * 10) / 10,
+          golfPeriodeSeconden: Math.max(5, Math.round(waveP)),
+          windDirectionDeg: Math.round(windDir),
+          coastOrientationDeg: catalogSpot.coastOrientationDeg,
+          windSpeedKnots: windSpd != null ? Math.round(windSpd * 10) / 10 : null,
+          temperature: point?.temperature ?? null,
+          cloudCover: point?.cloudCover ?? null,
+          swellHeight: point?.swellHeight ?? null,
+          swellPeriod: point?.swellPeriod ?? null,
+          swellDirection: point?.swellDirection ?? null,
+          waveDirection: point?.waveDirection ?? null,
+        },
+      });
+    }
+    globalOffset += 24;
+  }
 
   return {
     id: raw.spotId,
@@ -172,7 +192,7 @@ export function adaptMultiSpot(
   });
 }
 
-/* ── Fallback (replicates old mock behaviour) ── */
+/* ── Fallback (replicates old mock behaviour, extended to 16 days) ── */
 
 function buildFallbackSpot(spot: SurfSpot, dayKey: string): ForecastSpot {
   const TEMPLATES = [
@@ -182,24 +202,37 @@ function buildFallbackSpot(spot: SurfSpot, dayKey: string): ForecastSpot {
     { label: "Evening" as const, timeLabel: "18:00", dayPart: "evening" as const,   hour: 18, waveFactor: 0.85, periodDelta: 0,  windShift: 10,  cond: "mixed" as const, challenging: false, tide: "good" as const },
   ];
 
-  const slots: ForecastSlot[] = TEMPLATES.map((tpl) => ({
-    id: `${dayKey}-${spot.id}-${tpl.label.toLowerCase()}`,
-    label: tpl.label,
-    timeLabel: tpl.timeLabel,
-    dayPart: tpl.dayPart,
-    dayKey,
-    offsetHours: tpl.hour,
-    conditionTag: tpl.cond,
-    challenging: tpl.challenging || (spot.windSpeedKnots > 14 && tpl.hour >= 14),
-    tideSuitability: tpl.tide,
-    minSurfable: spot.waveHeightM * tpl.waveFactor >= 0.3,
-    mergedSpot: {
-      golfHoogteMeter: Math.round(spot.waveHeightM * tpl.waveFactor * 10) / 10,
-      golfPeriodeSeconden: Math.max(5, spot.wavePeriodS + tpl.periodDelta),
-      windDirectionDeg: (spot.windDirectionDeg + tpl.windShift + 360) % 360,
-      coastOrientationDeg: spot.coastOrientationDeg,
-    },
-  }));
+  const baseDate = new Date();
+  const baseDateStr = dayKey !== "today" ? dayKey : baseDate.toISOString().split("T")[0];
+  const base = new Date(baseDateStr);
+
+  const slots: ForecastSlot[] = [];
+  for (let d = 0; d < 16; d++) {
+    const dayDate = new Date(base);
+    dayDate.setDate(base.getDate() + d);
+    const dateStr = dayDate.toISOString().split("T")[0];
+
+    for (const tpl of TEMPLATES) {
+      slots.push({
+        id: `${dateStr}-${spot.id}-${tpl.label.toLowerCase()}`,
+        label: tpl.label,
+        timeLabel: tpl.timeLabel,
+        dayPart: tpl.dayPart,
+        dayKey: dateStr,
+        offsetHours: d * 24 + tpl.hour,
+        conditionTag: tpl.cond,
+        challenging: tpl.challenging || (spot.windSpeedKnots > 14 && tpl.hour >= 14),
+        tideSuitability: tpl.tide,
+        minSurfable: spot.waveHeightM * tpl.waveFactor >= 0.3,
+        mergedSpot: {
+          golfHoogteMeter: Math.round(spot.waveHeightM * tpl.waveFactor * 10) / 10,
+          golfPeriodeSeconden: Math.max(5, spot.wavePeriodS + tpl.periodDelta),
+          windDirectionDeg: (spot.windDirectionDeg + tpl.windShift + 360) % 360,
+          coastOrientationDeg: spot.coastOrientationDeg,
+        },
+      });
+    }
+  }
 
   return { id: spot.id, name: spot.name, slots };
 }

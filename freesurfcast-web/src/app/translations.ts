@@ -380,6 +380,27 @@ const dict = {
     fr: "Les données en direct sont temporairement indisponibles — affichage des données de repli.",
     es: "Los datos en vivo no están disponibles temporalmente — mostrando datos de respaldo.",
   },
+  "forecast.days.today": {
+    en: "Today",
+    nl: "Vandaag",
+    de: "Heute",
+    fr: "Aujourd'hui",
+    es: "Hoy",
+  },
+  "forecast.days.tomorrow": {
+    en: "Tomorrow",
+    nl: "Morgen",
+    de: "Morgen",
+    fr: "Demain",
+    es: "Mañana",
+  },
+  "forecast.days.horizon": {
+    en: "16-day forecast",
+    nl: "16-daagse voorspelling",
+    de: "16-Tage-Vorhersage",
+    fr: "Prévision à 16 jours",
+    es: "Pronóstico a 16 días",
+  },
 
   // ── Surf Windows ──────────────────────────
   "surfWindows.title": {
