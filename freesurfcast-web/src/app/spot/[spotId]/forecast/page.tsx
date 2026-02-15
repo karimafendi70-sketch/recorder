@@ -9,6 +9,7 @@ import {
 } from "@/lib/scores";
 import { usePreferences } from "@/app/PreferencesProvider";
 import { useLanguage } from "@/app/LanguageProvider";
+import { SPOT_CATALOG } from "@/lib/spots/catalog";
 import { useLiveForecast } from "@/app/forecast/useLiveForecast";
 import { buildQualityOptions } from "@/app/forecast/scoringHelpers";
 import { buildSurfWindows } from "@/lib/forecast/surfWindows";
@@ -28,6 +29,8 @@ import { AlertConfigPanel } from "./AlertConfigPanel";
 import { summarizeConditions } from "@/lib/forecast/conditions";
 import { useAlertProfile } from "@/lib/alerts/useAlertProfile";
 import { buildAlertMap } from "@/lib/alerts/matchDayAlert";
+import { buildForecastShareText, buildForecastShareUrl } from "@/lib/share/forecastShare";
+import { SharePanel } from "@/app/share/SharePanel";
 import type { TranslationKey } from "@/app/LanguageProvider";
 import styles from "../../spot.module.css";
 
@@ -198,6 +201,47 @@ export default function SpotForecastPage() {
     };
   }, [daySlots, qualityForSlot, activeSpot.name]);
 
+  // Share state
+  const [showShare, setShowShare] = useState(false);
+
+  const shareUrl = useMemo(
+    () => buildForecastShareUrl(spotId, activeDateKey),
+    [spotId, activeDateKey],
+  );
+
+  const shareText = useMemo(() => {
+    const ratingKey = `rating.${
+      dayAvgScore >= 8.5 ? "epic"
+        : dayAvgScore >= 7 ? "goodToEpic"
+        : dayAvgScore >= 5.5 ? "good"
+        : dayAvgScore >= 4.5 ? "fairToGood"
+        : dayAvgScore >= 3 ? "fair"
+        : dayAvgScore >= 1.5 ? "poorToFair"
+        : "poor"
+    }` as TranslationKey;
+    const bestLabel = dayBest?.window
+      ? `${dayBest.window.startLabel}–${dayBest.window.endLabel}`
+      : undefined;
+    const cond = explainerData;
+    return buildForecastShareText({
+      spotName: activeSpot.name,
+      country: (SPOT_CATALOG.find((s) => s.id === spotId))?.country,
+      dayLabel,
+      dateISO: activeDateKey,
+      avgScore: dayAvgScore,
+      ratingLabel: t(ratingKey),
+      sizeBand: cond?.sizeKey ? t(cond.sizeKey) : undefined,
+      bestWindowLabel: bestLabel,
+      windSummary: cond?.windKey ? t(cond.windKey) : undefined,
+      surfaceSummary: cond?.surfaceKey ? t(cond.surfaceKey) : undefined,
+      swellSummary:
+        cond?.waveHeight != null && cond?.wavePeriod != null
+          ? `${cond.waveHeight.toFixed(1)}m @ ${cond.wavePeriod.toFixed(0)}s`
+          : undefined,
+      url: shareUrl,
+    });
+  }, [activeSpot.name, spotId, dayLabel, activeDateKey, dayAvgScore, dayBest, explainerData, shareUrl, t]);
+
   return (
     <>
       <DataSourceBadge status={status} isLive={isLive} fetchedAt={fetchedAt} />
@@ -237,6 +281,19 @@ export default function SpotForecastPage() {
               <button className={styles.backToTodayBtn} onClick={selectToday}>
                 ← {t("forecast.actions.backToToday" as TranslationKey)}
               </button>
+            )}
+            <button
+              className={styles.shareToggle}
+              onClick={() => setShowShare((v) => !v)}
+            >
+              📤 {t("share.button" as TranslationKey)}
+            </button>
+            {showShare && (
+              <SharePanel
+                link={shareUrl}
+                text={shareText}
+                className={styles.sharePanel}
+              />
             )}
             <span className={styles.shortcutHint}>
               {t("forecast.shortcuts.hint" as TranslationKey)}

@@ -7,6 +7,8 @@ import { useLanguage, type TranslationKey } from "@/app/LanguageProvider";
 import { SPOT_CATALOG, type Region } from "@/lib/spots/catalog";
 import { useTripPlanner } from "@/lib/trip/useTripPlanner";
 import type { TripCombo } from "@/lib/trip/types";
+import { buildTripShareText, buildTripShareUrl } from "@/lib/share/tripShare";
+import { SharePanel } from "@/app/share/SharePanel";
 import styles from "./trip.module.css";
 
 /* ── Rating colours ──────────────────────────── */
@@ -248,6 +250,25 @@ function TripPlannerInner() {
   // Date range label
   const rangeLabel = `${formatDateShort(startDate, lang)} – ${formatDateShort(endDate, lang)}`;
 
+  // Share state
+  const [showShare, setShowShare] = useState(false);
+
+  const shareUrl = useMemo(
+    () => buildTripShareUrl(startDate, endDate, regionFilter || undefined, countryFilter || undefined),
+    [startDate, endDate, regionFilter, countryFilter],
+  );
+
+  const shareText = useMemo(
+    () =>
+      buildTripShareText({
+        rangeLabel,
+        combos,
+        url: shareUrl,
+        ratingLabel: (bucket) => t(`rating.${bucket}` as TranslationKey),
+      }),
+    [rangeLabel, combos, shareUrl, t],
+  );
+
   return (
     <section className="stack-lg">
       {/* Header */}
@@ -335,6 +356,23 @@ function TripPlannerInner() {
       {/* Range badge */}
       <div className={styles.rangeBadge}>
         📅 {rangeLabel} · {spotIds.length} {t("trip.spots" as TranslationKey)}
+      </div>
+
+      {/* Share */}
+      <div className={styles.shareRow}>
+        <button
+          className={styles.shareToggle}
+          onClick={() => setShowShare((v) => !v)}
+        >
+          📤 {t("share.button" as TranslationKey)}
+        </button>
+        {showShare && (
+          <SharePanel
+            link={shareUrl}
+            text={shareText}
+            className={styles.sharePanel}
+          />
+        )}
       </div>
 
       {/* Results */}

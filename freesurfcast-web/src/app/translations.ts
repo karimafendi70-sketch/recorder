@@ -2049,6 +2049,36 @@ const dict = {
     fr: "Score bas\u00e9 sur la taille, la p\u00e9riode, le vent et la consistance.",
     es: "Puntuaci\u00f3n basada en tama\u00f1o, per\u00edodo, viento y consistencia.",
   },
+
+  /* ── P4: Share / Export ───────────────────── */
+  "share.copyLink": {
+    en: "Copy link",
+    nl: "Link kopiëren",
+    de: "Link kopieren",
+    fr: "Copier le lien",
+    es: "Copiar enlace",
+  },
+  "share.copyText": {
+    en: "Copy summary",
+    nl: "Samenvatting kopiëren",
+    de: "Zusammenfassung kopieren",
+    fr: "Copier le résumé",
+    es: "Copiar resumen",
+  },
+  "share.copied": {
+    en: "Copied!",
+    nl: "Gekopieerd!",
+    de: "Kopiert!",
+    fr: "Copié !",
+    es: "¡Copiado!",
+  },
+  "share.button": {
+    en: "Share",
+    nl: "Delen",
+    de: "Teilen",
+    fr: "Partager",
+    es: "Compartir",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;
