@@ -1633,6 +1633,78 @@ const dict = {
     fr: "Dernière session",
     es: "Última sesión",
   },
+
+  // ── Alerts config ─────────────────────────
+  "alerts.config.setup": {
+    en: "Set up day alert",
+    nl: "Dagalert instellen",
+    de: "Tagesalarm einrichten",
+    fr: "Configurer l'alerte",
+    es: "Configurar alerta",
+  },
+  "alerts.config.active": {
+    en: "Day alert active",
+    nl: "Dagalert actief",
+    de: "Tagesalarm aktiv",
+    fr: "Alerte jour active",
+    es: "Alerta diaria activa",
+  },
+  "alerts.config.title": {
+    en: "Day Alert Settings",
+    nl: "Dagalert-instellingen",
+    de: "Tagesalarm-Einstellungen",
+    fr: "Paramètres d'alerte",
+    es: "Ajustes de alerta diaria",
+  },
+  "alerts.config.minRating": {
+    en: "Minimum rating",
+    nl: "Minimale beoordeling",
+    de: "Mindestbewertung",
+    fr: "Note minimale",
+    es: "Valoración mínima",
+  },
+  "alerts.config.sizeRange": {
+    en: "Wave size range",
+    nl: "Golfgrootte-range",
+    de: "Wellengrößen-Bereich",
+    fr: "Plage de taille",
+    es: "Rango de tamaño",
+  },
+  "alerts.config.any": {
+    en: "Any",
+    nl: "Alle",
+    de: "Alle",
+    fr: "Tous",
+    es: "Cualquiera",
+  },
+  "alerts.config.preferOffshore": {
+    en: "Only when offshore / cross-off wind",
+    nl: "Alleen bij offshore / cross-off wind",
+    de: "Nur bei ablandigem / schräg ablandigem Wind",
+    fr: "Uniquement vent offshore / cross-off",
+    es: "Solo con viento offshore / cross-off",
+  },
+  "alerts.config.save": {
+    en: "Save alert",
+    nl: "Alert opslaan",
+    de: "Alarm speichern",
+    fr: "Enregistrer l'alerte",
+    es: "Guardar alerta",
+  },
+  "alerts.config.remove": {
+    en: "Remove alert",
+    nl: "Alert verwijderen",
+    de: "Alarm entfernen",
+    fr: "Supprimer l'alerte",
+    es: "Eliminar alerta",
+  },
+  "alerts.config.cancel": {
+    en: "Cancel",
+    nl: "Annuleren",
+    de: "Abbrechen",
+    fr: "Annuler",
+    es: "Cancelar",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

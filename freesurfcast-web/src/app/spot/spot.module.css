@@ -927,6 +927,243 @@
 
 /* ── Dark-mode overrides ─────────────────────── */
 
+/* ── Alerts ───────────────────────────────────── */
+
+.dayBarCardAlert {
+  position: relative;
+}
+
+.dayBarAlertDot {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f5a623;
+  box-shadow: 0 0 4px rgba(245, 166, 35, 0.6);
+  pointer-events: none;
+}
+
+.dayBarCardActive .dayBarAlertDot {
+  background: #fff;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+}
+
+.alertToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border: 1.5px solid var(--panel-border);
+  border-radius: var(--radius-full);
+  background: var(--panel);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.alertToggleBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.alertToggleBtnActive {
+  border-color: #f5a623;
+  background: rgba(245, 166, 35, 0.08);
+  color: #c58700;
+}
+
+.alertToggleBtnActive:hover {
+  background: rgba(245, 166, 35, 0.15);
+  border-color: #c58700;
+}
+
+.alertToggleIcon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.alertPanel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alertPanelHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.alertPanelIcon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.alertPanelTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.alertField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.alertFieldLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.alertChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.alertChip {
+  padding: 0.3rem 0.6rem;
+  border: 1.5px solid var(--panel-border);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.alertChip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.alertChipSelected {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.alertSizeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.alertSizeSep {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.alertSelect {
+  flex: 1;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.85rem;
+  transition: border-color var(--transition);
+}
+
+.alertSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(21, 111, 120, 0.15);
+}
+
+.alertCheckRow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.alertCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.alertActions {
+  display: flex;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.alertSaveBtn {
+  padding: 0.45rem 1.1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: #f5a623;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.alertSaveBtn:hover {
+  background: #d98f1a;
+}
+
+.alertRemoveBtn {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid #ef9a9a;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: #c62828;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.alertRemoveBtn:hover {
+  background: #fde2e2;
+}
+
+.alertCancelBtn {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.alertCancelBtn:hover {
+  background: var(--background);
+  color: var(--foreground);
+}
+
 /* ── Sessions ─────────────────────────────────── */
 
 .sessStars {
@@ -1292,6 +1529,43 @@
     background: rgba(198, 40, 40, 0.2);
     color: #ef9a9a;
   }
+
+  /* ── Alerts dark ── */
+  .alertToggleBtn {
+    background: #1e2c30;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .alertToggleBtnActive {
+    background: rgba(245, 166, 35, 0.12);
+    border-color: rgba(245, 166, 35, 0.4);
+    color: #f5c36a;
+  }
+
+  .alertPanel {
+    background: #1e2c30;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .alertChip {
+    border-color: rgba(21, 111, 120, 0.25);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .alertChipSelected {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .alertRemoveBtn {
+    border-color: rgba(198, 40, 40, 0.4);
+    color: #ef9a9a;
+  }
+
+  .alertRemoveBtn:hover {
+    background: rgba(198, 40, 40, 0.2);
+  }
 }
 
 /* ── Responsive ──────────────────────────────── */
@@ -1331,6 +1605,15 @@
 
   .sessFormGrid {
     grid-template-columns: 1fr;
+  }
+
+  .alertChips {
+    gap: 0.25rem;
+  }
+
+  .alertChip {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
   }
 }
 

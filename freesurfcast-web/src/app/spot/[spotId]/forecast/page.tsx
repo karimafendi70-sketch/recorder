@@ -24,7 +24,10 @@ import { DataSourceBadge } from "@/app/forecast/components/DataSourceBadge";
 import { SurfWindowsPanel } from "@/app/forecast/components/SurfWindowsPanel";
 import { ScoreExplainer } from "@/app/forecast/components/ScoreExplainer";
 import { ProGraphsSection } from "./ProGraphsSection";
+import { AlertConfigPanel } from "./AlertConfigPanel";
 import { summarizeConditions } from "@/lib/forecast/conditions";
+import { useAlertProfile } from "@/lib/alerts/useAlertProfile";
+import { buildAlertMap } from "@/lib/alerts/matchDayAlert";
 import type { TranslationKey } from "@/app/LanguageProvider";
 import styles from "../../spot.module.css";
 
@@ -37,6 +40,9 @@ export default function SpotForecastPage() {
 
   const { spots, status, isLive, fetchedAt, errorMessage } = useLiveForecast("today");
   const isLoading = status === "idle" || status === "loading";
+
+  // Alert profile for this spot
+  const { profile: alertProfile } = useAlertProfile(spotId);
 
   const qualityOptions = useMemo(() => buildQualityOptions(prefs), [prefs]);
   const qualityForSlot = useCallback(
@@ -61,6 +67,24 @@ export default function SpotForecastPage() {
         t("forecast.days.tomorrow"),
       ),
     [activeSpot.slots, qualityForSlot, lang, t],
+  );
+
+  // Slots grouped by day (used by alerts + day detail)
+  const slotsByDay = useMemo(() => {
+    const map = new Map<string, SlotContext[]>();
+    for (const s of activeSpot.slots) {
+      const key = s.dayKey ?? "unknown";
+      let arr = map.get(key);
+      if (!arr) { arr = []; map.set(key, arr); }
+      arr.push(s);
+    }
+    return map;
+  }, [activeSpot.slots]);
+
+  // Alert matching
+  const alertDays = useMemo(
+    () => buildAlertMap(alertProfile, daySummaries, slotsByDay),
+    [alertProfile, daySummaries, slotsByDay],
   );
 
   // Selected day state
@@ -147,6 +171,9 @@ export default function SpotForecastPage() {
         </div>
       )}
 
+      {/* ── Alert config toggle ── */}
+      {!isLoading && <AlertConfigPanel spotId={spotId} />}
+
       {/* ── 16-day DayBar ── */}
       {isLoading ? (
         <DayBarSkeleton />
@@ -155,6 +182,7 @@ export default function SpotForecastPage() {
           days={daySummaries}
           activeDateKey={activeDateKey}
           onSelect={setSelectedDay}
+          alertDays={alertDays}
         />
       )}
 
