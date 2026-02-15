@@ -46,13 +46,13 @@ function ratingBand(score: number): RatingBand {
 }
 
 const RATING_COLORS: Record<RatingBand, string> = {
-  epic:        "#2d9e6a",
-  goodToEpic:  "#4db87a",
-  good:        "#7ac068",
-  fairToGood:  "#9cba54",
-  fair:        "#d4b44a",
-  poorToFair:  "#d49055",
-  poor:        "#c06060",
+  epic:        "#00acc1",
+  goodToEpic:  "#26a69a",
+  good:        "#43a047",
+  fairToGood:  "#c0ca33",
+  fair:        "#fdd835",
+  poorToFair:  "#fb8c00",
+  poor:        "#e53935",
 };
 
 function capitalise(s: string) {

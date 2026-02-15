@@ -187,31 +187,31 @@
 }
 
 .dayBarRatingEpic {
-  background: #2d9e6a;
+  background: var(--rating-epic, #00acc1);
 }
 
 .dayBarRatingGoodToEpic {
-  background: #4db87a;
+  background: var(--rating-goodToEpic, #26a69a);
 }
 
 .dayBarRatingGood {
-  background: #7ac068;
+  background: var(--rating-good, #43a047);
 }
 
 .dayBarRatingFairToGood {
-  background: #9cba54;
+  background: var(--rating-fairToGood, #c0ca33);
 }
 
 .dayBarRatingFair {
-  background: #d4b44a;
+  background: var(--rating-fair, #fdd835);
 }
 
 .dayBarRatingPoorToFair {
-  background: #d49055;
+  background: var(--rating-poorToFair, #fb8c00);
 }
 
 .dayBarRatingPoor {
-  background: #c06060;
+  background: var(--rating-poor, #e53935);
 }
 
 .dayBarHeight {
@@ -327,10 +327,15 @@
 .proCard {
   padding: 0.75rem 0.85rem;
   border-radius: 14px;
-  border: 1.5px solid var(--panel-border, #d6e5ea);
-  background: #fafdfe;
+  border: 1.5px solid rgba(21, 111, 120, 0.15);
+  background: linear-gradient(175deg, #f5fbfc, #fafdfe 60%);
   display: grid;
   gap: 0.25rem;
+  transition: box-shadow var(--transition, 0.15s ease);
+}
+
+.proCard:hover {
+  box-shadow: 0 4px 14px rgba(21, 111, 120, 0.08);
 }
 
 .proCardLabel {
@@ -339,7 +344,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--muted, #5d7178);
+  color: var(--accent, #156f78);
 }
 
 .proCardValue {
@@ -416,30 +421,32 @@
 
 .timelineTrack {
   position: relative;
-  height: 16px;
-  border-radius: 8px;
-  background: #e6ecee;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--timeline-track, #d0d8dc);
   overflow: visible;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .timelineSegment {
   position: absolute;
   top: 0;
   height: 100%;
-  border-radius: 8px;
-  opacity: 0.80;
+  border-radius: 9px;
+  opacity: 0.92;
   transition: all var(--transition, 0.25s ease);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .timelineMarker {
   position: absolute;
   top: 50%;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2.5px solid #fff;
   transform: translate(-50%, -50%);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
   z-index: 2;
 }
 
@@ -448,7 +455,7 @@
   top: 0;
   width: 1px;
   height: 100%;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.12);
   pointer-events: none;
 }
 
@@ -573,15 +580,46 @@
 /* ── Score color helpers ─────────────────────── */
 
 .scoreHigh {
-  color: #1a6e3e;
+  color: var(--rating-good, #43a047);
 }
 
 .scoreMedium {
-  color: #6e6a1a;
+  color: var(--rating-fairToGood, #9e9d24);
 }
 
 .scoreLow {
-  color: #7f3232;
+  color: var(--rating-poor, #e53935);
+}
+
+/* ── Dark-mode overrides ─────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  .timelineTrack {
+    background: var(--timeline-track, #2a363a);
+  }
+
+  .timelineMarker {
+    border-color: #2a363a;
+  }
+
+  .timelineTick {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .proCard {
+    background: linear-gradient(175deg, #1e2c30, #22333a 60%);
+    border-color: rgba(21, 111, 120, 0.25);
+  }
+
+  .dayBarCard {
+    background: #1e2c30;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .dayBarCard:hover {
+    background: #1e3538;
+    border-color: var(--accent, #156f78);
+  }
 }
 
 /* ── Responsive ──────────────────────────────── */

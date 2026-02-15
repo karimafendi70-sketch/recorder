@@ -20,6 +20,15 @@
   --shadow-sm: 0 2px 8px rgba(10, 38, 51, 0.06);
   --shadow: 0 12px 30px rgba(10, 38, 51, 0.08);
   --shadow-lg: 0 20px 44px rgba(10, 38, 51, 0.1);
+
+  /* ── Rating color scale (poor → epic) ── */
+  --rating-poor: #e53935;
+  --rating-poorToFair: #fb8c00;
+  --rating-fair: #fdd835;
+  --rating-fairToGood: #c0ca33;
+  --rating-good: #43a047;
+  --rating-goodToEpic: #26a69a;
+  --rating-epic: #00acc1;
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
