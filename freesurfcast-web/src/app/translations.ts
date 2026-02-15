@@ -1777,6 +1777,92 @@ const dict = {
     fr: "Explorer la carte",
     es: "Explorar mapa",
   },
+
+  /* ── Compare ─────────────────────────────── */
+  "nav.compare": {
+    en: "Compare",
+    nl: "Vergelijk",
+    de: "Vergleichen",
+    fr: "Comparer",
+    es: "Comparar",
+  },
+  "tab.compare": {
+    en: "Compare",
+    nl: "Vergelijk",
+    de: "Vergleich",
+    fr: "Comparer",
+    es: "Comparar",
+  },
+  "compare.title": {
+    en: "Compare Spots",
+    nl: "Spots vergelijken",
+    de: "Spots vergleichen",
+    fr: "Comparer les spots",
+    es: "Comparar spots",
+  },
+  "compare.subtitle": {
+    en: "Side by side for the same day",
+    nl: "Naast elkaar voor dezelfde dag",
+    de: "Nebeneinander für denselben Tag",
+    fr: "Côte à côte pour le même jour",
+    es: "Lado a lado para el mismo día",
+  },
+  "compare.selectSpot": {
+    en: "Choose a spot…",
+    nl: "Kies een spot…",
+    de: "Spot wählen…",
+    fr: "Choisir un spot…",
+    es: "Elige un spot…",
+  },
+  "compare.day": {
+    en: "Day",
+    nl: "Dag",
+    de: "Tag",
+    fr: "Jour",
+    es: "Día",
+  },
+  "compare.noData": {
+    en: "No forecast data available",
+    nl: "Geen forecastdata beschikbaar",
+    de: "Keine Vorhersagedaten verfügbar",
+    fr: "Pas de données de prévision",
+    es: "Sin datos de pronóstico",
+  },
+  "compare.empty": {
+    en: "Select two spots above to compare them",
+    nl: "Selecteer twee spots hierboven om ze te vergelijken",
+    de: "Wähle oben zwei Spots zum Vergleichen",
+    fr: "Sélectionnez deux spots ci-dessus pour les comparer",
+    es: "Selecciona dos spots arriba para compararlos",
+  },
+  "compare.surf": {
+    en: "Surf height",
+    nl: "Golfhoogte",
+    de: "Wellenhöhe",
+    fr: "Hauteur des vagues",
+    es: "Altura del oleaje",
+  },
+  "compare.swell": {
+    en: "Swell period",
+    nl: "Deiningperiode",
+    de: "Dünung",
+    fr: "Période de houle",
+    es: "Período del oleaje",
+  },
+  "compare.wind": {
+    en: "Wind",
+    nl: "Wind",
+    de: "Wind",
+    fr: "Vent",
+    es: "Viento",
+  },
+  "compare.surface": {
+    en: "Surface",
+    nl: "Oppervlak",
+    de: "Oberfläche",
+    fr: "Surface",
+    es: "Superficie",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

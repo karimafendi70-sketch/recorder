@@ -18,6 +18,7 @@ const TABS: TabDef[] = [
   { href: "/forecast",  labelKey: "tab.forecast",   icon: "🌊" },
   { href: "/map",       labelKey: "tab.map",        icon: "🗺️" },
   { href: "/insights",  labelKey: "tab.insights",   icon: "📊" },
+  { href: "/compare",   labelKey: "tab.compare",    icon: "⚖️" },
   { href: "/profile",   labelKey: "tab.account",    icon: "👤" },
 ];
 

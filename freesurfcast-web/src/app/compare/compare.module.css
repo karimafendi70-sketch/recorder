@@ -1,0 +1,230 @@
+/* ── Compare Page ─────────────────────── */
+
+/* Header */
+.compareHeader {
+  text-align: center;
+  padding-bottom: var(--gap-md);
+}
+.compareTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.compareSubtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Controls bar */
+.controls {
+  display: flex;
+  gap: var(--gap-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+  flex: 1 1 180px;
+  max-width: 280px;
+}
+.controlLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+.controlSelect {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+.controlSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Empty state */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 64px 16px;
+}
+.emptyIcon {
+  font-size: 2.5rem;
+}
+.emptyText {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 340px;
+}
+
+/* Columns wrapper */
+.columnsWrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--gap-lg);
+  width: 100%;
+}
+
+/* Single column card */
+.column {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--gap-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  animation: compareSlideUp 0.35s ease-out both;
+}
+@keyframes compareSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Column header */
+.colHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.colSpot {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.colCountry {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* Score + rating */
+.colScore {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+.colScoreValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.colRatingPill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* Best window strip */
+.colWindow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.colWindowTrack {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.colWindowSegment {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease, left 0.3s ease;
+}
+.colWindowLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Condition blocks */
+.colBlocks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-sm);
+}
+.colBlock {
+  background: var(--bg-secondary, rgba(0, 0, 0, 0.04));
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.colBlockLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+}
+.colBlockValue {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.colBlockSub {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Empty column */
+.colEmpty {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+/* Skeleton loader */
+.skeletonCol {
+  border-radius: var(--radius-lg);
+  background: var(--border);
+  height: 320px;
+  animation: comparePulse 1.2s ease-in-out infinite;
+}
+@keyframes comparePulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.25; }
+}
+
+/* ── Responsive ───────────────────────── */
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+  }
+  .controlGroup {
+    max-width: 100%;
+  }
+  .columnsWrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Dark mode ────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  .colBlock {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
