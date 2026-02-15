@@ -1710,3 +1710,223 @@
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── P8: Forecast Cleanup — TL;DR card ───────── */
+
+.tldrCard {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  background: var(--surface-raised, #fff);
+  border: 1px solid var(--border, #d6e5ea);
+  border-radius: 16px;
+  padding: 1rem 1.15rem;
+  box-shadow: 0 6px 18px rgba(13, 54, 66, 0.07);
+  animation: tldrFadeIn 0.25s ease;
+}
+
+@keyframes tldrFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tldrRating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 60px;
+}
+
+.tldrScoreBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 3px solid;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary, #0d3642);
+  background: var(--surface-base, #f6fafb);
+}
+.tldrScoreHigh  { background: #e0f7f2; }
+.tldrScoreMedium { background: #fff9e6; }
+.tldrScoreLow   { background: #fde8e6; }
+
+.tldrRatingLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tldrFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.tldrFact {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary, #0d3642);
+}
+
+.tldrFactIcon {
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tldrFactSub {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #5d7178);
+  font-weight: 400;
+  margin-left: 0.15rem;
+}
+
+.tldrChips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.15rem;
+}
+
+.tldrChip {
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--accent-light, #e0f2f4);
+  color: var(--accent, #156f78);
+  white-space: nowrap;
+}
+
+/* ── P8: Collapsible details section ─────────── */
+
+.detailsSection {
+  margin-top: 0.25rem;
+  border-top: 1px solid var(--panel-border, #d6e5ea);
+}
+
+.detailsToggle {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent, #156f78);
+  transition: color var(--transition, 0.15s ease);
+}
+.detailsToggle:hover {
+  color: var(--accent-hover, #0d4f56);
+}
+
+.detailsToggleIcon {
+  font-size: 0.75rem;
+  line-height: 1;
+  transition: transform var(--transition, 0.15s ease);
+}
+
+.detailsContent {
+  display: grid;
+  gap: 1.2rem;
+  padding-bottom: 0.5rem;
+  animation: detailsSlideIn 0.2s ease;
+}
+
+@keyframes detailsSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── P8: Actions row ─────────────────────────── */
+
+.actionsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0.5rem 0;
+  margin-top: 0.25rem;
+  border-top: 1px solid var(--panel-border, #d6e5ea);
+}
+
+.actionsLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent, #156f78);
+  padding: 5px 12px;
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--accent, #156f78);
+  text-decoration: none;
+  transition: background var(--transition, 0.15s ease), color var(--transition, 0.15s ease);
+}
+.actionBtn:hover {
+  background: var(--accent, #156f78);
+  color: #fff;
+}
+
+.actionsHint {
+  font-size: 0.68rem;
+  color: var(--text-secondary, #5d7178);
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .actionsHint {
+    display: none;
+  }
+}
+
+.actionsSharePanel {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+  animation: shareFadeIn 0.2s ease;
+}
+.actionsSharePanel button {
+  background: var(--surface-raised, #fff);
+  border: 1px solid var(--border, #d6e5ea);
+  border-radius: var(--radius-full, 999px);
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-primary, #0d3642);
+  transition: background var(--transition, 0.15s ease), border-color var(--transition, 0.15s ease);
+}
+.actionsSharePanel button:hover {
+  background: var(--accent, #156f78);
+  color: #fff;
+  border-color: var(--accent, #156f78);
+}

@@ -26,11 +26,13 @@ import { SurfWindowsPanel } from "@/app/forecast/components/SurfWindowsPanel";
 import { ScoreExplainer } from "@/app/forecast/components/ScoreExplainer";
 import { ProGraphsSection } from "./ProGraphsSection";
 import { AlertConfigPanel } from "./AlertConfigPanel";
+import { ForecastTldrCard } from "./ForecastTldrCard";
+import { ForecastDetailsSection } from "./ForecastDetailsSection";
+import { ForecastActionsRow } from "./ForecastActionsRow";
 import { summarizeConditions } from "@/lib/forecast/conditions";
 import { useAlertProfile } from "@/lib/alerts/useAlertProfile";
 import { buildAlertMap } from "@/lib/alerts/matchDayAlert";
 import { buildForecastShareText, buildForecastShareUrl } from "@/lib/share/forecastShare";
-import { SharePanel } from "@/app/share/SharePanel";
 import type { TranslationKey } from "@/app/LanguageProvider";
 import styles from "../../spot.module.css";
 
@@ -201,6 +203,46 @@ export default function SpotForecastPage() {
     };
   }, [daySlots, qualityForSlot, activeSpot.name]);
 
+  // ── TL;DR card data ──
+  const tldrData = useMemo(() => {
+    const ratingKey = `rating.${
+      dayAvgScore >= 8.5 ? "epic"
+        : dayAvgScore >= 7 ? "goodToEpic"
+        : dayAvgScore >= 5.5 ? "good"
+        : dayAvgScore >= 4.5 ? "fairToGood"
+        : dayAvgScore >= 3 ? "fair"
+        : dayAvgScore >= 1.5 ? "poorToFair"
+        : "poor"
+    }` as TranslationKey;
+    const RATING_COLORS: Record<string, string> = {
+      epic: "#00acc1", goodToEpic: "#26a69a", good: "#43a047",
+      fairToGood: "#c0ca33", fair: "#fdd835", poorToFair: "#fb8c00", poor: "#e53935",
+    };
+    const band = dayAvgScore >= 8 ? "epic" : dayAvgScore >= 7 ? "goodToEpic" : dayAvgScore >= 6 ? "good" : dayAvgScore >= 5 ? "fairToGood" : dayAvgScore >= 4 ? "fair" : dayAvgScore >= 3 ? "poorToFair" : "poor";
+
+    // Wave height range across all day slots
+    const heights = daySlots
+      .map((s) => (s.mergedSpot as Record<string, unknown> | undefined)?.golfHoogteMeter as number | undefined)
+      .filter((h): h is number => h != null);
+    const minH = heights.length > 0 ? Math.min(...heights) : 0;
+    const maxH = heights.length > 0 ? Math.max(...heights) : 0;
+
+    const bestLabel = dayBest?.window
+      ? `${dayBest.window.startLabel} – ${dayBest.window.endLabel}`
+      : undefined;
+
+    return {
+      ratingLabel: t(ratingKey),
+      ratingColor: RATING_COLORS[band] ?? "#e53935",
+      minHeight: minH,
+      maxHeight: maxH,
+      sizeBandLabel: explainerData?.sizeKey ? t(explainerData.sizeKey) : undefined,
+      bestWindowLabel: bestLabel,
+      windLabel: explainerData?.windKey ? t(explainerData.windKey) : undefined,
+      surfaceLabel: explainerData?.surfaceKey ? t(explainerData.surfaceKey) : undefined,
+    };
+  }, [dayAvgScore, daySlots, dayBest, explainerData, t]);
+
   // Share state
   const [showShare, setShowShare] = useState(false);
 
@@ -262,89 +304,89 @@ export default function SpotForecastPage() {
         </div>
       )}
 
-      {/* ── Alert config toggle ── */}
-      {!isLoading && <AlertConfigPanel spotId={spotId} />}
-
       {/* ── 16-day DayBar ── */}
       {isLoading ? (
         <DayBarSkeleton />
       ) : (
-        <>
-          <DayBar
-            days={daySummaries}
-            activeDateKey={activeDateKey}
-            onSelect={handleSelectDay}
-            alertDays={alertDays}
-          />
-          <div className={styles.dayBarExtras}>
-            {!isToday && hasTodayInRange && (
-              <button className={styles.backToTodayBtn} onClick={selectToday}>
-                ← {t("forecast.actions.backToToday" as TranslationKey)}
-              </button>
-            )}
-            <button
-              className={styles.shareToggle}
-              onClick={() => setShowShare((v) => !v)}
-            >
-              📤 {t("share.button" as TranslationKey)}
-            </button>
-            {showShare && (
-              <SharePanel
-                link={shareUrl}
-                text={shareText}
-                className={styles.sharePanel}
-              />
-            )}
-            <span className={styles.shortcutHint}>
-              {t("forecast.shortcuts.hint" as TranslationKey)}
-            </span>
-          </div>
-        </>
+        <DayBar
+          days={daySummaries}
+          activeDateKey={activeDateKey}
+          onSelect={handleSelectDay}
+          alertDays={alertDays}
+        />
       )}
 
-      {/* ── Day detail ── */}
+      {/* ── TL;DR card — above the fold ── */}
+      {!isLoading && (
+        <ForecastTldrCard
+          avgScore={dayAvgScore}
+          ratingLabel={tldrData.ratingLabel}
+          ratingColor={tldrData.ratingColor}
+          minHeight={tldrData.minHeight}
+          maxHeight={tldrData.maxHeight}
+          sizeBandLabel={tldrData.sizeBandLabel}
+          bestWindowLabel={tldrData.bestWindowLabel}
+          windLabel={tldrData.windLabel}
+          surfaceLabel={tldrData.surfaceLabel}
+        />
+      )}
+
+      {/* ── Day detail — timeline & conditions ── */}
       {isLoading ? (
         <DayDetailSkeleton />
       ) : (
-        <>
-          <div ref={detailRef}>
-            <DayDetailPanel
-              dateKey={activeDateKey}
-              dayLabel={dayLabel}
-              fullDate={fullDate}
-              daySlots={daySlots}
-              bestWindow={dayBest}
-              avgScore={dayAvgScore}
-              scoreFn={qualityForSlot}
-            />
-          </div>
-
-          {/* ── Extra sections (below day detail) ── */}
-          <section className={styles.moreSection}>
-            {/* Pro graphs for selected day */}
-            <ProGraphsSection daySlots={daySlots} locale={lang} />
-
-            {/* All surf windows (full 16-day overview) */}
-            <SurfWindowsPanel windows={surfWindows} />
-
-            {/* Score explainer */}
-            {explainerData && (
-              <ScoreExplainer
-                spotName={explainerData.spotName}
-                score={explainerData.score}
-                scoreClass={explainerData.scoreClass}
-                reasons={explainerData.reasons}
-                waveHeight={explainerData.waveHeight}
-                wavePeriod={explainerData.wavePeriod}
-                windDirection={explainerData.windDirection}
-                windKey={explainerData.windKey}
-                sizeKey={explainerData.sizeKey}
-                surfaceKey={explainerData.surfaceKey}
-              />
-            )}
-          </section>
-        </>
+        <div ref={detailRef}>
+          <DayDetailPanel
+            dateKey={activeDateKey}
+            dayLabel={dayLabel}
+            fullDate={fullDate}
+            daySlots={daySlots}
+            bestWindow={dayBest}
+            avgScore={dayAvgScore}
+            scoreFn={qualityForSlot}
+          />
+        </div>
       )}
+
+      {/* ── Collapsible pro details ── */}
+      {!isLoading && (
+        <ForecastDetailsSection>
+          <ProGraphsSection daySlots={daySlots} locale={lang} />
+          <SurfWindowsPanel windows={surfWindows} />
+          {explainerData && (
+            <ScoreExplainer
+              spotName={explainerData.spotName}
+              score={explainerData.score}
+              scoreClass={explainerData.scoreClass}
+              reasons={explainerData.reasons}
+              waveHeight={explainerData.waveHeight}
+              wavePeriod={explainerData.wavePeriod}
+              windDirection={explainerData.windDirection}
+              windKey={explainerData.windKey}
+              sizeKey={explainerData.sizeKey}
+              surfaceKey={explainerData.surfaceKey}
+            />
+          )}
+        </ForecastDetailsSection>
+      )}
+
+      {/* ── Compact action row ── */}
+      {!isLoading && (
+        <ForecastActionsRow
+          showBackToToday={!isToday && hasTodayInRange}
+          onBackToToday={selectToday}
+          showShare
+          onToggleShare={() => setShowShare((v) => !v)}
+          shareOpen={showShare}
+          shareUrl={shareUrl}
+          shareText={shareText}
+          spotId={spotId}
+          shortcutHint={t("forecast.shortcuts.hint" as TranslationKey)}
+        />
+      )}
+
+      {/* ── Alert config (end of page) ── */}
+      {!isLoading && <AlertConfigPanel spotId={spotId} />}
     </>
   );
 }

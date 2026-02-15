@@ -2291,6 +2291,36 @@ const dict = {
     fr: "Activez la préférence offshore — vos meilleures sessions sont avec du vent offshore.",
     es: "Activa la preferencia offshore — tus mejores sesiones son con viento de tierra.",
   },
+
+  /* ── P8: Forecast Cleanup ──────────────────── */
+  "forecast.details.show": {
+    en: "Show pro details & graphs",
+    nl: "Toon pro details & grafieken",
+    de: "Pro-Details & Grafiken anzeigen",
+    fr: "Afficher les détails pro & graphiques",
+    es: "Mostrar detalles pro y gráficos",
+  },
+  "forecast.details.hide": {
+    en: "Hide pro details",
+    nl: "Verberg pro details",
+    de: "Pro-Details ausblenden",
+    fr: "Masquer les détails pro",
+    es: "Ocultar detalles pro",
+  },
+  "forecast.actions.logSession": {
+    en: "Log session",
+    nl: "Sessie loggen",
+    de: "Session loggen",
+    fr: "Enregistrer session",
+    es: "Registrar sesión",
+  },
+  "forecast.tldr.bestWindow": {
+    en: "Best window",
+    nl: "Beste window",
+    de: "Bestes Fenster",
+    fr: "Meilleure fenêtre",
+    es: "Mejor ventana",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;
