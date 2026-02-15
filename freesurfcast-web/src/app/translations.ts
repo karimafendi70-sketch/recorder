@@ -112,6 +112,81 @@ const dict = {
     fr: "Votre profil personnalise tous les scores et aperçus.",
     es: "Tu perfil personaliza todas las puntuaciones y análisis.",
   },
+
+  // Hero (app-style)
+  "home.hero.tagline": {
+    en: "By surfers, for surfers.",
+    nl: "Door surfers, voor surfers.",
+    de: "Von Surfern, für Surfer.",
+    fr: "Par des surfeurs, pour des surfeurs.",
+    es: "Por surfistas, para surfistas.",
+  },
+  "home.hero.title": {
+    en: "Know exactly when to paddle out",
+    nl: "Weet precies wanneer je het water in gaat",
+    de: "Wisse genau, wann du rauspaddeln solltest",
+    fr: "Sachez exactement quand vous mettre à l'eau",
+    es: "Sabe exactamente cuándo remar",
+  },
+  "home.hero.subtitle": {
+    en: "16-day surf forecast with personalised scores, live conditions and smart surf windows.",
+    nl: "16-daagse surfvoorspelling met persoonlijke scores, live condities en slimme surf windows.",
+    de: "16-Tage-Surfvorhersage mit personalisierten Scores, Live-Bedingungen und smarten Surf-Fenstern.",
+    fr: "Prévisions surf 16 jours avec scores personnalisés, conditions en direct et créneaux intelligents.",
+    es: "Pronóstico de surf de 16 días con puntuaciones personalizadas, condiciones en vivo y ventanas inteligentes.",
+  },
+  "home.hero.ctaPrimary": {
+    en: "Get started",
+    nl: "Start nu",
+    de: "Jetzt starten",
+    fr: "Commencer",
+    es: "Empezar",
+  },
+  "home.hero.ctaSecondary": {
+    en: "How it works",
+    nl: "Hoe het werkt",
+    de: "So funktioniert's",
+    fr: "Comment ça marche",
+    es: "Cómo funciona",
+  },
+
+  // Bottom tab bar
+  "tab.home": {
+    en: "Home",
+    nl: "Home",
+    de: "Start",
+    fr: "Accueil",
+    es: "Inicio",
+  },
+  "tab.forecast": {
+    en: "Forecast",
+    nl: "Forecast",
+    de: "Forecast",
+    fr: "Prévisions",
+    es: "Pronóstico",
+  },
+  "tab.map": {
+    en: "Map",
+    nl: "Kaart",
+    de: "Karte",
+    fr: "Carte",
+    es: "Mapa",
+  },
+  "tab.insights": {
+    en: "Insights",
+    nl: "Inzichten",
+    de: "Einblicke",
+    fr: "Aperçus",
+    es: "Análisis",
+  },
+  "tab.account": {
+    en: "Account",
+    nl: "Account",
+    de: "Konto",
+    fr: "Compte",
+    es: "Cuenta",
+  },
+
   "home.stepsTitle": {
     en: "How it works",
     nl: "Zo werkt het",

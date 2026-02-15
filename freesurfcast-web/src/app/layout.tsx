@@ -5,6 +5,7 @@ import { FavoritesProvider } from "./FavoritesProvider";
 import { LanguageProvider } from "./LanguageProvider";
 import { PreferencesProvider } from "./PreferencesProvider";
 import { Topbar } from "./Topbar";
+import { BottomTabBar } from "./BottomTabBar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,6 +43,7 @@ export default function RootLayout({
                 <main className="app-shell">
                   <div className="app-container">{children}</div>
                 </main>
+                <BottomTabBar />
               </FavoritesProvider>
             </PreferencesProvider>
           </AuthProvider>

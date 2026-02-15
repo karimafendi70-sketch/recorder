@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 import { useLanguage } from "./LanguageProvider";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { usePageView } from "@/lib/trackClient";
@@ -9,31 +10,30 @@ export default function Home() {
   const { t } = useLanguage();
   usePageView();
 
+  const stepsRef = useRef<HTMLDivElement>(null);
+
+  function handleHowItWorks() {
+    stepsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <section className="stack-lg">
-      {/* -- Hero -- */}
-      <div className="hero-panel">
-        <p className="eyebrow">{t("home.eyebrow")}</p>
-        <h1>{t("home.title")}</h1>
-        <p className="hero-subtitle-text">{t("home.subtitle")}</p>
-        <div className="hero-keywords">
-          <span>{t("keywords.forecast")}</span>
-          <span>{t("keywords.heatmap")}</span>
-          <span>{t("keywords.timeline")}</span>
-          <span>{t("keywords.profileDriven")}</span>
+      {/* -- App-style Hero -- */}
+      <section className="home-hero">
+        <div className="hero-content">
+          <p className="hero-tagline">{t("home.hero.tagline")}</p>
+          <h1 className="hero-headline">{t("home.hero.title")}</h1>
+          <p className="hero-sub">{t("home.hero.subtitle")}</p>
+          <div className="hero-actions">
+            <Link href="/forecast" className="btn btn-primary btn-lg">
+              {t("home.hero.ctaPrimary")}
+            </Link>
+            <button type="button" className="btn btn-ghost btn-lg" onClick={handleHowItWorks}>
+              {t("home.hero.ctaSecondary")}
+            </button>
+          </div>
         </div>
-        <div className="hero-actions">
-          <Link href="/forecast" className="btn btn-primary">
-            {t("home.openForecast")}
-          </Link>
-          <Link href="/profile" className="btn btn-ghost">
-            {t("home.setupProfile")}
-          </Link>
-        </div>
-        <p className="muted" style={{ fontSize: "0.82rem" }}>
-          {t("home.profileHint")}
-        </p>
-      </div>
+      </section>
 
       {/* -- About -- */}
       <div className="about-card">
@@ -48,7 +48,7 @@ export default function Home() {
         </div>
 
         {/* 3-step quick-start */}
-        <div className="about-ideas">
+        <div className="about-ideas" ref={stepsRef}>
           <h3>{t("home.stepsTitle")}</h3>
           <ol className="steps-list">
             <li><span className="step-icon">📍</span> {t("home.step1")}</li>
