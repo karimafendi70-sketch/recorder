@@ -927,6 +927,274 @@
 
 /* ── Dark-mode overrides ─────────────────────── */
 
+/* ── Sessions ─────────────────────────────────── */
+
+.sessStars {
+  display: inline-flex;
+  gap: 2px;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.sessStar {
+  color: var(--panel-border);
+  transition: color var(--transition);
+}
+
+.sessStarFilled {
+  color: #f5a623;
+}
+
+.sessStatsCard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.sessStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.sessStatValue {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--accent);
+}
+
+.sessStatLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-align: center;
+}
+
+.sessAddBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.sessAddBtn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.sessForm {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 1.15rem 1.1rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.sessFormTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.sessFormGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.sessFormField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sessFormLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sessInput {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color var(--transition);
+}
+
+.sessInput:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(21, 111, 120, 0.15);
+}
+
+.sessTextarea {
+  resize: vertical;
+  min-height: 2.8rem;
+}
+
+.sessFormActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.sessSubmitBtn {
+  padding: 0.55rem 1.3rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.sessSubmitBtn:hover {
+  background: var(--accent-strong);
+}
+
+.sessCancelBtn {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.sessCancelBtn:hover {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.sessList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sessRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.9rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.sessRow:hover {
+  box-shadow: var(--shadow);
+}
+
+.sessRowMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.sessRowTop {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.sessRowDate {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--foreground);
+}
+
+.sessRowTime {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.sessRowDuration {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+}
+
+.sessRowBoard {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--background);
+  border-radius: var(--radius-full);
+  padding: 0.1rem 0.55rem;
+  margin-top: 0.1rem;
+}
+
+.sessRowNotes {
+  margin: 0.15rem 0 0;
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.sessDeleteBtn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.sessDeleteBtn:hover {
+  background: #fde2e2;
+  color: #c62828;
+}
+
 @media (prefers-color-scheme: dark) {
   .timelineTrack {
     background: var(--timeline-track, #2a363a);
@@ -994,6 +1262,36 @@
     background: #f5c6cb;
     color: #2a1a1a;
   }
+
+  /* ── Sessions dark ── */
+  .sessStatsCard {
+    background: #1e2c30;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .sessAddBtn {
+    background: rgba(21, 111, 120, 0.15);
+    border-color: rgba(21, 111, 120, 0.5);
+  }
+
+  .sessAddBtn:hover {
+    background: var(--accent);
+  }
+
+  .sessForm {
+    background: #1e2c30;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .sessRow {
+    background: #1e2c30;
+    border-color: rgba(21, 111, 120, 0.2);
+  }
+
+  .sessDeleteBtn:hover {
+    background: rgba(198, 40, 40, 0.2);
+    color: #ef9a9a;
+  }
 }
 
 /* ── Responsive ──────────────────────────────── */
@@ -1025,6 +1323,14 @@
   .bestTimeStrip {
     flex-wrap: wrap;
     gap: 0.5rem;
+  }
+
+  .sessStatsCard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sessFormGrid {
+    grid-template-columns: 1fr;
   }
 }
 

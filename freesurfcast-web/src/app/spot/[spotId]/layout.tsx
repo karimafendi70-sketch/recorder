@@ -17,6 +17,7 @@ interface SubTab {
 
 const SUB_TABS: SubTab[] = [
   { key: "forecast",  labelKey: "spot.tabs.forecast",  segment: "forecast",  enabled: true },
+  { key: "sessions",  labelKey: "spot.tabs.sessions",  segment: "sessions",  enabled: true },
   { key: "live",      labelKey: "spot.tabs.live",      segment: "live",      enabled: false },
   { key: "analysis",  labelKey: "spot.tabs.analysis",  segment: "analysis",  enabled: false },
   { key: "charts",    labelKey: "spot.tabs.charts",    segment: "charts",    enabled: false },
