@@ -21,6 +21,7 @@ import { DayDetailPanel } from "./DayDetailPanel";
 import { DataSourceBadge } from "@/app/forecast/components/DataSourceBadge";
 import { SurfWindowsPanel } from "@/app/forecast/components/SurfWindowsPanel";
 import { ScoreExplainer } from "@/app/forecast/components/ScoreExplainer";
+import { ProGraphsSection } from "./ProGraphsSection";
 import { summarizeConditions } from "@/lib/forecast/conditions";
 import type { TranslationKey } from "@/app/LanguageProvider";
 import styles from "../../spot.module.css";
@@ -154,6 +155,9 @@ export default function SpotForecastPage() {
 
       {/* ── Extra sections (below day detail) ── */}
       <section className={styles.moreSection}>
+        {/* Pro graphs for selected day */}
+        <ProGraphsSection daySlots={daySlots} locale={lang} />
+
         {/* All surf windows (full 16-day overview) */}
         <SurfWindowsPanel windows={surfWindows} />
 

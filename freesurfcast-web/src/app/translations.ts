@@ -1389,6 +1389,43 @@ const dict = {
     fr: "Meilleure fenêtre selon votre profil et les prévisions à 16 jours.",
     es: "Mejor ventana según tu perfil y el pronóstico de 16 días.",
   },
+
+  // ── Pro-graphs section ────────────────────
+  "proGraph.title": {
+    en: "Day analysis",
+    nl: "Daganalyse",
+    de: "Tagesanalyse",
+    fr: "Analyse du jour",
+    es: "Análisis del día",
+  },
+  "proGraph.tide": {
+    en: "Tide",
+    nl: "Getij",
+    de: "Gezeiten",
+    fr: "Marée",
+    es: "Marea",
+  },
+  "proGraph.energy": {
+    en: "Wave energy",
+    nl: "Golfenergie",
+    de: "Wellenenergie",
+    fr: "Énergie des vagues",
+    es: "Energía del oleaje",
+  },
+  "proGraph.consistency": {
+    en: "Consistency",
+    nl: "Consistentie",
+    de: "Konsistenz",
+    fr: "Consistance",
+    es: "Consistencia",
+  },
+  "proGraph.weather": {
+    en: "Weather",
+    nl: "Weer",
+    de: "Wetter",
+    fr: "Météo",
+    es: "Clima",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;
