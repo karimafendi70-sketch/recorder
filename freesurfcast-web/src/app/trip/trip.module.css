@@ -1,0 +1,318 @@
+/* ── Trip Planner ─────────────────────── */
+
+/* Header */
+.tripHeader {
+  text-align: center;
+  padding-bottom: var(--gap-md);
+}
+.tripTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.tripSubtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── Controls ─────────────────────────── */
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+.controlRow {
+  display: flex;
+  gap: var(--gap-md);
+  flex-wrap: wrap;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 160px;
+  min-width: 140px;
+}
+
+.controlLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.controlInput,
+.controlSelect {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+.controlInput:focus,
+.controlSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ── Range badge ──────────────────────── */
+
+.rangeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  align-self: center;
+}
+
+/* ── Empty state ──────────────────────── */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 64px 16px;
+}
+.emptyIcon {
+  font-size: 2.5rem;
+}
+.emptyText {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 360px;
+}
+
+/* ── Combo list ───────────────────────── */
+
+.comboList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+/* ── Combo card ───────────────────────── */
+
+.comboCard {
+  display: flex;
+  align-items: stretch;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow var(--transition), transform var(--transition);
+  animation: tripSlideUp 0.35s ease-out both;
+}
+.comboCard:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+@keyframes tripSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Rank badge ───────────────────────── */
+
+.comboRank {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* ── Rating stripe ────────────────────── */
+
+.comboStripe {
+  width: 5px;
+  flex-shrink: 0;
+}
+
+/* ── Body ─────────────────────────────── */
+
+.comboBody {
+  flex: 1;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* ── Header ───────────────────────────── */
+
+.comboHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.comboSpotWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+.comboSpot {
+  font-size: 1rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.comboCountry {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.comboDay {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* ── Score row ────────────────────────── */
+
+.comboScoreRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.comboScoreValue {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.comboRatingPill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+}
+.comboSizeBadge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary, rgba(0, 0, 0, 0.05));
+}
+
+/* ── Best window strip ────────────────── */
+
+.comboWindow {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.comboWindowTrack {
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.comboWindowSeg {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease, left 0.3s ease;
+}
+.comboWindowLabel {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ── Conditions tags ──────────────────── */
+
+.comboConditions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.comboTag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary, rgba(0, 0, 0, 0.04));
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Reason text ──────────────────────── */
+
+.comboReason {
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-weight: 600;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ── Skeleton ─────────────────────────── */
+
+.skeletonWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+.skeletonCard {
+  height: 120px;
+  border-radius: var(--radius-lg);
+  background: var(--border);
+  animation: tripPulse 1.2s ease-in-out infinite;
+}
+@keyframes tripPulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.25; }
+}
+
+/* ── Responsive ───────────────────────── */
+
+@media (max-width: 600px) {
+  .controlRow {
+    flex-direction: column;
+  }
+  .comboHeader {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+/* ── Dark mode ────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  .comboTag,
+  .comboSizeBadge {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}

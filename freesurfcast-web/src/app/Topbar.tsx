@@ -12,6 +12,7 @@ const NAV_ITEMS: { href: string; labelKey: TranslationKey }[] = [
   { href: "/map", labelKey: "nav.map" },
   { href: "/insights", labelKey: "nav.insights" },
   { href: "/compare", labelKey: "nav.compare" },
+  { href: "/trip", labelKey: "nav.trip" },
   { href: "/profile", labelKey: "nav.profile" },
 ];
 
