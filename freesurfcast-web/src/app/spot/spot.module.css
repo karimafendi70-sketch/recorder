@@ -463,6 +463,13 @@
   font-weight: 600;
 }
 
+.timelineHint {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--muted, #5d7178);
+  font-style: italic;
+}
+
 /* ── More / lower sections ───────────────────── */
 
 .moreSection {
