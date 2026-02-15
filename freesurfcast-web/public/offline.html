@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>FreeSurfCast — Offline</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      min-height:100vh;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:#f1f6f8;color:#1b2f35;padding:2rem 1rem;text-align:center;
+    }
+    .icon{font-size:3.5rem;margin-bottom:1rem}
+    h1{font-size:1.4rem;font-weight:750;margin-bottom:.4rem}
+    p{font-size:.92rem;color:#5d7178;line-height:1.55;max-width:380px}
+    .retry{
+      margin-top:1.2rem;display:inline-block;
+      padding:.55rem 1.4rem;border-radius:999px;
+      background:#156f78;color:#fff;font-weight:650;
+      font-size:.88rem;text-decoration:none;
+      transition:background .2s;
+    }
+    .retry:hover{background:#0f5960}
+  </style>
+</head>
+<body>
+  <div class="icon">🌊</div>
+  <h1>You're offline</h1>
+  <p>FreeSurfCast needs an internet connection to load forecasts. Check your connection and try again.</p>
+  <a class="retry" href="/" onclick="location.reload();return false;">Retry</a>
+</body>
+</html>
