@@ -213,15 +213,15 @@ function TideLane({ buckets, metrics, activeBucket, onHover }: LaneProps) {
           {fillD && (
             <path
               d={fillD}
-              fill="var(--accent-light, #e0f2f4)"
-              opacity="0.4"
+              fill="var(--color-graph-tide, #38bdf8)"
+              opacity="0.15"
             />
           )}
           {pathD && (
             <path
               d={pathD}
               fill="none"
-              stroke="var(--accent, #156f78)"
+              stroke="var(--color-graph-tide, #38bdf8)"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -233,8 +233,8 @@ function TideLane({ buckets, metrics, activeBucket, onHover }: LaneProps) {
               y={0}
               width={colW}
               height={H}
-              fill="var(--accent, #156f78)"
-              opacity="0.08"
+              fill="var(--color-wave-primary, #22d3ee)"
+              opacity="0.1"
               rx="4"
             />
           )}
@@ -246,7 +246,7 @@ function TideLane({ buckets, metrics, activeBucket, onHover }: LaneProps) {
                   cx={p.x}
                   cy={p.y}
                   r={activeBucket === i ? 4 : 2.5}
-                  fill="var(--accent, #156f78)"
+                  fill="var(--color-graph-tide, #38bdf8)"
                   opacity={activeBucket === i ? 1 : 0.7}
                 />
               ),
@@ -473,7 +473,7 @@ export function ProGraphsSection({
           {...laneProps}
           field="consistency"
           label={t("proGraph.consistency" as TranslationKey)}
-          color="var(--rating-goodToEpic, #26a69a)"
+          color="var(--color-graph-consistency, #a855f7)"
         />
         <WeatherLane {...laneProps} />
         <TimeAxis

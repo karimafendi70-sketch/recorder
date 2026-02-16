@@ -6,13 +6,13 @@ import styles from "../../spot.module.css";
 /* ── Rating colour map ───────────────────────── */
 
 const RATING_COLORS: Record<string, string> = {
-  epic: "#00acc1",
-  goodToEpic: "#26a69a",
-  good: "#43a047",
-  fairToGood: "#c0ca33",
-  fair: "#fdd835",
-  poorToFair: "#fb8c00",
-  poor: "#e53935",
+  epic: "var(--rating-epic)",
+  goodToEpic: "var(--rating-goodToEpic)",
+  good: "var(--rating-good)",
+  fairToGood: "var(--rating-fairToGood)",
+  fair: "var(--rating-fair)",
+  poorToFair: "var(--rating-poorToFair)",
+  poor: "var(--rating-poor)",
 };
 
 /* ── Props ────────────────────────────────────── */

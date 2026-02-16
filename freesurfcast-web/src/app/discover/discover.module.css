@@ -272,46 +272,7 @@
 
 /* ── Dark mode ───────────────────────────────── */
 
-@media (prefers-color-scheme: dark) {
-  .topDayCard {
-    background: #1e2c30;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .spotCard {
-    background: #1e2c30;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .topDaySize {
-    background: #2a363a;
-  }
-
-  .spotCardAlertBadge {
-    background: rgba(245, 166, 35, 0.15);
-    color: #f5c36a;
-  }
-
-  .quickLink {
-    background: rgba(21, 111, 120, 0.15);
-    border-color: rgba(21, 111, 120, 0.5);
-  }
-
-  .quickLink:hover {
-    background: var(--accent);
-    color: #fff;
-  }
-
-  .skeletonCard {
-    background: linear-gradient(
-      90deg,
-      #1e2c30 25%,
-      #2a383d 50%,
-      #1e2c30 75%
-    );
-    background-size: 200% 100%;
-  }
-}
+/* Dark mode block removed – base theme is now ocean-dark */
 
 /* ── Responsive ──────────────────────────────── */
 

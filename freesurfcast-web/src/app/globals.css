@@ -9,26 +9,69 @@
 }
 
 :root {
-  --background: #f1f6f8;
-  --foreground: #1b2f35;
-  --panel: #ffffff;
-  --panel-border: #d6e5ea;
-  --accent: #156f78;
-  --accent-strong: #0f5961;
-  --accent-light: #e0f2f4;
-  --muted: #5d7178;
-  --shadow-sm: 0 2px 8px rgba(10, 38, 51, 0.06);
-  --shadow: 0 12px 30px rgba(10, 38, 51, 0.08);
-  --shadow-lg: 0 20px 44px rgba(10, 38, 51, 0.1);
+  /* ── Base (ocean dark) ── */
+  --color-bg: #050a10;
+  --color-bg-elevated: #0b1220;
+  --color-border-subtle: #1f2933;
+  --color-text-primary: #e5e7eb;
+  --color-text-muted: #9ca3af;
 
-  /* ── Rating color scale (poor → epic) ── */
-  --rating-poor: #e53935;
-  --rating-poorToFair: #fb8c00;
-  --rating-fair: #fdd835;
-  --rating-fairToGood: #c0ca33;
-  --rating-good: #43a047;
-  --rating-goodToEpic: #26a69a;
-  --rating-epic: #00acc1;
+  /* ── Wave / ocean accents ── */
+  --color-wave-primary: #22d3ee;
+  --color-wave-secondary: #06b6d4;
+  --color-wave-line: #38bdf8;
+
+  /* ── Wind comfort ── */
+  --color-wind-offshore: #22c55e;
+  --color-wind-cross: #facc15;
+  --color-wind-onshore: #ef4444;
+
+  /* ── Buttons / chips ── */
+  --color-button-primary-bg: #06b6d4;
+  --color-button-primary-text: #020617;
+  --color-chip-bg: #111827;
+  --color-chip-border: #1f2937;
+
+  /* ── Graphs ── */
+  --color-graph-axis: #4b5563;
+  --color-graph-grid: #1f2937;
+  --color-graph-tide: #38bdf8;
+  --color-graph-energy: #22d3ee;
+  --color-graph-consistency: #a855f7;
+
+  /* ── Legacy tokens (map to ocean) ── */
+  --background: #050a10;
+  --foreground: #e5e7eb;
+  --panel: #0b1220;
+  --panel-border: #1f2933;
+  --accent: #06b6d4;
+  --accent-strong: #22d3ee;
+  --accent-light: rgba(6, 182, 212, 0.12);
+  --muted: #9ca3af;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 44px rgba(0, 0, 0, 0.4);
+
+  /* ── Rating color scale (ocean wave tints) ── */
+  --rating-poor: #6b7280;
+  --rating-poorToFair: #4b5563;
+  --rating-fair: #38bdf8;
+  --rating-fairToGood: #06b6d4;
+  --rating-good: #06b6d4;
+  --rating-goodToEpic: #22d3ee;
+  --rating-epic: #22d3ee;
+
+  /* ── Undefined tokens (formerly phantom) ── */
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --surface-raised: #0f1a2a;
+  --surface-base: #0b1220;
+  --surface-tint: rgba(6, 182, 212, 0.08);
+  --border: #1f2933;
+  --accent-hover: #22d3ee;
+  --timeline-track: #1f2933;
+
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
@@ -39,8 +82,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
   font-family: var(--font-geist-sans, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   font-size: 15px;
   line-height: 1.6;
@@ -92,8 +135,8 @@ h2 {
   left: 0;
   right: 0;
   z-index: 40;
-  border-bottom: 1px solid var(--panel-border);
-  background: rgba(241, 246, 248, 0.88);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: rgba(5, 10, 16, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
@@ -121,14 +164,14 @@ h2 {
   width: 38px;
   height: 38px;
   border-radius: var(--radius-full);
-  background: linear-gradient(140deg, var(--accent), #49a6ad);
-  color: #ffffff;
+  background: linear-gradient(140deg, var(--color-wave-secondary), var(--color-wave-primary));
+  color: #020617;
   display: grid;
   place-items: center;
   font-size: 0.82rem;
   font-weight: 750;
   letter-spacing: 0.04em;
-  box-shadow: 0 2px 8px rgba(21, 111, 120, 0.25);
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
   transition: transform var(--transition);
 }
 
@@ -157,7 +200,7 @@ h2 {
 .nav-link {
   padding: 0.4rem 0.7rem;
   border-radius: var(--radius-full);
-  color: #4a6870;
+  color: var(--color-text-muted);
   font-size: 0.86rem;
   font-weight: 600;
   transition: background var(--transition), color var(--transition), box-shadow var(--transition);
@@ -165,8 +208,8 @@ h2 {
 }
 
 .nav-link:hover {
-  background: #deeef2;
-  color: #1a4a52;
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--color-wave-primary);
 }
 
 .nav-link:focus-visible {
@@ -229,8 +272,8 @@ h2 {
   width: 30px;
   height: 30px;
   border-radius: var(--radius-full);
-  background: linear-gradient(145deg, var(--accent), #4ba8ae);
-  color: #fff;
+  background: linear-gradient(145deg, var(--color-wave-secondary), var(--color-wave-primary));
+  color: #020617;
   font-weight: 700;
   font-size: 0.82rem;
   letter-spacing: 0.03em;
@@ -845,10 +888,10 @@ h2 {
     left: 0;
     right: 0;
     z-index: 900;
-    background: #ffffffee;
+    background: rgba(5, 10, 16, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid var(--panel-border, #d6e5ea);
+    border-top: 1px solid var(--color-border-subtle);
     padding: 0.35rem 0 calc(0.35rem + env(safe-area-inset-bottom, 0px));
     justify-content: space-around;
   }

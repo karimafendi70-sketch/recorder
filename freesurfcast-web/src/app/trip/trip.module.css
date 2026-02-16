@@ -308,14 +308,7 @@
   }
 }
 
-/* ── Dark mode ────────────────────────── */
-
-@media (prefers-color-scheme: dark) {
-  .comboTag,
-  .comboSizeBadge {
-    background: rgba(255, 255, 255, 0.08);
-  }
-}
+/* Dark mode block removed – base theme is now ocean-dark */
 
 /* ── P3: Trip UX extras ───────────────── */
 

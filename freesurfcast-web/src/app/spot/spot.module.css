@@ -9,10 +9,10 @@
   display: grid;
   gap: 0.45rem;
   padding: 1rem 1.2rem;
-  background: linear-gradient(165deg, #e2eff3, #f8fcfd 68%);
-  border: 1px solid #cfe2e8;
+  background: linear-gradient(165deg, #0b1220, #0f1a2a 68%);
+  border: 1px solid var(--color-border-subtle, #1f2933);
   border-radius: 22px;
-  box-shadow: 0 16px 32px rgba(13, 54, 66, 0.07);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
   position: relative;
   overflow: hidden;
 }
@@ -25,7 +25,7 @@
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(21, 111, 120, 0.06), transparent 70%);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.08), transparent 70%);
   pointer-events: none;
 }
 
@@ -142,8 +142,8 @@
   width: 72px;
   padding: 0.45rem 0.35rem;
   border-radius: 12px;
-  border: 1.5px solid var(--panel-border, #d6e5ea);
-  background: #f9fcfd;
+  border: 1.5px solid var(--color-border-subtle, #1f2933);
+  background: var(--color-bg-elevated, #0b1220);
   display: grid;
   gap: 0.2rem;
   justify-items: center;
@@ -154,23 +154,23 @@
 }
 
 .dayBarCard:hover {
-  border-color: var(--accent, #156f78);
-  background: var(--accent-light, #e0f2f4);
+  border-color: var(--color-wave-secondary, #06b6d4);
+  background: rgba(6, 182, 212, 0.08);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(13, 54, 66, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .dayBarCardActive {
-  border-color: var(--accent, #156f78);
-  background: var(--accent, #156f78);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(21, 111, 120, 0.25);
+  border-color: var(--color-wave-primary, #22d3ee);
+  background: var(--color-wave-secondary, #06b6d4);
+  color: #020617;
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3);
 }
 
 .dayBarCardActive .dayBarLabel,
 .dayBarCardActive .dayBarHeight,
 .dayBarCardActive .dayBarWind {
-  color: #fff;
+  color: #020617;
 }
 
 .dayBarLabel {
@@ -274,7 +274,7 @@
   padding: 0.75rem 1rem;
   border-radius: 14px;
   border: 2px solid var(--accent, #156f78);
-  background: linear-gradient(135deg, var(--accent-light, #e0f2f4) 0%, #f1f9fa 100%);
+  background: linear-gradient(135deg, var(--accent-light, rgba(6,182,212,0.12)) 0%, #0f1a2a 100%);
 }
 
 .bestTimeIcon {
@@ -327,15 +327,15 @@
 .proCard {
   padding: 0.75rem 0.85rem;
   border-radius: 14px;
-  border: 1.5px solid rgba(21, 111, 120, 0.15);
-  background: linear-gradient(175deg, #f5fbfc, #fafdfe 60%);
+  border: 1.5px solid rgba(6, 182, 212, 0.15);
+  background: linear-gradient(175deg, #0b1220, #0f1a2a 60%);
   display: grid;
   gap: 0.25rem;
   transition: box-shadow var(--transition, 0.15s ease);
 }
 
 .proCard:hover {
-  box-shadow: 0 4px 14px rgba(21, 111, 120, 0.08);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.1);
 }
 
 .proCardLabel {
@@ -537,7 +537,7 @@
   padding: 0.4rem 0.65rem;
   border-radius: 10px;
   border: 1.5px solid var(--panel-border, #d6e5ea);
-  background: #fafdfe;
+  background: #0b1220;
   display: grid;
   gap: 0.15rem;
   text-align: center;
@@ -546,18 +546,18 @@
 }
 
 .timeBlockHigh {
-  border-color: #7dd4a8;
-  background: linear-gradient(170deg, #edf9f2, #f5fcf7);
+  border-color: #065f46;
+  background: linear-gradient(170deg, #0b1a1a, #0f1a2a);
 }
 
 .timeBlockMedium {
-  border-color: #cdd89e;
-  background: linear-gradient(170deg, #f5f8e9, #fafcf1);
+  border-color: #4a5230;
+  background: linear-gradient(170deg, #0f1820, #0f1a2a);
 }
 
 .timeBlockLow {
-  border-color: #e0b8be;
-  background: linear-gradient(170deg, #fdf2f3, #fef8f8);
+  border-color: #4a2030;
+  background: linear-gradient(170deg, #1a1015, #0f1a2a);
 }
 
 .timeBlockTime {
@@ -598,8 +598,8 @@
   display: grid;
   gap: 0;
   border-radius: 16px;
-  border: 1.5px solid rgba(21, 111, 120, 0.15);
-  background: linear-gradient(175deg, #f5fbfc, #fafdfe 60%);
+  border: 1.5px solid rgba(6, 182, 212, 0.15);
+  background: linear-gradient(175deg, #0b1220, #0f1a2a 60%);
   overflow: hidden;
 }
 
@@ -609,7 +609,7 @@
   grid-template-columns: 54px 1fr;
   align-items: stretch;
   min-height: 52px;
-  border-bottom: 1px solid rgba(21, 111, 120, 0.08);
+  border-bottom: 1px solid rgba(6, 182, 212, 0.08);
 }
 
 .analysisLane:last-of-type {
@@ -624,9 +624,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: var(--accent, #156f78);
-  background: rgba(21, 111, 120, 0.03);
-  border-right: 1px solid rgba(21, 111, 120, 0.08);
+  color: var(--color-wave-primary, #22d3ee);
+  background: rgba(6, 182, 212, 0.04);
+  border-right: 1px solid rgba(6, 182, 212, 0.08);
   line-height: 1.15;
   word-break: break-word;
 }
@@ -678,9 +678,9 @@
 }
 
 .analysisBucketActive {
-  background: rgba(21, 111, 120, 0.07);
-  border-left-color: rgba(21, 111, 120, 0.12);
-  border-right-color: rgba(21, 111, 120, 0.12);
+  background: rgba(6, 182, 212, 0.1);
+  border-left-color: rgba(6, 182, 212, 0.18);
+  border-right-color: rgba(6, 182, 212, 0.18);
 }
 
 .analysisBarValue {
@@ -702,7 +702,7 @@
 .analysisBar {
   width: 100%;
   border-radius: 3px 3px 0 0;
-  background: var(--accent, #156f78);
+  background: var(--color-graph-energy, #22d3ee);
   min-height: 2px;
   transition: height 0.3s ease;
 }
@@ -711,7 +711,7 @@
   width: 60%;
   height: 2px;
   border-radius: 1px;
-  background: rgba(21, 111, 120, 0.12);
+  background: rgba(6, 182, 212, 0.12);
 }
 
 /* Weather column */
@@ -736,7 +736,7 @@
 .analysisWindArrow {
   width: 12px;
   height: 12px;
-  color: var(--accent, #156f78);
+  color: var(--color-wave-primary, #22d3ee);
   opacity: 0.7;
 }
 
@@ -815,9 +815,9 @@
   border-radius: 4px;
   background: linear-gradient(
     90deg,
-    #e4edf0 25%,
-    #f0f6f8 50%,
-    #e4edf0 75%
+    #0f1a2a 25%,
+    #1a2535 50%,
+    #0f1a2a 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
@@ -905,8 +905,8 @@
   padding: 2rem 1.2rem;
   text-align: center;
   border-radius: 18px;
-  border: 1.5px dashed var(--panel-border, #d6e5ea);
-  background: #f8fcfd;
+  border: 1.5px dashed var(--color-border-subtle, #1f2933);
+  background: var(--color-bg-elevated, #0b1220);
 }
 
 .emptyStateIcon {
@@ -936,9 +936,9 @@
   gap: 0.65rem;
   padding: 0.75rem 1rem;
   border-radius: 14px;
-  border: 1.5px solid #f5c6cb;
-  background: linear-gradient(170deg, #fef2f2, #fff8f8);
-  color: #842029;
+  border: 1.5px solid #6b2030;
+  background: linear-gradient(170deg, #1a1015, #0f1a2a);
+  color: #ef9a9a;
 }
 
 .errorBannerIcon {
@@ -1496,163 +1496,8 @@
   color: #c62828;
 }
 
-@media (prefers-color-scheme: dark) {
-  .timelineTrack {
-    background: var(--timeline-track, #2a363a);
-  }
-
-  .timelineMarker {
-    border-color: #2a363a;
-  }
-
-  .timelineTick {
-    background: rgba(255, 255, 255, 0.12);
-  }
-
-  .proCard {
-    background: linear-gradient(175deg, #1e2c30, #22333a 60%);
-    border-color: rgba(21, 111, 120, 0.25);
-  }
-
-  .dayBarCard {
-    background: #1e2c30;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .dayBarCard:hover {
-    background: #1e3538;
-    border-color: var(--accent, #156f78);
-  }
-
-  .proGraphCard {
-    background: linear-gradient(175deg, #1e2c30, #22333a 60%);
-    border-color: rgba(21, 111, 120, 0.25);
-  }
-
-  .analysisStack {
-    background: linear-gradient(175deg, #1e2c30, #22333a 60%);
-    border-color: rgba(21, 111, 120, 0.25);
-  }
-
-  .analysisLane {
-    border-bottom-color: rgba(21, 111, 120, 0.12);
-  }
-
-  .analysisLaneLabel {
-    background: rgba(21, 111, 120, 0.06);
-    border-right-color: rgba(21, 111, 120, 0.12);
-  }
-
-  .analysisBucketActive {
-    background: rgba(21, 111, 120, 0.12);
-  }
-
-  .analysisBarEmpty {
-    background: rgba(255, 255, 255, 0.08);
-  }
-
-  .skeletonLine,
-  .skeletonStripe,
-  .skeletonPill,
-  .skeletonDot,
-  .skeletonBlock {
-    background: linear-gradient(
-      90deg,
-      #1e2c30 25%,
-      #2a383d 50%,
-      #1e2c30 75%
-    );
-    background-size: 200% 100%;
-  }
-
-  .emptyState {
-    background: #1a2529;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .errorBanner {
-    background: linear-gradient(170deg, #2a1a1a, #221818);
-    border-color: #5a2028;
-    color: #f5c6cb;
-  }
-
-  .errorBannerRetry {
-    border-color: #f5c6cb;
-    color: #f5c6cb;
-  }
-
-  .errorBannerRetry:hover {
-    background: #f5c6cb;
-    color: #2a1a1a;
-  }
-
-  /* ── Sessions dark ── */
-  .sessStatsCard {
-    background: #1e2c30;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .sessAddBtn {
-    background: rgba(21, 111, 120, 0.15);
-    border-color: rgba(21, 111, 120, 0.5);
-  }
-
-  .sessAddBtn:hover {
-    background: var(--accent);
-  }
-
-  .sessForm {
-    background: #1e2c30;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .sessRow {
-    background: #1e2c30;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .sessDeleteBtn:hover {
-    background: rgba(198, 40, 40, 0.2);
-    color: #ef9a9a;
-  }
-
-  /* ── Alerts dark ── */
-  .alertToggleBtn {
-    background: #1e2c30;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .alertToggleBtnActive {
-    background: rgba(245, 166, 35, 0.12);
-    border-color: rgba(245, 166, 35, 0.4);
-    color: #f5c36a;
-  }
-
-  .alertPanel {
-    background: #1e2c30;
-    border-color: rgba(21, 111, 120, 0.2);
-  }
-
-  .alertChip {
-    border-color: rgba(21, 111, 120, 0.25);
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .alertChipSelected {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: #fff;
-  }
-
-  .alertRemoveBtn {
-    border-color: rgba(198, 40, 40, 0.4);
-    color: #ef9a9a;
-  }
-
-  .alertRemoveBtn:hover {
-    background: rgba(198, 40, 40, 0.2);
-  }
-}
+/* Dark mode block removed – base theme is now ocean-dark.
+   Skeleton animation still works via base styles. */
 
 /* ── Responsive ──────────────────────────────── */
 
@@ -2309,11 +2154,11 @@
 /* ── Individual card ─────────────────────────── */
 
 .fcCard {
-  background: var(--panel, #fff);
-  border: 1px solid var(--panel-border, #d2e4e8);
+  background: var(--color-bg-elevated, #0b1220);
+  border: 1px solid var(--color-border-subtle, #1f2933);
   border-radius: var(--radius-md, 10px);
   padding: 1rem 1.1rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   display: grid;
   gap: 0.6rem;
 }

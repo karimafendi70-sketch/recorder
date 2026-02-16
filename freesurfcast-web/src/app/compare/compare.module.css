@@ -225,12 +225,7 @@
   }
 }
 
-/* ── Dark mode ────────────────────────── */
-@media (prefers-color-scheme: dark) {
-  .colBlock {
-    background: rgba(255, 255, 255, 0.06);
-  }
-}
+/* Dark mode block removed – base theme is now ocean-dark */
 
 /* ── P3: Compare UX extras ────────────── */
 
