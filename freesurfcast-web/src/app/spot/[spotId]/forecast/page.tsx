@@ -26,6 +26,12 @@ import { ScoreExplainer } from "@/app/forecast/components/ScoreExplainer";
 import { ProGraphsSection } from "./ProGraphsSection";
 import { AlertConfigPanel } from "./AlertConfigPanel";
 import { ForecastTldrCard } from "./ForecastTldrCard";
+import { ForecastConditionCard } from "./ForecastConditionCard";
+import { ForecastSurfHeightCard } from "./ForecastSurfHeightCard";
+import { ForecastWindCard } from "./ForecastWindCard";
+import { ForecastSwellCard } from "./ForecastSwellCard";
+import { ForecastTideCard } from "./ForecastTideCard";
+import { ForecastTemperatureCard } from "./ForecastTemperatureCard";
 import { ForecastDetailsSection } from "./ForecastDetailsSection";
 import { ForecastActionsRow } from "./ForecastActionsRow";
 import { ForecastFilterStatusBar } from "./ForecastFilterStatusBar";
@@ -33,7 +39,7 @@ import { DayStrip24h } from "./DayStrip24h";
 import { TrendBadges } from "./TrendBadges";
 import { DaySummaryLine } from "./DaySummaryLine";
 import { getSlotsForDay } from "@/lib/forecast/daySlots";
-import { analyseDayTrends } from "@/lib/forecast/dayTrends";
+import { analyseDayTrends, buildStripBlocks, pickDaySummaryKey } from "@/lib/forecast/dayTrends";
 import { summarizeConditions } from "@/lib/forecast/conditions";
 import { useAlertProfile } from "@/lib/alerts/useAlertProfile";
 import { buildAlertMap } from "@/lib/alerts/matchDayAlert";
@@ -216,24 +222,38 @@ export default function SpotForecastPage() {
     };
   }, [daySlots, qualityForSlot, activeSpot.name]);
 
+  // ── Rating bucket + card data ──
+  const ratingBucket = useMemo(() => {
+    if (dayAvgScore >= 8.5) return "epic";
+    if (dayAvgScore >= 7)   return "goodToEpic";
+    if (dayAvgScore >= 5.5) return "good";
+    if (dayAvgScore >= 4.5) return "fairToGood";
+    if (dayAvgScore >= 3)   return "fair";
+    if (dayAvgScore >= 1.5) return "poorToFair";
+    return "poor";
+  }, [dayAvgScore]);
+
+  const ratingLabel = useMemo(
+    () => t(`rating.${ratingBucket}` as TranslationKey),
+    [ratingBucket, t],
+  );
+
+  // Summary text for condition card (reuses DaySummaryLine logic)
+  const summaryText = useMemo(() => {
+    if (daySlots.length === 0) return "";
+    const blocks = buildStripBlocks(daySlots, qualityForSlot);
+    const trends = analyseDayTrends(daySlots);
+    const key = pickDaySummaryKey(blocks, dayAvgScore, trends);
+    return t(key as TranslationKey);
+  }, [daySlots, dayAvgScore, qualityForSlot, t]);
+
   // ── TL;DR card data ──
   const tldrData = useMemo(() => {
-    const ratingKey = `rating.${
-      dayAvgScore >= 8.5 ? "epic"
-        : dayAvgScore >= 7 ? "goodToEpic"
-        : dayAvgScore >= 5.5 ? "good"
-        : dayAvgScore >= 4.5 ? "fairToGood"
-        : dayAvgScore >= 3 ? "fair"
-        : dayAvgScore >= 1.5 ? "poorToFair"
-        : "poor"
-    }` as TranslationKey;
     const RATING_COLORS: Record<string, string> = {
       epic: "#00acc1", goodToEpic: "#26a69a", good: "#43a047",
       fairToGood: "#c0ca33", fair: "#fdd835", poorToFair: "#fb8c00", poor: "#e53935",
     };
-    const band = dayAvgScore >= 8 ? "epic" : dayAvgScore >= 7 ? "goodToEpic" : dayAvgScore >= 6 ? "good" : dayAvgScore >= 5 ? "fairToGood" : dayAvgScore >= 4 ? "fair" : dayAvgScore >= 3 ? "poorToFair" : "poor";
 
-    // Wave height range across all day slots
     const heights = daySlots
       .map((s) => (s.mergedSpot as Record<string, unknown> | undefined)?.golfHoogteMeter as number | undefined)
       .filter((h): h is number => h != null);
@@ -245,8 +265,8 @@ export default function SpotForecastPage() {
       : undefined;
 
     return {
-      ratingLabel: t(ratingKey),
-      ratingColor: RATING_COLORS[band] ?? "#e53935",
+      ratingLabel,
+      ratingColor: RATING_COLORS[ratingBucket] ?? "#e53935",
       minHeight: minH,
       maxHeight: maxH,
       sizeBandLabel: explainerData?.sizeKey ? t(explainerData.sizeKey) : undefined,
@@ -254,7 +274,7 @@ export default function SpotForecastPage() {
       windLabel: explainerData?.windKey ? t(explainerData.windKey) : undefined,
       surfaceLabel: explainerData?.surfaceKey ? t(explainerData.surfaceKey) : undefined,
     };
-  }, [dayAvgScore, daySlots, dayBest, explainerData, t]);
+  }, [ratingBucket, ratingLabel, daySlots, dayBest, explainerData, t]);
 
   // Share state
   const [showShare, setShowShare] = useState(false);
@@ -265,15 +285,6 @@ export default function SpotForecastPage() {
   );
 
   const shareText = useMemo(() => {
-    const ratingKey = `rating.${
-      dayAvgScore >= 8.5 ? "epic"
-        : dayAvgScore >= 7 ? "goodToEpic"
-        : dayAvgScore >= 5.5 ? "good"
-        : dayAvgScore >= 4.5 ? "fairToGood"
-        : dayAvgScore >= 3 ? "fair"
-        : dayAvgScore >= 1.5 ? "poorToFair"
-        : "poor"
-    }` as TranslationKey;
     const bestLabel = dayBest?.window
       ? `${dayBest.window.startLabel}–${dayBest.window.endLabel}`
       : undefined;
@@ -284,7 +295,7 @@ export default function SpotForecastPage() {
       dayLabel,
       dateISO: activeDateKey,
       avgScore: dayAvgScore,
-      ratingLabel: t(ratingKey),
+      ratingLabel,
       sizeBand: cond?.sizeKey ? t(cond.sizeKey) : undefined,
       bestWindowLabel: bestLabel,
       windSummary: cond?.windKey ? t(cond.windKey) : undefined,
@@ -295,7 +306,7 @@ export default function SpotForecastPage() {
           : undefined,
       url: shareUrl,
     });
-  }, [activeSpot.name, spotId, dayLabel, activeDateKey, dayAvgScore, dayBest, explainerData, shareUrl, t]);
+  }, [activeSpot.name, spotId, dayLabel, activeDateKey, dayAvgScore, ratingLabel, dayBest, explainerData, shareUrl, t]);
 
   // Determine if user has active filters / alerts
   const hasActiveFilters = !prefsDefaults;
@@ -343,22 +354,31 @@ export default function SpotForecastPage() {
         />
       )}
 
-      {/* ── TL;DR card — above the fold ── */}
+      {/* ── Condition + data cards ── */}
       {!isLoading && (
-        <ForecastTldrCard
-          avgScore={dayAvgScore}
-          ratingLabel={tldrData.ratingLabel}
-          ratingColor={tldrData.ratingColor}
-          minHeight={tldrData.minHeight}
-          maxHeight={tldrData.maxHeight}
-          sizeBandLabel={tldrData.sizeBandLabel}
-          bestWindowLabel={tldrData.bestWindowLabel}
-          windLabel={tldrData.windLabel}
-          surfaceLabel={tldrData.surfaceLabel}
-        />
+        <div className={styles.fcCardGrid}>
+          <ForecastConditionCard
+            ratingBucket={ratingBucket}
+            ratingLabel={ratingLabel}
+            avgScore={dayAvgScore}
+            summaryText={summaryText}
+          />
+          <ForecastSurfHeightCard
+            daySlots={daySlots}
+            sizeBandLabel={tldrData.sizeBandLabel}
+          />
+          <ForecastWindCard
+            daySlots={daySlots}
+            windLabel={tldrData.windLabel}
+            surfaceLabel={tldrData.surfaceLabel}
+          />
+          <ForecastSwellCard daySlots={daySlots} />
+          <ForecastTideCard daySlots={daySlots} />
+          <ForecastTemperatureCard daySlots={daySlots} />
+        </div>
       )}
 
-      {/* ── 24h strip + trends + dynamic summary ── */}
+      {/* ── 24h strip + trends ── */}
       {!isLoading && daySlots.length > 0 && uiPrefs.dayStripEnabled && (
         <>
           <DayStrip24h
@@ -367,11 +387,6 @@ export default function SpotForecastPage() {
             scoreFn={qualityForSlot}
           />
           <TrendBadges trends={dayTrends} />
-          <DaySummaryLine
-            daySlots={daySlots}
-            avgScore={dayAvgScore}
-            scoreFn={qualityForSlot}
-          />
         </>
       )}
 
