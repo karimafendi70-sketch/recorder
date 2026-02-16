@@ -2893,6 +2893,64 @@ const dict = {
     fr: "favorable",
     es: "favorable",
   },
+
+  // ── P18: Home / Start screen ──
+  "home.start.title": {
+    en: "FreeSurfCast",
+    nl: "FreeSurfCast",
+    de: "FreeSurfCast",
+    fr: "FreeSurfCast",
+    es: "FreeSurfCast",
+  },
+  "home.start.subtitle": {
+    en: "Smart surf forecasts",
+    nl: "Slimme surfvoorspellingen",
+    de: "Smarte Surfvorhersagen",
+    fr: "Prévisions de surf intelligentes",
+    es: "Pronósticos de surf inteligentes",
+  },
+  "home.start.searchTitle": {
+    en: "Find a spot",
+    nl: "Zoek een spot",
+    de: "Spot finden",
+    fr: "Trouver un spot",
+    es: "Buscar un spot",
+  },
+  "home.start.searchPlaceholder": {
+    en: "Search by spot name…",
+    nl: "Zoek op spotnaam…",
+    de: "Nach Spotname suchen…",
+    fr: "Chercher par nom de spot…",
+    es: "Buscar por nombre de spot…",
+  },
+  "home.start.openMap": {
+    en: "Browse on map",
+    nl: "Zoek via kaart",
+    de: "Auf Karte suchen",
+    fr: "Chercher sur la carte",
+    es: "Buscar en el mapa",
+  },
+  "home.start.languageTitle": {
+    en: "Language",
+    nl: "Taal",
+    de: "Sprache",
+    fr: "Langue",
+    es: "Idioma",
+  },
+  "home.start.lastSpotTitle": {
+    en: "Continue",
+    nl: "Verder gaan",
+    de: "Weitermachen",
+    fr: "Continuer",
+    es: "Continuar",
+  },
+  "home.start.recentTitle": {
+    en: "Recent spots",
+    nl: "Recente spots",
+    de: "Letzte Spots",
+    fr: "Spots récents",
+    es: "Spots recientes",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

@@ -1040,6 +1040,246 @@ h2 {
 }
 
 /* ═══════════════════════════════════════════════
+   P18: Home / Start screen
+   ═══════════════════════════════════════════════ */
+
+.homeStart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2.5rem 1rem 3rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.homeStartHeader {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.homeStartLogo {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.homeStartTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+
+.homeStartSubtitle {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.homeStartSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.homeStartSectionTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+/* ── Search ── */
+
+.homeSearchWrap {
+  position: relative;
+}
+
+.homeSearchInput {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border-subtle);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 0.92rem;
+  transition: border-color var(--transition);
+  outline: none;
+}
+
+.homeSearchInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.homeSearchInput:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-weak);
+}
+
+.homeSearchDropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem 0;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 910;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.homeSearchResult {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.55rem 0.85rem;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.homeSearchResult:hover {
+  background: var(--color-accent-weak);
+}
+
+.homeSearchName {
+  font-weight: 600;
+}
+
+.homeSearchCountry {
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
+.homeSearchEmpty {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  z-index: 910;
+}
+
+/* ── Map button ── */
+
+.homeMapButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border-subtle);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.homeMapButton:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-weak);
+}
+
+/* ── Recent spots ── */
+
+.homeRecentList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.homeRecentChip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border-subtle);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.homeRecentChip:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-weak);
+}
+
+.homeRecentName {
+  /* inherits */
+}
+
+.homeRecentCountry {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+/* ── Language pills ── */
+
+.homeLangRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.homeLangPill {
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-border-subtle);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.homeLangPill:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text-primary);
+}
+
+.homeLangPillActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent-weak);
+  color: var(--color-active-text);
+}
+
+/* ═══════════════════════════════════════════════
    P10: Topbar settings button
    ═══════════════════════════════════════════════ */
 

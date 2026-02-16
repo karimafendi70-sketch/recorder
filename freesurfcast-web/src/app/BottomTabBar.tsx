@@ -18,10 +18,7 @@ interface TabDef {
 
 const ALL_TABS: TabDef[] = [
   { href: "/",          labelKey: "tab.home",      icon: "🏠" },
-  { href: "/discover",  labelKey: "tab.discover",  icon: "🔍",  flagKey: "enableDiscover" },
   { href: "/forecast",  labelKey: "tab.forecast",  icon: "🌊" },
-  { href: "/map",       labelKey: "tab.map",       icon: "🗺️" },
-  { href: "/insights",  labelKey: "tab.insights",  icon: "📊",  flagKey: "enableProfileInsights" },
   { href: "/compare",   labelKey: "tab.compare",   icon: "⚖️",  flagKey: "enableCompare" },
   { href: "/trip",      labelKey: "tab.trip",      icon: "✈️",  flagKey: "enableTrip" },
   { href: "/settings",  labelKey: "tab.settings",  icon: "⚙️" },
