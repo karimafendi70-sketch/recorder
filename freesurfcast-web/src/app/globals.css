@@ -72,6 +72,12 @@
   --accent-hover: #22d3ee;
   --timeline-track: #1f2933;
 
+  /* ── Active / selected states ── */
+  --color-active-bg: rgba(34, 211, 238, 0.16);
+  --color-active-bg-strong: #0f172a;
+  --color-active-text: #f9fafb;
+  --color-pill-bg: #020617;
+
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
