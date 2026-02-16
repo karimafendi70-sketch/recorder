@@ -161,6 +161,34 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ── About ─────────────────────── */}
+      <section className="homeAbout">
+        <h2 className="homeAboutTitle">
+          {t("home.about.title" as TranslationKey)}
+        </h2>
+        <p className="homeAboutTagline">
+          {t("home.about.tagline" as TranslationKey)}
+        </p>
+
+        <div className="homeAboutGrid">
+          <div className="homeAboutCard">
+            <span className="homeAboutIcon">📍</span>
+            <h3>{t("home.about.block1.title" as TranslationKey)}</h3>
+            <p>{t("home.about.block1.body" as TranslationKey)}</p>
+          </div>
+          <div className="homeAboutCard">
+            <span className="homeAboutIcon">⚙️</span>
+            <h3>{t("home.about.block2.title" as TranslationKey)}</h3>
+            <p>{t("home.about.block2.body" as TranslationKey)}</p>
+          </div>
+          <div className="homeAboutCard">
+            <span className="homeAboutIcon">🌊</span>
+            <h3>{t("home.about.block3.title" as TranslationKey)}</h3>
+            <p>{t("home.about.block3.body" as TranslationKey)}</p>
+          </div>
+        </div>
+      </section>
     </section>
   );
 }

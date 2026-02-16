@@ -1279,6 +1279,68 @@ h2 {
   color: var(--color-active-text);
 }
 
+/* ── P19: About section ── */
+
+.homeAbout {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.homeAboutTitle {
+  font-size: 1.1rem;
+  font-weight: 750;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+.homeAboutTagline {
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  font-style: italic;
+}
+
+.homeAboutGrid {
+  display: grid;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.homeAboutCard {
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border-subtle);
+  background: var(--color-bg-elevated);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.homeAboutCard h3 {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.homeAboutCard p {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.homeAboutIcon {
+  font-size: 1.15rem;
+  line-height: 1;
+  margin-bottom: 0.15rem;
+}
+
 /* ═══════════════════════════════════════════════
    P10: Topbar settings button
    ═══════════════════════════════════════════════ */

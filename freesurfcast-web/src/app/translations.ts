@@ -2951,6 +2951,80 @@ const dict = {
     fr: "Spots récents",
     es: "Spots recientes",
   },
+
+  // ── P19: About section ──
+  "home.about.title": {
+    en: "How does it work?",
+    nl: "Hoe werkt het?",
+    de: "Wie funktioniert es?",
+    fr: "Comment ça marche ?",
+    es: "¿Cómo funciona?",
+  },
+  "home.about.tagline": {
+    en: "Built for surfers, by surfers.",
+    nl: "Gemaakt voor surfers, door surfers.",
+    de: "Von Surfern, für Surfer.",
+    fr: "Par des surfeurs, pour des surfeurs.",
+    es: "Hecho por surfistas, para surfistas.",
+  },
+  "home.about.block1.title": {
+    en: "Pick your spot",
+    nl: "Kies je spot",
+    de: "Wähle deinen Spot",
+    fr: "Choisis ton spot",
+    es: "Elige tu spot",
+  },
+  "home.about.block1.body": {
+    en: "Search or browse 40+ spots across Europe, Africa, Americas and Asia-Pacific.",
+    nl: "Zoek of blader door 40+ spots in Europa, Afrika, Amerika en Azië-Pacific.",
+    de: "Suche oder durchstöbere 40+ Spots in Europa, Afrika, Amerika und Asien-Pazifik.",
+    fr: "Recherchez ou parcourez plus de 40 spots en Europe, Afrique, Amériques et Asie-Pacifique.",
+    es: "Busca o explora más de 40 spots en Europa, África, América y Asia-Pacífico.",
+  },
+  "home.about.block2.title": {
+    en: "Set your profile",
+    nl: "Stel je profiel in",
+    de: "Stelle dein Profil ein",
+    fr: "Configure ton profil",
+    es: "Configura tu perfil",
+  },
+  "home.about.block2.body": {
+    en: "Tell us your level, preferred wave size and board type. We score every day to match your style.",
+    nl: "Geef je niveau, voorkeurs-golfgrootte en boardtype op. We scoren elke dag op basis van jouw stijl.",
+    de: "Gib dein Level, bevorzugte Wellengröße und Boardtyp an. Wir bewerten jeden Tag passend zu deinem Stil.",
+    fr: "Indique ton niveau, ta taille de vague préférée et ton type de planche. On note chaque jour selon ton style.",
+    es: "Indica tu nivel, tamaño de ola preferido y tipo de tabla. Puntuamos cada día según tu estilo.",
+  },
+  "home.about.block3.title": {
+    en: "Read the forecast",
+    nl: "Lees de forecast",
+    de: "Lies die Vorhersage",
+    fr: "Lis les prévisions",
+    es: "Lee el pronóstico",
+  },
+  "home.about.block3.body": {
+    en: "Personalized scores, tide curves, wind analysis and 16-day outlook — all in one view.",
+    nl: "Persoonlijke scores, getijkrommes, windanalyse en 16-daagse vooruitzichten — alles in één overzicht.",
+    de: "Personalisierte Scores, Gezeitenkurven, Windanalyse und 16-Tage-Ausblick — alles auf einen Blick.",
+    fr: "Scores personnalisés, courbes de marée, analyse du vent et prévisions sur 16 jours — tout en un.",
+    es: "Puntuaciones personalizadas, curvas de mareas, análisis de viento y pronóstico de 16 días — todo en una vista.",
+  },
+
+  // ── P19: Forecast details strip ──
+  "forecast.details.showDetails": {
+    en: "Details & settings",
+    nl: "Details & instellingen",
+    de: "Details & Einstellungen",
+    fr: "Détails & paramètres",
+    es: "Detalles & ajustes",
+  },
+  "forecast.details.hideDetails": {
+    en: "Hide details",
+    nl: "Verberg details",
+    de: "Details ausblenden",
+    fr: "Masquer les détails",
+    es: "Ocultar detalles",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

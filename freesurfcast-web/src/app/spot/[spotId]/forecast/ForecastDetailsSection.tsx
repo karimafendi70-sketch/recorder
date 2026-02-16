@@ -21,15 +21,18 @@ export function ForecastDetailsSection({ children, defaultOpen = false }: Props)
   return (
     <section className={styles.detailsSection}>
       <button
-        className={styles.detailsToggle}
+        className={`${styles.detailsToggle} ${open ? styles.detailsToggleOpen : ""}`}
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >
         <span className={styles.detailsToggleIcon}>{open ? "▾" : "▸"}</span>
-        <span>
+        <span className={styles.detailsToggleLabel}>
           {open
-            ? t("forecast.details.hide" as TranslationKey)
-            : t("forecast.details.show" as TranslationKey)}
+            ? t("forecast.details.hideDetails" as TranslationKey)
+            : t("forecast.details.showDetails" as TranslationKey)}
+        </span>
+        <span className={styles.detailsToggleBadge}>
+          {open ? "−" : "+"}
         </span>
       </button>
 
