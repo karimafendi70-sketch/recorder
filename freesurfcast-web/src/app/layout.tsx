@@ -4,7 +4,8 @@ import { AuthProvider } from "./AuthProvider";
 import { FavoritesProvider } from "./FavoritesProvider";
 import { LanguageProvider } from "./LanguageProvider";
 import { PreferencesProvider } from "./PreferencesProvider";
-import { Topbar } from "./Topbar";
+import { UiPreferencesProvider } from "./UiPreferencesProvider";
+import { FeatureFlagsProvider } from "./FeatureFlagsProvider";
 import { BottomTabBar } from "./BottomTabBar";
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar";
 import "./globals.css";
@@ -85,14 +86,17 @@ export default function RootLayout({
         <LanguageProvider>
           <AuthProvider>
             <PreferencesProvider>
-              <FavoritesProvider>
-                <Topbar />
-                <main className="app-shell">
-                  <div className="app-container">{children}</div>
-                </main>
-                <BottomTabBar />
-                <ServiceWorkerRegistrar />
-              </FavoritesProvider>
+              <UiPreferencesProvider>
+                <FeatureFlagsProvider>
+                  <FavoritesProvider>
+                    <main className="app-shell">
+                      <div className="app-container">{children}</div>
+                    </main>
+                    <BottomTabBar />
+                    <ServiceWorkerRegistrar />
+                  </FavoritesProvider>
+                </FeatureFlagsProvider>
+              </UiPreferencesProvider>
             </PreferencesProvider>
           </AuthProvider>
         </LanguageProvider>

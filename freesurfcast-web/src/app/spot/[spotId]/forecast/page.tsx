@@ -38,6 +38,7 @@ import { summarizeConditions } from "@/lib/forecast/conditions";
 import { useAlertProfile } from "@/lib/alerts/useAlertProfile";
 import { buildAlertMap } from "@/lib/alerts/matchDayAlert";
 import { buildForecastShareText, buildForecastShareUrl } from "@/lib/share/forecastShare";
+import { useUiPreferences } from "@/app/UiPreferencesProvider";
 import type { TranslationKey } from "@/app/LanguageProvider";
 import styles from "../../spot.module.css";
 
@@ -47,6 +48,7 @@ export default function SpotForecastPage() {
 
   const { preferences: prefs, isUsingDefaults: prefsDefaults } = usePreferences();
   const { t, lang } = useLanguage();
+  const { uiPrefs } = useUiPreferences();
 
   const { spots, status, isLive, fetchedAt, errorMessage } = useLiveForecast("today");
   const isLoading = status === "idle" || status === "loading";
@@ -357,7 +359,7 @@ export default function SpotForecastPage() {
       )}
 
       {/* ── 24h strip + trends + dynamic summary ── */}
-      {!isLoading && daySlots.length > 0 && (
+      {!isLoading && daySlots.length > 0 && uiPrefs.dayStripEnabled && (
         <>
           <DayStrip24h
             dateKey={activeDateKey}
@@ -391,8 +393,8 @@ export default function SpotForecastPage() {
       )}
 
       {/* ── Collapsible pro details ── */}
-      {!isLoading && (
-        <ForecastDetailsSection>
+      {!isLoading && !uiPrefs.simpleMode && (
+        <ForecastDetailsSection defaultOpen={uiPrefs.proDetailsDefaultOpen}>
           <ProGraphsSection daySlots={daySlots} locale={lang} />
           <SurfWindowsPanel windows={surfWindows} />
           {explainerData && (

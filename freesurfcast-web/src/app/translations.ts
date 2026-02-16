@@ -2682,6 +2682,117 @@ const dict = {
     fr: "Non connecté — vos préférences sont stockées localement.",
     es: "No has iniciado sesión — tus preferencias se guardan localmente.",
   },
+
+  /* ── P11: Interface settings ───────────────── */
+  "settings.ui.title": {
+    en: "Interface",
+    nl: "Interface",
+    de: "Oberfläche",
+    fr: "Interface",
+    es: "Interfaz",
+  },
+  "settings.ui.description": {
+    en: "Control how much detail and advanced information you see.",
+    nl: "Bepaal hoeveel detail en geavanceerde informatie je ziet.",
+    de: "Bestimme, wie viel Detail und erweiterte Informationen du siehst.",
+    fr: "Contrôlez le niveau de détail et d'informations avancées affichées.",
+    es: "Controla cuánto detalle e información avanzada ves.",
+  },
+  "settings.ui.proDetails": {
+    en: "Show pro details open by default",
+    nl: "Pro-details standaard geopend tonen",
+    de: "Pro-Details standardmäßig geöffnet anzeigen",
+    fr: "Afficher les détails pro ouverts par défaut",
+    es: "Mostrar detalles pro abiertos por defecto",
+  },
+  "settings.ui.proDetails.description": {
+    en: "Open the advanced breakdown on forecast pages automatically.",
+    nl: "Open de geavanceerde analyse op forecast-pagina's automatisch.",
+    de: "Öffne die erweiterte Analyse auf Vorhersageseiten automatisch.",
+    fr: "Ouvrir automatiquement l'analyse avancée sur les pages de prévision.",
+    es: "Abrir automáticamente el análisis avanzado en las páginas de pronóstico.",
+  },
+  "settings.ui.dayStrip": {
+    en: "Show 24h strip and trends",
+    nl: "Toon 24u-strip en trends",
+    de: "24h-Streifen und Trends anzeigen",
+    fr: "Afficher la bande 24h et les tendances",
+    es: "Mostrar franja de 24h y tendencias",
+  },
+  "settings.ui.dayStrip.description": {
+    en: "Display the 24-hour score/height strip and trend badges.",
+    nl: "Toon de 24-uurs score/hoogte-strip en trend-badges.",
+    de: "Zeige den 24-Stunden Score/Höhe-Streifen und Trend-Badges.",
+    fr: "Afficher la bande score/hauteur sur 24h et les badges de tendance.",
+    es: "Mostrar la franja de puntuación/altura de 24h y las insignias de tendencia.",
+  },
+  "settings.ui.simpleMode": {
+    en: "Simple mode",
+    nl: "Eenvoudige modus",
+    de: "Einfacher Modus",
+    fr: "Mode simple",
+    es: "Modo simple",
+  },
+  "settings.ui.simpleMode.description": {
+    en: "Hide some advanced blocks and keep the interface cleaner.",
+    nl: "Verberg sommige geavanceerde blokken en houd de interface rustiger.",
+    de: "Einige erweiterte Blöcke ausblenden und die Oberfläche übersichtlicher halten.",
+    fr: "Masquer certains blocs avancés et garder l'interface plus épurée.",
+    es: "Ocultar algunos bloques avanzados y mantener la interfaz más limpia.",
+  },
+
+  /* ── P11: Feature toggles ─────────────────── */
+  "settings.features.title": {
+    en: "Features",
+    nl: "Functies",
+    de: "Funktionen",
+    fr: "Fonctionnalités",
+    es: "Funciones",
+  },
+  "settings.features.description": {
+    en: "Choose which features appear in navigation.",
+    nl: "Kies welke functies in de navigatie verschijnen.",
+    de: "Wähle, welche Funktionen in der Navigation erscheinen.",
+    fr: "Choisissez quelles fonctionnalités apparaissent dans la navigation.",
+    es: "Elige qué funciones aparecen en la navegación.",
+  },
+  "settings.features.discover": {
+    en: "Discover",
+    nl: "Ontdek",
+    de: "Entdecken",
+    fr: "Découvrir",
+    es: "Descubrir",
+  },
+  "settings.features.compare": {
+    en: "Compare",
+    nl: "Vergelijk",
+    de: "Vergleichen",
+    fr: "Comparer",
+    es: "Comparar",
+  },
+  "settings.features.trip": {
+    en: "Trip planner",
+    nl: "Reisplanner",
+    de: "Reiseplaner",
+    fr: "Planificateur de voyage",
+    es: "Planificador de viaje",
+  },
+  "settings.features.surfDna": {
+    en: "Surf DNA / Insights",
+    nl: "Surf DNA / Inzichten",
+    de: "Surf DNA / Einblicke",
+    fr: "Surf DNA / Aperçus",
+    es: "Surf DNA / Análisis",
+  },
+
+  /* ── P11: Discover search ──────────────────── */
+  "discover.search.title": {
+    en: "Find a surf spot",
+    nl: "Zoek een surfspot",
+    de: "Finde einen Surfspot",
+    fr: "Trouver un spot de surf",
+    es: "Buscar un spot de surf",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type TranslationKey = keyof typeof dict;

@@ -315,6 +315,13 @@
 
 /* ── Responsive ──────────────────────────────── */
 
+/* ── Spot search section ─────────────────────── */
+
+.spotSearchSection {
+  display: grid;
+  gap: 0.5rem;
+}
+
 @media (max-width: 640px) {
   .topDayGrid,
   .spotGrid {

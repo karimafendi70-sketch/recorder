@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { useLanguage, type TranslationKey } from "./LanguageProvider";
+import { useFeatureFlags } from "./FeatureFlagsProvider";
 
 /* ── Tab definitions ─────────────────────────── */
 
@@ -10,17 +12,19 @@ interface TabDef {
   href: string;
   labelKey: TranslationKey;
   icon: string; // emoji for now — swap for SVG icons later
+  /** Optional feature-flag key — tab hidden when flag is false */
+  flagKey?: "enableDiscover" | "enableCompare" | "enableTrip" | "enableProfileInsights";
 }
 
-const TABS: TabDef[] = [
+const ALL_TABS: TabDef[] = [
   { href: "/",          labelKey: "tab.home",      icon: "🏠" },
-  { href: "/discover",  labelKey: "tab.discover",   icon: "🔍" },
-  { href: "/forecast",  labelKey: "tab.forecast",   icon: "🌊" },
-  { href: "/map",       labelKey: "tab.map",        icon: "🗺️" },
-  { href: "/insights",  labelKey: "tab.insights",   icon: "📊" },
-  { href: "/compare",   labelKey: "tab.compare",    icon: "⚖️" },
-  { href: "/trip",      labelKey: "tab.trip",       icon: "✈️" },
-  { href: "/settings",  labelKey: "tab.settings",   icon: "⚙️" },
+  { href: "/discover",  labelKey: "tab.discover",  icon: "🔍",  flagKey: "enableDiscover" },
+  { href: "/forecast",  labelKey: "tab.forecast",  icon: "🌊" },
+  { href: "/map",       labelKey: "tab.map",       icon: "🗺️" },
+  { href: "/insights",  labelKey: "tab.insights",  icon: "📊",  flagKey: "enableProfileInsights" },
+  { href: "/compare",   labelKey: "tab.compare",   icon: "⚖️",  flagKey: "enableCompare" },
+  { href: "/trip",      labelKey: "tab.trip",      icon: "✈️",  flagKey: "enableTrip" },
+  { href: "/settings",  labelKey: "tab.settings",  icon: "⚙️" },
 ];
 
 /* ── Component ───────────────────────────────── */
@@ -28,10 +32,16 @@ const TABS: TabDef[] = [
 export function BottomTabBar() {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { flags } = useFeatureFlags();
+
+  const visibleTabs = useMemo(
+    () => ALL_TABS.filter((tab) => !tab.flagKey || flags[tab.flagKey]),
+    [flags],
+  );
 
   return (
     <nav className="bottom-tabs" aria-label="Main navigation">
-      {TABS.map((tab) => {
+      {visibleTabs.map((tab) => {
         const isActive =
           tab.href === "/"
             ? pathname === "/"

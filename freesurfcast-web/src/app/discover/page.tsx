@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage, type TranslationKey } from "@/app/LanguageProvider";
 import { useDiscoverData } from "@/lib/discover/useDiscoverData";
+import { SpotSearch } from "@/app/components/SpotSearch";
 import type { DayHighlight, SpotDiscoverSummary } from "@/lib/discover/types";
 import styles from "./discover.module.css";
 
@@ -119,6 +120,14 @@ export default function DiscoverPage() {
           {t("discover.subtitle" as TranslationKey)}
         </p>
       </header>
+
+      {/* ── Spot search ── */}
+      <section className={styles.spotSearchSection}>
+        <h2 className={styles.sectionTitle}>
+          {t("discover.search.title" as TranslationKey)}
+        </h2>
+        <SpotSearch />
+      </section>
 
       {/* ── Top Days ── */}
       <section>
