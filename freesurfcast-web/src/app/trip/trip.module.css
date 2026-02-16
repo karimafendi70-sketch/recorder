@@ -330,7 +330,7 @@
 }
 
 .comboCardEpic {
-  box-shadow: 0 0 0 2px var(--rating-goodToEpic, #22c55e), var(--shadow-sm);
+  box-shadow: 0 0 0 2px var(--color-accent), var(--shadow-sm);
 }
 
 .scoreHint {

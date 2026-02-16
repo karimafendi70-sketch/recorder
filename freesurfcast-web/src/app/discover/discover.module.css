@@ -200,8 +200,8 @@
   gap: 0.2rem;
   font-size: 0.7rem;
   font-weight: 600;
-  color: #c58700;
-  background: rgba(245, 166, 35, 0.1);
+  color: var(--color-bad);
+  background: var(--color-bad-soft);
   border-radius: var(--radius-full);
   padding: 0.15rem 0.5rem;
   align-self: flex-start;

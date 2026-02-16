@@ -118,7 +118,7 @@
 
 .subTabActive {
   color: var(--color-active-text);
-  border-bottom-color: var(--color-wave-primary, #22d3ee);
+  border-bottom-color: var(--color-accent);
 }
 
 .subTabDisabled {
@@ -154,14 +154,14 @@
 }
 
 .dayBarCard:hover {
-  border-color: var(--color-wave-secondary, #06b6d4);
+  border-color: var(--color-accent-soft);
   background: rgba(6, 182, 212, 0.08);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .dayBarCardActive {
-  border-color: var(--color-wave-primary, #22d3ee);
+  border-color: var(--color-accent);
   background: var(--color-active-bg);
   color: var(--color-active-text);
   box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3);
@@ -624,7 +624,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: var(--color-wave-primary, #22d3ee);
+  color: var(--color-accent);
   background: rgba(6, 182, 212, 0.04);
   border-right: 1px solid rgba(6, 182, 212, 0.08);
   line-height: 1.15;
@@ -702,7 +702,7 @@
 .analysisBar {
   width: 100%;
   border-radius: 3px 3px 0 0;
-  background: var(--color-graph-energy, #22d3ee);
+  background: var(--color-accent);
   min-height: 2px;
   transition: height 0.3s ease;
 }
@@ -736,7 +736,7 @@
 .analysisWindArrow {
   width: 12px;
   height: 12px;
-  color: var(--color-wave-primary, #22d3ee);
+  color: var(--color-accent);
   opacity: 0.7;
 }
 
@@ -772,22 +772,22 @@
 }
 
 .analysisTimeTickActive {
-  color: var(--color-wave-primary, #22d3ee);
+  color: var(--color-accent);
   font-weight: 800;
 }
 
 /* ── Score color helpers ─────────────────────── */
 
 .scoreHigh {
-  color: var(--rating-good, #43a047);
+  color: var(--color-accent);
 }
 
 .scoreMedium {
-  color: var(--rating-fairToGood, #9e9d24);
+  color: var(--color-text-muted);
 }
 
 .scoreLow {
-  color: var(--rating-poor, #e53935);
+  color: var(--color-bad);
 }
 
 /* ── Skeleton / shimmer loading ──────────────── */
@@ -1004,8 +1004,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #f5a623;
-  box-shadow: 0 0 4px rgba(245, 166, 35, 0.6);
+  background: var(--color-bad);
+  box-shadow: 0 0 4px var(--color-bad-soft);
   pointer-events: none;
 }
 
@@ -1036,14 +1036,14 @@
 }
 
 .alertToggleBtnActive {
-  border-color: #f5a623;
-  background: rgba(245, 166, 35, 0.14);
-  color: #fbbf24;
+  border-color: var(--color-accent);
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
 }
 
 .alertToggleBtnActive:hover {
-  background: rgba(245, 166, 35, 0.22);
-  border-color: #fbbf24;
+  background: rgba(34, 211, 238, 0.22);
+  border-color: var(--color-accent);
 }
 
 .alertToggleIcon {
@@ -1119,10 +1119,7 @@
 }
 
 .alertChipSelected {
-  border-color: var(--color-wave-primary, #22d3ee);
-  background: var(--color-active-bg);
-  color: var(--color-active-text);
-}
+  border-color: var(--color-accent);
 
 .alertSizeRow {
   display: flex;
@@ -1180,8 +1177,8 @@
   padding: 0.45rem 1.1rem;
   border: none;
   border-radius: var(--radius-sm);
-  background: #f5a623;
-  color: #fff;
+  background: var(--color-accent-soft);
+  color: var(--color-button-primary-text);
   font: inherit;
   font-weight: 600;
   font-size: 0.85rem;
@@ -1190,7 +1187,7 @@
 }
 
 .alertSaveBtn:hover {
-  background: #d98f1a;
+  background: var(--color-accent);
 }
 
 .alertRemoveBtn {
@@ -1243,7 +1240,7 @@
 }
 
 .sessStarFilled {
-  color: #f5a623;
+  color: var(--color-accent);
 }
 
 .sessStatsCard {
