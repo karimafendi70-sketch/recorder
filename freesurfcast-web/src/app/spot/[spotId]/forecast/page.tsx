@@ -410,7 +410,7 @@ export default function SpotForecastPage() {
       {/* ── Collapsible pro details ── */}
       {!isLoading && !uiPrefs.simpleMode && (
         <ForecastDetailsSection defaultOpen={uiPrefs.proDetailsDefaultOpen}>
-          <ProGraphsSection daySlots={daySlots} locale={lang} />
+          <ProGraphsSection key={`${spotId}-${activeDateKey}`} daySlots={daySlots} locale={lang} spotId={spotId} dateKey={activeDateKey} />
           <SurfWindowsPanel windows={surfWindows} />
           {explainerData && (
             <ScoreExplainer

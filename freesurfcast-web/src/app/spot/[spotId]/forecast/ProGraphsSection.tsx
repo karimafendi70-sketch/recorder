@@ -9,6 +9,10 @@ import styles from "../../spot.module.css";
 interface ProGraphsSectionProps {
   daySlots: ForecastSlot[];
   locale: string;
+  /** Current spot id — used to key graphs per spot */
+  spotId: string;
+  /** Selected day key (YYYY-MM-DD) — used to key & seed graphs */
+  dateKey: string;
 }
 
 /* ── Tiny helpers ────────────────────────────── */
@@ -21,7 +25,7 @@ function num(slot: ForecastSlot, key: string): number | null {
 }
 
 /** Map cloud cover (0-100) → weather icon. */
-function weatherIcon(cloud: number | null, temp: number | null): string {
+function weatherIcon(cloud: number | null): string {
   if (cloud == null) return "☀️";
   if (cloud < 20) return "☀️";
   if (cloud < 50) return "⛅";
@@ -29,12 +33,29 @@ function weatherIcon(cloud: number | null, temp: number | null): string {
   return "☁️";
 }
 
-/** Map tide suitability string → numeric height 0..1 for visual curve. */
-function tideValue(slot: ForecastSlot, idx: number, total: number): number {
-  // Simulate a sinusoidal tidal pattern across the day
-  // (real tide would come from an API – this gives a realistic visual)
-  const phase = (idx / Math.max(total - 1, 1)) * Math.PI * 2;
-  const base = 0.5 + 0.45 * Math.sin(phase - Math.PI / 3);
+/** Simple numeric hash from a string (for seeding day-specific variation). */
+function hashStr(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+/** Map tide suitability string → numeric height 0..1 for visual curve.
+ *  Uses dateKey + spotId as seeds so the curve differs per day & spot. */
+function tideValue(
+  slot: ForecastSlot,
+  idx: number,
+  total: number,
+  dayHash: number,
+): number {
+  // Day-specific phase shift so the curve looks different each day
+  const phaseShift = ((dayHash % 100) / 100) * Math.PI * 2;
+  const freqMultiplier = 1.5 + ((dayHash % 50) / 50) * 1.0; // 1.5 – 2.5
+  const phase =
+    (idx / Math.max(total - 1, 1)) * Math.PI * freqMultiplier + phaseShift;
+  const base = 0.5 + 0.45 * Math.sin(phase);
   // Nudge by tide suitability
   if (slot.tideSuitability === "good") return Math.min(1, base + 0.05);
   if (slot.tideSuitability === "less-ideal") return Math.max(0, base - 0.05);
@@ -61,13 +82,13 @@ function consistencyScore(slots: ForecastSlot[]): number[] {
 
 /* ── SVG Tide Curve ──────────────────────────── */
 
-function TideCurve({ slots }: { slots: ForecastSlot[] }) {
+function TideCurve({ slots, dayHash }: { slots: ForecastSlot[]; dayHash: number }) {
   const { t } = useLanguage();
   const W = 260;
   const H = 56;
   const PAD = 4;
 
-  const values = slots.map((s, i) => tideValue(s, i, slots.length));
+  const values = slots.map((s, i) => tideValue(s, i, slots.length, dayHash));
   const points = values.map((v, i) => {
     const x = PAD + (i / Math.max(slots.length - 1, 1)) * (W - PAD * 2);
     const y = H - PAD - v * (H - PAD * 2);
@@ -130,8 +151,10 @@ function EnergyBars({ slots }: { slots: ForecastSlot[] }) {
       <div className={styles.proGraphBars}>
         {slots.map((s, i) => {
           const pct = (energies[i] / maxE) * 100;
+          const absVal = Math.round(energies[i]);
           return (
             <div key={s.id} className={styles.proGraphBarCol}>
+              <span className={styles.proGraphBarValue}>{absVal}</span>
               <div className={styles.proGraphBarTrack}>
                 <div
                   className={styles.proGraphBar}
@@ -193,7 +216,7 @@ function WeatherStrip({ slots }: { slots: ForecastSlot[] }) {
           return (
             <div key={s.id} className={styles.weatherStripSlot}>
               <span className={styles.weatherStripIcon}>
-                {weatherIcon(cloud, temp)}
+                {weatherIcon(cloud)}
               </span>
               <span className={styles.weatherStripTemp}>
                 {temp != null ? `${Math.round(temp)}°` : "—"}
@@ -209,8 +232,9 @@ function WeatherStrip({ slots }: { slots: ForecastSlot[] }) {
 
 /* ── Main Component ──────────────────────────── */
 
-export function ProGraphsSection({ daySlots, locale }: ProGraphsSectionProps) {
+export function ProGraphsSection({ daySlots, locale, spotId, dateKey }: ProGraphsSectionProps) {
   const { t } = useLanguage();
+  const dayHash = hashStr(spotId + dateKey);
 
   if (!daySlots.length) return null;
 
@@ -237,7 +261,7 @@ export function ProGraphsSection({ daySlots, locale }: ProGraphsSectionProps) {
         {t("proGraph.title" as TranslationKey)}
       </h3>
       <div className={styles.proGraphsGrid}>
-        <TideCurve slots={daySlots} />
+        <TideCurve slots={daySlots} dayHash={dayHash} />
         <EnergyBars slots={daySlots} />
         <ConsistencyBars slots={daySlots} />
         <WeatherStrip slots={daySlots} />
