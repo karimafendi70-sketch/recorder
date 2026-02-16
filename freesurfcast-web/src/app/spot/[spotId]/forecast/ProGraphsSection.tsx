@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, useMemo, useCallback } from "react";
 import type { ForecastSlot } from "@/app/forecast/mockData";
 import { useLanguage, type TranslationKey } from "@/app/LanguageProvider";
+import { buildDayBuckets, type DayBucket } from "@/lib/analysis/dayBuckets";
 import styles from "../../spot.module.css";
 
 /* ── Props ───────────────────────────────────── */
@@ -24,6 +26,15 @@ function num(slot: ForecastSlot, key: string): number | null {
   return typeof v === "number" ? v : null;
 }
 
+/** Average numeric field across slots, or null if no data. */
+function avgNum(slots: ForecastSlot[], key: string): number | null {
+  const vals = slots
+    .map((s) => num(s, key))
+    .filter((v): v is number => v != null);
+  if (vals.length === 0) return null;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
 /** Map cloud cover (0-100) → weather icon. */
 function weatherIcon(cloud: number | null): string {
   if (cloud == null) return "☀️";
@@ -42,24 +53,18 @@ function hashStr(s: string): number {
   return Math.abs(h);
 }
 
-/** Map tide suitability string → numeric height 0..1 for visual curve.
- *  Uses dateKey + spotId as seeds so the curve differs per day & spot. */
-function tideValue(
-  slot: ForecastSlot,
-  idx: number,
-  total: number,
+/** Synthetic tide value 0..1, seeded by dayHash so it differs per day/spot. */
+function tideValueForBucket(
+  bucketIdx: number,
+  totalBuckets: number,
   dayHash: number,
 ): number {
-  // Day-specific phase shift so the curve looks different each day
   const phaseShift = ((dayHash % 100) / 100) * Math.PI * 2;
-  const freqMultiplier = 1.5 + ((dayHash % 50) / 50) * 1.0; // 1.5 – 2.5
+  const freqMultiplier = 1.5 + ((dayHash % 50) / 50) * 1.0;
   const phase =
-    (idx / Math.max(total - 1, 1)) * Math.PI * freqMultiplier + phaseShift;
-  const base = 0.5 + 0.45 * Math.sin(phase);
-  // Nudge by tide suitability
-  if (slot.tideSuitability === "good") return Math.min(1, base + 0.05);
-  if (slot.tideSuitability === "less-ideal") return Math.max(0, base - 0.05);
-  return base;
+    (bucketIdx / Math.max(totalBuckets - 1, 1)) * Math.PI * freqMultiplier +
+    phaseShift;
+  return 0.5 + 0.45 * Math.sin(phase);
 }
 
 /** Wave energy ∝ H² · T (simplified). */
@@ -69,99 +74,257 @@ function waveEnergy(slot: ForecastSlot): number {
   return h * h * p;
 }
 
-/** Consistency = inverse of height variance across the day (normalised 0-1). */
-function consistencyScore(slots: ForecastSlot[]): number[] {
-  const heights = slots.map((s) => num(s, "golfHoogteMeter") ?? 0);
-  const mean = heights.reduce((a, b) => a + b, 0) / (heights.length || 1);
-  // Per-slot deviation → normalised consistency
-  return heights.map((h) => {
-    const dev = Math.abs(h - mean);
-    return Math.max(0, 1 - dev / Math.max(mean, 0.5));
+/* ── Per-bucket metric aggregation ───────────── */
+
+interface BucketMetrics {
+  tide: number | null;
+  energy: number | null;
+  consistency: number | null;
+  weather: { icon: string; temp: number | null } | null;
+  wind: { speed: number | null; dir: number | null } | null;
+}
+
+function computeAllMetrics(
+  buckets: DayBucket[],
+  dayHash: number,
+): BucketMetrics[] {
+  const allSlots = buckets.flatMap((b) => b.slots);
+  const allHeights = allSlots.map((s) => num(s, "golfHoogteMeter") ?? 0);
+  const globalMean =
+    allHeights.length > 0
+      ? allHeights.reduce((a, b) => a + b, 0) / allHeights.length
+      : 0;
+
+  return buckets.map((bucket, i) => {
+    const { slots } = bucket;
+    if (slots.length === 0) {
+      return {
+        tide: null,
+        energy: null,
+        consistency: null,
+        weather: null,
+        wind: null,
+      };
+    }
+
+    // Tide – synthetic curve seeded by dayHash, nudged by suitability
+    let tide = tideValueForBucket(i, buckets.length, dayHash);
+    const goodCount = slots.filter(
+      (s) => s.tideSuitability === "good",
+    ).length;
+    const lessCount = slots.filter(
+      (s) => s.tideSuitability === "less-ideal",
+    ).length;
+    if (goodCount > lessCount) tide = Math.min(1, tide + 0.05);
+    else if (lessCount > goodCount) tide = Math.max(0, tide - 0.05);
+
+    // Energy – average H²·T across bucket slots
+    const energy =
+      slots.reduce((sum, s) => sum + waveEnergy(s), 0) / slots.length;
+
+    // Consistency – inverse deviation from global mean
+    const heights = slots.map((s) => num(s, "golfHoogteMeter") ?? 0);
+    const avgDev =
+      heights.reduce((sum, h) => sum + Math.abs(h - globalMean), 0) /
+      heights.length;
+    const consistency = Math.max(0, 1 - avgDev / Math.max(globalMean, 0.5));
+
+    // Weather
+    const cloud = avgNum(slots, "cloudCover");
+    const temp = avgNum(slots, "temperature");
+
+    // Wind
+    const speed = avgNum(slots, "windSpeedKnots");
+    const dir = avgNum(slots, "windDirectionDeg");
+
+    return {
+      tide,
+      energy,
+      consistency,
+      weather: { icon: weatherIcon(cloud), temp },
+      wind: { speed, dir },
+    };
   });
 }
 
-/* ── SVG Tide Curve ──────────────────────────── */
+/* ── Wind arrow helper ───────────────────────── */
 
-function TideCurve({ slots, dayHash }: { slots: ForecastSlot[]; dayHash: number }) {
+function WindArrow({ deg }: { deg: number }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={styles.analysisWindArrow}
+      style={{ transform: `rotate(${deg}deg)` }}
+      aria-hidden="true"
+    >
+      <path d="M8 2 L12 12 L8 9 L4 12 Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+/* ── Lane components ─────────────────────────── */
+
+interface LaneProps {
+  buckets: DayBucket[];
+  metrics: BucketMetrics[];
+  activeBucket: number | null;
+  onHover: (idx: number | null) => void;
+}
+
+/** Tide lane – SVG area chart spanning all bucket columns. */
+function TideLane({ buckets, metrics, activeBucket, onHover }: LaneProps) {
   const { t } = useLanguage();
-  const W = 260;
-  const H = 56;
-  const PAD = 4;
+  const W = buckets.length * 40;
+  const H = 44;
+  const colW = W / buckets.length;
 
-  const values = slots.map((s, i) => tideValue(s, i, slots.length, dayHash));
-  const points = values.map((v, i) => {
-    const x = PAD + (i / Math.max(slots.length - 1, 1)) * (W - PAD * 2);
-    const y = H - PAD - v * (H - PAD * 2);
-    return `${x},${y}`;
-  });
+  const dataPoints = metrics.map((m, i) => ({
+    x: colW * i + colW / 2,
+    y: m.tide != null ? H - 4 - m.tide * (H - 8) : null,
+  }));
 
-  // Smooth path using line segments (simple polyline)
-  const pathD = points.length > 0
-    ? `M ${points[0]} ` + points.slice(1).map((p) => `L ${p}`).join(" ")
-    : "";
-  // Fill area
+  const validPts = dataPoints.filter(
+    (p): p is { x: number; y: number } => p.y != null,
+  );
+  const pathD =
+    validPts.length > 1
+      ? `M ${validPts[0].x},${validPts[0].y} ` +
+        validPts
+          .slice(1)
+          .map((p) => `L ${p.x},${p.y}`)
+          .join(" ")
+      : "";
   const fillD = pathD
-    ? `${pathD} L ${PAD + (W - PAD * 2)},${H - PAD} L ${PAD},${H - PAD} Z`
+    ? `${pathD} L ${validPts[validPts.length - 1].x},${H - 4} L ${validPts[0].x},${H - 4} Z`
     : "";
 
   return (
-    <div className={styles.proGraphCard}>
-      <p className={styles.proGraphLabel}>{t("proGraph.tide" as TranslationKey)}</p>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        className={styles.proGraphSvg}
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        {fillD && (
-          <path d={fillD} fill="var(--accent-light, #e0f2f4)" opacity="0.5" />
-        )}
-        {pathD && (
-          <path
-            d={pathD}
-            fill="none"
-            stroke="var(--accent, #156f78)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        )}
-      </svg>
-      <div className={styles.proGraphAxisLabels}>
-        {slots.map((s, i) => (
-          <span key={s.id} className={styles.proGraphAxisTick}>
-            {s.timeLabel}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Energy Bar Chart ────────────────────────── */
-
-function EnergyBars({ slots }: { slots: ForecastSlot[] }) {
-  const { t } = useLanguage();
-  const energies = slots.map((s) => waveEnergy(s));
-  const maxE = Math.max(...energies, 1);
-
-  return (
-    <div className={styles.proGraphCard}>
-      <p className={styles.proGraphLabel}>{t("proGraph.energy" as TranslationKey)}</p>
-      <div className={styles.proGraphBars}>
-        {slots.map((s, i) => {
-          const pct = (energies[i] / maxE) * 100;
-          const absVal = Math.round(energies[i]);
-          return (
-            <div key={s.id} className={styles.proGraphBarCol}>
-              <span className={styles.proGraphBarValue}>{absVal}</span>
-              <div className={styles.proGraphBarTrack}>
-                <div
-                  className={styles.proGraphBar}
-                  style={{ height: `${pct}%` }}
+    <div className={styles.analysisLane}>
+      <span className={styles.analysisLaneLabel}>
+        {t("proGraph.tide" as TranslationKey)}
+      </span>
+      <div className={styles.analysisLaneContent}>
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          className={styles.analysisTideSvg}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          {fillD && (
+            <path
+              d={fillD}
+              fill="var(--accent-light, #e0f2f4)"
+              opacity="0.4"
+            />
+          )}
+          {pathD && (
+            <path
+              d={pathD}
+              fill="none"
+              stroke="var(--accent, #156f78)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          )}
+          {activeBucket != null && (
+            <rect
+              x={colW * activeBucket}
+              y={0}
+              width={colW}
+              height={H}
+              fill="var(--accent, #156f78)"
+              opacity="0.08"
+              rx="4"
+            />
+          )}
+          {dataPoints.map(
+            (p, i) =>
+              p.y != null && (
+                <circle
+                  key={i}
+                  cx={p.x}
+                  cy={p.y}
+                  r={activeBucket === i ? 4 : 2.5}
+                  fill="var(--accent, #156f78)"
+                  opacity={activeBucket === i ? 1 : 0.7}
                 />
+              ),
+          )}
+        </svg>
+        {/* Invisible hover/tap targets overlaying each column */}
+        <div className={styles.analysisHitLayer}>
+          {buckets.map((_, i) => (
+            <div
+              key={i}
+              className={styles.analysisHitCol}
+              onMouseEnter={() => onHover(i)}
+              onMouseLeave={() => onHover(null)}
+              onTouchStart={() => onHover(i)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Generic bar lane (Energy / Consistency). */
+function BarLane({
+  buckets,
+  metrics,
+  activeBucket,
+  onHover,
+  field,
+  label,
+  color,
+  showValue,
+}: LaneProps & {
+  field: "energy" | "consistency";
+  label: string;
+  color?: string;
+  showValue?: boolean;
+}) {
+  const values = metrics.map((m) => m[field]);
+  const maxVal = Math.max(
+    ...values.filter((v): v is number => v != null),
+    1,
+  );
+
+  return (
+    <div className={styles.analysisLane}>
+      <span className={styles.analysisLaneLabel}>{label}</span>
+      <div className={styles.analysisLaneBars}>
+        {buckets.map((_, i) => {
+          const val = values[i];
+          const pct = val != null ? (val / maxVal) * 100 : 0;
+          const isEmpty = val == null;
+          const isActive = activeBucket === i;
+          return (
+            <div
+              key={i}
+              className={`${styles.analysisBucketCol} ${isActive ? styles.analysisBucketActive : ""}`}
+              onMouseEnter={() => onHover(i)}
+              onMouseLeave={() => onHover(null)}
+              onTouchStart={() => onHover(i)}
+            >
+              {showValue && val != null && (
+                <span className={styles.analysisBarValue}>
+                  {Math.round(val)}
+                </span>
+              )}
+              <div className={styles.analysisBarTrack}>
+                {!isEmpty && (
+                  <div
+                    className={styles.analysisBar}
+                    style={{
+                      height: `${Math.max(pct, 4)}%`,
+                      ...(color ? { background: color } : {}),
+                    }}
+                  />
+                )}
+                {isEmpty && <div className={styles.analysisBarEmpty} />}
               </div>
-              <span className={styles.proGraphBarLabel}>{s.timeLabel}</span>
             </div>
           );
         })}
@@ -170,29 +333,45 @@ function EnergyBars({ slots }: { slots: ForecastSlot[] }) {
   );
 }
 
-/* ── Consistency Bar Chart ───────────────────── */
-
-function ConsistencyBars({ slots }: { slots: ForecastSlot[] }) {
+/** Weather + wind lane. */
+function WeatherLane({ buckets, metrics, activeBucket, onHover }: LaneProps) {
   const { t } = useLanguage();
-  const scores = consistencyScore(slots);
 
   return (
-    <div className={styles.proGraphCard}>
-      <p className={styles.proGraphLabel}>
-        {t("proGraph.consistency" as TranslationKey)}
-      </p>
-      <div className={styles.proGraphBars}>
-        {slots.map((s, i) => {
-          const pct = scores[i] * 100;
+    <div className={styles.analysisLane}>
+      <span className={styles.analysisLaneLabel}>
+        {t("proGraph.weather" as TranslationKey)}
+      </span>
+      <div className={styles.analysisLaneBars}>
+        {buckets.map((_, i) => {
+          const w = metrics[i].weather;
+          const wind = metrics[i].wind;
+          const isEmpty = w == null;
+          const isActive = activeBucket === i;
           return (
-            <div key={s.id} className={styles.proGraphBarCol}>
-              <div className={styles.proGraphBarTrack}>
-                <div
-                  className={`${styles.proGraphBar} ${styles.proGraphBarConsistency}`}
-                  style={{ height: `${pct}%` }}
-                />
-              </div>
-              <span className={styles.proGraphBarLabel}>{s.timeLabel}</span>
+            <div
+              key={i}
+              className={`${styles.analysisBucketCol} ${styles.analysisWeatherCol} ${isActive ? styles.analysisBucketActive : ""}`}
+              onMouseEnter={() => onHover(i)}
+              onMouseLeave={() => onHover(null)}
+              onTouchStart={() => onHover(i)}
+            >
+              {!isEmpty ? (
+                <>
+                  <span className={styles.analysisWeatherIcon}>{w.icon}</span>
+                  <span className={styles.analysisWeatherTemp}>
+                    {w.temp != null ? `${Math.round(w.temp)}°` : "—"}
+                  </span>
+                  {wind?.dir != null && <WindArrow deg={wind.dir} />}
+                  {wind?.speed != null && (
+                    <span className={styles.analysisWindSpeed}>
+                      {Math.round(wind.speed)}kn
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className={styles.analysisEmptyDash}>—</span>
+              )}
             </div>
           );
         })}
@@ -201,44 +380,59 @@ function ConsistencyBars({ slots }: { slots: ForecastSlot[] }) {
   );
 }
 
-/* ── Weather Strip ───────────────────────────── */
+/* ── Shared time axis ────────────────────────── */
 
-function WeatherStrip({ slots }: { slots: ForecastSlot[] }) {
-  const { t } = useLanguage();
-
+function TimeAxis({
+  buckets,
+  activeBucket,
+  onHover,
+}: {
+  buckets: DayBucket[];
+  activeBucket: number | null;
+  onHover: (idx: number | null) => void;
+}) {
   return (
-    <div className={styles.proGraphCard}>
-      <p className={styles.proGraphLabel}>{t("proGraph.weather" as TranslationKey)}</p>
-      <div className={styles.weatherStrip}>
-        {slots.map((s) => {
-          const temp = num(s, "temperature");
-          const cloud = num(s, "cloudCover");
-          return (
-            <div key={s.id} className={styles.weatherStripSlot}>
-              <span className={styles.weatherStripIcon}>
-                {weatherIcon(cloud)}
-              </span>
-              <span className={styles.weatherStripTemp}>
-                {temp != null ? `${Math.round(temp)}°` : "—"}
-              </span>
-              <span className={styles.weatherStripTime}>{s.timeLabel}</span>
-            </div>
-          );
-        })}
-      </div>
+    <div className={styles.analysisTimeAxis}>
+      {buckets.map((b, i) => (
+        <span
+          key={i}
+          className={`${styles.analysisTimeTick} ${activeBucket === i ? styles.analysisTimeTickActive : ""}`}
+          onMouseEnter={() => onHover(i)}
+          onMouseLeave={() => onHover(null)}
+          onTouchStart={() => onHover(i)}
+        >
+          {b.label}
+        </span>
+      ))}
     </div>
   );
 }
 
 /* ── Main Component ──────────────────────────── */
 
-export function ProGraphsSection({ daySlots, locale, spotId, dateKey }: ProGraphsSectionProps) {
+export function ProGraphsSection({
+  daySlots,
+  locale,
+  spotId,
+  dateKey,
+}: ProGraphsSectionProps) {
   const { t } = useLanguage();
   const dayHash = hashStr(spotId + dateKey);
 
+  const [activeBucket, setActiveBucket] = useState<number | null>(null);
+
+  const buckets = useMemo(() => buildDayBuckets(daySlots), [daySlots]);
+  const metrics = useMemo(
+    () => computeAllMetrics(buckets, dayHash),
+    [buckets, dayHash],
+  );
+
+  const handleHover = useCallback((idx: number | null) => {
+    setActiveBucket(idx);
+  }, []);
+
   if (!daySlots.length) return null;
 
-  // Not enough data for meaningful graphs
   if (daySlots.length < 2) {
     return (
       <section className={styles.proGraphsSection}>
@@ -255,16 +449,38 @@ export function ProGraphsSection({ daySlots, locale, spotId, dateKey }: ProGraph
     );
   }
 
+  const laneProps: LaneProps = {
+    buckets,
+    metrics,
+    activeBucket,
+    onHover: handleHover,
+  };
+
   return (
     <section className={styles.proGraphsSection}>
       <h3 className={styles.proGraphsSectionTitle}>
         {t("proGraph.title" as TranslationKey)}
       </h3>
-      <div className={styles.proGraphsGrid}>
-        <TideCurve slots={daySlots} dayHash={dayHash} />
-        <EnergyBars slots={daySlots} />
-        <ConsistencyBars slots={daySlots} />
-        <WeatherStrip slots={daySlots} />
+      <div className={styles.analysisStack}>
+        <TideLane {...laneProps} />
+        <BarLane
+          {...laneProps}
+          field="energy"
+          label={t("proGraph.energy" as TranslationKey)}
+          showValue
+        />
+        <BarLane
+          {...laneProps}
+          field="consistency"
+          label={t("proGraph.consistency" as TranslationKey)}
+          color="var(--rating-goodToEpic, #26a69a)"
+        />
+        <WeatherLane {...laneProps} />
+        <TimeAxis
+          buckets={buckets}
+          activeBucket={activeBucket}
+          onHover={handleHover}
+        />
       </div>
     </section>
   );

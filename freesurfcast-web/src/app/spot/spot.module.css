@@ -592,75 +592,114 @@
   letter-spacing: -0.01em;
 }
 
-.proGraphsGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.65rem;
-}
+/* ── Analysis Stack (P14) ────────────────────── */
 
-.proGraphCard {
-  padding: 0.7rem 0.75rem;
-  border-radius: 14px;
+.analysisStack {
+  display: grid;
+  gap: 0;
+  border-radius: 16px;
   border: 1.5px solid rgba(21, 111, 120, 0.15);
   background: linear-gradient(175deg, #f5fbfc, #fafdfe 60%);
-  display: grid;
-  gap: 0.4rem;
-  min-height: 100px;
+  overflow: hidden;
 }
 
-.proGraphLabel {
-  margin: 0;
-  font-size: 0.65rem;
+/* Each metric lane */
+.analysisLane {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  align-items: stretch;
+  min-height: 52px;
+  border-bottom: 1px solid rgba(21, 111, 120, 0.08);
+}
+
+.analysisLane:last-of-type {
+  border-bottom: none;
+}
+
+.analysisLaneLabel {
+  display: flex;
+  align-items: center;
+  padding: 0 0.4rem;
+  font-size: 0.58rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   color: var(--accent, #156f78);
+  background: rgba(21, 111, 120, 0.03);
+  border-right: 1px solid rgba(21, 111, 120, 0.08);
+  line-height: 1.15;
+  word-break: break-word;
 }
 
-/* SVG chart area */
-.proGraphSvg {
-  width: 100%;
-  height: 48px;
+/* Tide SVG area */
+.analysisLaneContent {
+  position: relative;
+  min-height: 44px;
+}
+
+.analysisTideSvg {
   display: block;
+  width: 100%;
+  height: 44px;
 }
 
-/* Axis labels below SVG charts */
-.proGraphAxisLabels {
+/* Invisible hover/tap layer for tide SVG */
+.analysisHitLayer {
+  position: absolute;
+  inset: 0;
   display: flex;
-  justify-content: space-between;
 }
 
-.proGraphAxisTick {
-  font-size: 0.55rem;
-  color: var(--muted, #5d7178);
-  font-weight: 600;
+.analysisHitCol {
+  flex: 1;
+  cursor: pointer;
 }
 
-/* Bar chart container */
-.proGraphBars {
+/* Bar-style lane content (Energy, Consistency) */
+.analysisLaneBars {
   display: flex;
-  gap: 3px;
-  align-items: flex-end;
-  height: 52px;
+  gap: 0;
+  align-items: stretch;
 }
 
-.proGraphBarCol {
+.analysisBucketCol {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
   gap: 2px;
+  padding: 4px 2px;
   min-width: 0;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
 }
 
-.proGraphBarTrack {
-  width: 100%;
-  height: 42px;
+.analysisBucketActive {
+  background: rgba(21, 111, 120, 0.07);
+  border-left-color: rgba(21, 111, 120, 0.12);
+  border-right-color: rgba(21, 111, 120, 0.12);
+}
+
+.analysisBarValue {
+  font-size: 0.52rem;
+  font-weight: 700;
+  color: var(--foreground, #1b2f35);
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.analysisBarTrack {
+  width: 60%;
+  height: 36px;
   display: flex;
   align-items: flex-end;
+  justify-content: center;
 }
 
-.proGraphBar {
+.analysisBar {
   width: 100%;
   border-radius: 3px 3px 0 0;
   background: var(--accent, #156f78);
@@ -668,48 +707,73 @@
   transition: height 0.3s ease;
 }
 
-.proGraphBarConsistency {
-  background: var(--rating-goodToEpic, #26a69a);
+.analysisBarEmpty {
+  width: 60%;
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(21, 111, 120, 0.12);
 }
 
-.proGraphBarLabel {
-  font-size: 0.5rem;
-  color: var(--muted, #5d7178);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* Weather strip */
-.weatherStrip {
-  display: flex;
-  justify-content: space-between;
-  gap: 2px;
-}
-
-.weatherStripSlot {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Weather column */
+.analysisWeatherCol {
+  justify-content: center;
   gap: 1px;
-  min-width: 0;
+  padding: 6px 2px;
 }
 
-.weatherStripIcon {
-  font-size: 1.15rem;
+.analysisWeatherIcon {
+  font-size: 0.95rem;
   line-height: 1;
 }
 
-.weatherStripTemp {
-  font-size: 0.72rem;
+.analysisWeatherTemp {
+  font-size: 0.62rem;
   font-weight: 700;
   color: var(--foreground, #1b2f35);
+  line-height: 1;
 }
 
-.weatherStripTime {
-  font-size: 0.5rem;
-  color: var(--muted, #5d7178);
+.analysisWindArrow {
+  width: 12px;
+  height: 12px;
+  color: var(--accent, #156f78);
+  opacity: 0.7;
+}
+
+.analysisWindSpeed {
+  font-size: 0.48rem;
   font-weight: 600;
+  color: var(--muted, #5d7178);
+  line-height: 1;
+}
+
+.analysisEmptyDash {
+  font-size: 0.72rem;
+  color: var(--muted, #5d7178);
+  opacity: 0.4;
+}
+
+/* Shared time axis at the bottom */
+.analysisTimeAxis {
+  display: flex;
+  padding: 0 0 4px;
+  margin-left: 54px; /* align with lane content */
+}
+
+.analysisTimeTick {
+  flex: 1;
+  text-align: center;
+  font-size: 0.52rem;
+  font-weight: 600;
+  color: var(--muted, #5d7178);
+  padding: 3px 0;
+  cursor: pointer;
+  transition: color 0.15s ease, font-weight 0.15s ease;
+}
+
+.analysisTimeTickActive {
+  color: var(--accent, #156f78);
+  font-weight: 800;
 }
 
 /* ── Score color helpers ─────────────────────── */
@@ -1465,6 +1529,28 @@
     border-color: rgba(21, 111, 120, 0.25);
   }
 
+  .analysisStack {
+    background: linear-gradient(175deg, #1e2c30, #22333a 60%);
+    border-color: rgba(21, 111, 120, 0.25);
+  }
+
+  .analysisLane {
+    border-bottom-color: rgba(21, 111, 120, 0.12);
+  }
+
+  .analysisLaneLabel {
+    background: rgba(21, 111, 120, 0.06);
+    border-right-color: rgba(21, 111, 120, 0.12);
+  }
+
+  .analysisBucketActive {
+    background: rgba(21, 111, 120, 0.12);
+  }
+
+  .analysisBarEmpty {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
   .skeletonLine,
   .skeletonStripe,
   .skeletonPill,
@@ -1592,6 +1678,20 @@
 
   .proGraphsGrid {
     grid-template-columns: 1fr;
+  }
+
+  /* Analysis stack — narrower label column on mobile */
+  .analysisLane {
+    grid-template-columns: 42px 1fr;
+  }
+
+  .analysisTimeAxis {
+    margin-left: 42px;
+  }
+
+  .analysisLaneLabel {
+    font-size: 0.5rem;
+    padding: 0 0.25rem;
   }
 
   .bestTimeStrip {
